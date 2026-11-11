@@ -49,6 +49,7 @@ $textos = $campos([
         <?= component('button', ['label' => 'Imprimir', 'icon' => 'printer', 'variant' => 'outline', 'href' => site_url('mine/imprimirOs/' . $idOs), 'attrs' => ['target' => '_blank', 'rel' => 'noopener']]) ?>
     </header>
 
+    <?php $this->load->view('agenda/horarios', ['agendamentos' => $os->status === 'Cancelado' ? [] : ($os->agendamentos ?? []), 'editar_agenda' => false]); ?>
     <?php // Uma coluna no celular: em duas, o valor em reais não cabe na linha do kpi-card.?>
     <div class="grid gap-4 sm:grid-cols-3">
         <?= component('kpi-card', ['label' => 'Produtos', 'value' => dinheiro($totais['produtos']), 'icon' => 'package']) ?>

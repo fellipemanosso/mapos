@@ -243,6 +243,9 @@ class Os_model extends CI_Model
             $dependente = $this->db->where('id', $os->dependente_id)->where('clientes_id', $os->clientes_id)->get('dependentes')->row();
             $os->beneficiario_nome = $dependente->nome ?? null;
         }
+        if ($os && $this->db->table_exists('agenda')) {
+            $os->agendamentos = $this->db->where('os_id', (int) $os->idOs)->where('cancelado', 0)->order_by('inicio')->get('agenda')->result();
+        }
 
         return $os;
     }

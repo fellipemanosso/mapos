@@ -15,7 +15,7 @@ $errosDeCampo = array_diff_key($erros, ['_geral' => true]);
 <div class="flex max-w-2xl flex-col gap-4 pt-2 pb-8">
     <header>
         <h1 class="font-display text-heading-xl text-text"><?= e($editando ? 'Editar serviço' : 'Novo serviço') ?></h1>
-        <p class="text-caption text-muted"><?= e($editando ? $servico->nome : 'Mão de obra ou serviço cobrado nas atendimentos.') ?></p>
+        <p class="text-caption text-muted"><?= e($editando ? $servico->nome : 'Serviço, valor e duração padrão para a agenda.') ?></p>
     </header>
 
     <?php if ($erroGeral !== null) { ?>
@@ -46,6 +46,16 @@ $errosDeCampo = array_diff_key($erros, ['_geral' => true]);
                 'attrs' => ['data-mascara' => 'dinheiro', 'inputmode' => 'decimal', 'maxlength' => 20, 'data-msg-vazio' => 'Informe o preço.'],
             ]) ?>
             <div class="sm:col-span-2">
+                <?= component('input', [
+                    'name' => 'duracao_min',
+                    'label' => 'Duração padrão (minutos)',
+                    'type' => 'number',
+                    'required' => true,
+                    'value' => $valores['duracao_min'] ?? 60,
+                    'error' => $errosDeCampo['duracao_min'] ?? null,
+                    'help' => 'Ex.: 30 para perfuração, 60 para consultoria. Use 0 para taxas sem tempo de execução.',
+                    'attrs' => ['min' => 0, 'max' => 1440, 'step' => 1],
+                ]) ?>
                 <?= component('input', [
                     'name' => 'descricao',
                     'label' => 'Descrição',

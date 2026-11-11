@@ -290,3 +290,12 @@ Depois do rollback do banco, volte também os arquivos da 4.x, o `.env` anterior
 | O 2FA de um usuário deixou de abrir | A `APP_ENCRYPTION_KEY` foi trocada. Redefina o 2FA do usuário em Usuários → editar. |
 
 Dúvidas e problemas: [Discussions](https://github.com/RamonSilva20/mapos/discussions) ou contato@mapos.com.br. Falhas de segurança **não** vão em issue pública: veja o [SECURITY.md](../SECURITY.md).
+# Customização local: agenda e responsáveis
+
+Após atualizar esta versão personalizada, execute `php index.php tools migrate`.
+As migrations `20261111000000_add_dependentes` e
+`20261111010000_create_agenda` criam o vínculo de dependentes, a agenda e a
+duração dos serviços. Configure as durações em Serviços antes de agendar;
+os registros antigos recebem zero, sem alterar valores ou pagamentos.
+Veja [Agenda de atendimentos](agenda.md) e
+[Clientes e responsáveis](customizacao-atendimentos.md).

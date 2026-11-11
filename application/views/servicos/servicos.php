@@ -19,6 +19,7 @@ $colunas = [
         : $s->nome],
     ['key' => 'descricao', 'label' => 'Descrição', 'hide_until' => 'md'],
     ['label' => 'Preço', 'align' => 'right', 'nowrap' => true, 'render' => fn ($s) => dinheiro($s->preco)],
+    ['label' => 'Duração', 'align' => 'right', 'render' => fn ($s) => (int) ($s->duracao_min ?? 0) . ' min'],
     ['label' => 'Ações', 'align' => 'right', 'nowrap' => true, 'render' => function ($s) use ($pode) {
         $acoes = [];
         if ($pode['editar']) {

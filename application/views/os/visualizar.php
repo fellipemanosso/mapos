@@ -58,6 +58,9 @@ $textos = [
             <p class="text-caption [overflow-wrap:anywhere] text-muted"><?= e($os->nomeCliente . ' · Profissional: ' . $os->nome) ?></p>
         </div>
         <div class="flex flex-wrap gap-2">
+            <?php if (! empty($pode['agendar']) && $os->status !== 'Cancelado') { ?>
+                <?= component('button', ['label' => 'Agendar atendimento', 'variant' => 'outline', 'href' => site_url('agenda/formulario') . '?os=' . (int) $os->idOs]) ?>
+            <?php } ?>
             <?php if ($pode['faturar']) { ?>
                 <?= component('button', ['label' => 'Faturar', 'icon' => 'circle-dollar-sign', 'variant' => 'outline', 'attrs' => ['data-modal-abrir' => 'faturar-os']]) ?>
             <?php } ?>
@@ -90,6 +93,7 @@ $textos = [
         </div>
     </header>
 
+    <?php $this->load->view('agenda/horarios', ['agendamentos' => $os->status === 'Cancelado' ? [] : ($os->agendamentos ?? []), 'editar_agenda' => ! empty($pode['agendar'])]); ?>
     <?php if ($fechada && ! $pode['editar']) { ?>
         <?= component('alert', ['variant' => 'info', 'message' => 'Esto atendimento está ' . ($os->status === 'Cancelado' ? 'cancelada' : 'faturada') . ': produtos, serviços, anexos, anotações e desconto não podem mais ser alterados.']) ?>
     <?php } ?>

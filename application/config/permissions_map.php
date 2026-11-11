@@ -32,6 +32,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 */
 
 $config['permissions_map'] = [
+    'Agenda' => [
+        'index' => 'vOs',
+        'formulario' => 'eOs',
+        'cancelar' => 'eOs',
+    ],
     'Arquivos' => [
         'index' => 'vArquivo',
         'gerenciar' => 'vArquivo',

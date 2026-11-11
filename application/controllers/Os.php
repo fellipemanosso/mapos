@@ -425,6 +425,7 @@ class Os extends MY_Controller
                 'cobrar' => $this->permite('aCobranca') && ! $cobrancas && $totais['total'] > 0,
                 'ver_cobranca' => $this->permite('vCobranca'),
                 'ver_cliente' => $this->permite('vCliente'),
+                'agendar' => $this->permite('eOs'),
             ],
         ];
     }

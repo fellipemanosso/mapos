@@ -140,24 +140,11 @@ if ($pode['os']) {
     <?php if ($pode['os']) { ?>
         <div class="grid gap-4 xl:grid-cols-3">
             <section class="<?= e($caixa) ?> min-w-0 xl:col-span-2" aria-labelledby="titulo-agenda">
-                <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                        <h2 id="titulo-agenda" class="text-heading-sm text-text">Agenda de entregas</h2>
-                        <p class="text-caption text-muted">OS pela data final. Clique num atendimento para ver os detalhes.</p>
-                    </div>
-                    <div class="sm:w-56">
-                        <?= component('select', [
-                            'name' => 'status',
-                            'id' => 'agenda-status',
-                            'label' => 'Status',
-                            'placeholder' => 'Todos os status',
-                            'options' => array_combine(array_keys(OS_STATUS_VARIANTES), array_keys(OS_STATUS_VARIANTES)),
-                            'attrs' => ['data-agenda-status' => true],
-                        ]) ?>
-                    </div>
-                </div>
-                <div class="painel-agenda mt-4 min-h-96" data-agenda="<?= e(site_url('mapos/calendario')) ?>" aria-live="polite">
-                    <p class="text-caption text-muted" data-agenda-carregando>Carregando a agenda…</p>
+                <h2 id="titulo-agenda" class="text-heading-sm text-text">Agenda de atendimentos</h2>
+                <p class="mt-3 text-body-md text-muted">Organize os horários do dia e da semana, com duração dos serviços, deslocamentos e bloqueios.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <?= component('button', ['label' => 'Ver agenda de hoje', 'variant' => 'outline', 'href' => site_url('agenda') . '?modo=dia&data=' . date('Y-m-d')]) ?>
+                    <?= component('button', ['label' => 'Ver semana', 'variant' => 'ghost', 'href' => site_url('agenda')]) ?>
                 </div>
             </section>
 

@@ -93,6 +93,10 @@ class Servicos extends MY_Controller
         if ($this->input->method() === 'post') {
             $erros = $this->validarFormulario('servicos');
             $preco = valorDecimal($this->input->post('preco'));
+            $duracao = $this->input->post('duracao_min');
+            if (! is_string($duracao) || ! ctype_digit($duracao) || (int) $duracao > 1440) {
+                $erros['duracao_min'] = 'Informe a duração de 0 a 1.440 minutos. Use 0 para taxas sem tempo de execução.';
+            }
             if (! isset($erros['preco']) && $preco === null) {
                 $erros['preco'] = 'Informe o preço em reais, como 150,00 (até 99.999.999,99).';
             }
@@ -102,6 +106,7 @@ class Servicos extends MY_Controller
                     'nome' => trim((string) $this->input->post('nome')),
                     'descricao' => trim((string) $this->input->post('descricao')),
                     'preco' => $preco,
+                    'duracao_min' => (int) $duracao,
                 ];
 
                 $salvou = $servico === null
@@ -125,6 +130,7 @@ class Servicos extends MY_Controller
             'nome' => is_array($post) ? (string) ($post['nome'] ?? '') : (string) ($servico->nome ?? ''),
             'descricao' => is_array($post) ? (string) ($post['descricao'] ?? '') : (string) ($servico->descricao ?? ''),
             'preco' => is_array($post) ? (string) ($post['preco'] ?? '') : (string) ($servico->preco ?? ''),
+            'duracao_min' => is_array($post) ? (string) ($post['duracao_min'] ?? '') : (string) ($servico->duracao_min ?? 60),
         ];
         $this->data['erros'] = $erros;
         $this->data['view'] = 'servicos/formulario';
