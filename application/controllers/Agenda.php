@@ -20,9 +20,8 @@ class Agenda extends MY_Controller
         if (! $dia || $dia->format('Y-m-d') !== $data) {
             $dia = new DateTimeImmutable('today');
         }
-        $modo = $this->input->get('modo') === 'dia' ? 'dia' : 'semana';
-        $inicio = $modo === 'dia' ? $dia : $dia->modify('monday this week');
-        $fim = $inicio->modify($modo === 'dia' ? '+1 day' : '+7 days');
+        $modo = in_array($this->input->get('modo'), ['dia', 'semana', 'calendario'], true) ? $this->input->get('modo') : 'calendario';
+        [$inicio, $fim] = agendaIntervalo($dia, $modo);
         $this->data['inicio'] = $inicio;
         $this->data['selecionado'] = $dia;
         $this->data['fim'] = $fim;

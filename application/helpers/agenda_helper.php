@@ -1,5 +1,16 @@
 <?php
 
+function agendaIntervalo(DateTimeImmutable $dia, string $modo): array
+{
+    if ($modo === 'calendario') {
+        $primeiro = $dia->modify('first day of this month');
+        $ultimo = $dia->modify('last day of this month');
+        return [$primeiro->modify('monday this week'), $ultimo->modify('sunday this week')->modify('+1 day')];
+    }
+    $inicio = $modo === 'dia' ? $dia : $dia->modify('monday this week');
+    return [$inicio, $inicio->modify($modo === 'dia' ? '+1 day' : '+7 days')];
+}
+
 /** Horários locais de São Paulo, em intervalos semiabertos: fim às 10h permite início às 10h. */
 function agendaPeriodo(string $inicio, int $duracao, int $deslocamento, int $intervalo): ?array
 {

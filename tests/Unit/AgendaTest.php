@@ -5,6 +5,24 @@ require_once APPPATH . 'models/Agenda_model.php';
 
 final class AgendaTest extends MaposTestCase
 {
+    public function testCalendarioIncluiSemanasCompletasETransicaoDeAno(): void
+    {
+        foreach ([
+            ['2026-11-11', '2026-10-26', '2026-12-07'],
+            ['2026-12-31', '2026-11-30', '2027-01-04'],
+            ['2024-02-29', '2024-01-29', '2024-03-04'],
+        ] as [$dia, $esperadoInicio, $esperadoFim]) {
+            [$inicio, $fim] = agendaIntervalo(new DateTimeImmutable($dia), 'calendario');
+            $this->assertSame($esperadoInicio, $inicio->format('Y-m-d'));
+            $this->assertSame($esperadoFim, $fim->format('Y-m-d'));
+            $this->assertSame('1', $inicio->format('N'));
+            $this->assertSame(0, (int) $inicio->diff($fim)->days % 7);
+        }
+        [$inicio, $fim] = agendaIntervalo(new DateTimeImmutable('2026-11-11'), 'dia');
+        $this->assertSame('2026-11-11', $inicio->format('Y-m-d'));
+        $this->assertSame('2026-11-12', $fim->format('Y-m-d'));
+    }
+
     private function modelo(): Agenda_model
     {
         $this->db->query('CREATE TABLE os (idOs INTEGER PRIMARY KEY, status TEXT)');

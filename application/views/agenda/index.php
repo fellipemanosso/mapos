@@ -1,6 +1,7 @@
 <?php
 $url = static fn ($dia, $visao) => site_url('agenda') . '?' . http_build_query(['data' => $dia->format('Y-m-d'), 'modo' => $visao]);
-$salto = $modo === 'dia' ? '1 day' : '7 days';
+$salto = $modo === 'calendario' ? '1 month' : ($modo === 'dia' ? '1 day' : '7 days');
+$navegacao = $modo === 'calendario' ? $selecionado->modify('first day of this month') : $inicio;
 $dias = ['Mon' => 'Segunda', 'Tue' => 'Terça', 'Wed' => 'Quarta', 'Thu' => 'Quinta', 'Fri' => 'Sexta', 'Sat' => 'Sábado', 'Sun' => 'Domingo'];
 ?>
 <div class="flex flex-col gap-4 pt-2 pb-8">
@@ -9,9 +10,10 @@ $dias = ['Mon' => 'Segunda', 'Tue' => 'Terça', 'Wed' => 'Quarta', 'Thu' => 'Qui
         <p class="text-caption text-muted">Serviços, deslocamentos e bloqueios · horário de Brasília</p>
     </header>
     <div class="flex flex-wrap items-center gap-2">
-        <?= component('button', ['label' => 'Anterior', 'variant' => 'outline', 'href' => $url($inicio->modify('-' . $salto), $modo)]) ?>
+        <?= component('button', ['label' => 'Anterior', 'variant' => 'outline', 'href' => $url($navegacao->modify('-' . $salto), $modo)]) ?>
         <?= component('button', ['label' => 'Hoje', 'variant' => 'outline', 'href' => $url(new DateTimeImmutable('today'), $modo)]) ?>
-        <?= component('button', ['label' => 'Próximo', 'variant' => 'outline', 'href' => $url($inicio->modify('+' . $salto), $modo)]) ?>
+        <?= component('button', ['label' => 'Próximo', 'variant' => 'outline', 'href' => $url($navegacao->modify('+' . $salto), $modo)]) ?>
+        <?= component('button', ['label' => 'Calendário', 'variant' => $modo === 'calendario' ? 'outline' : 'ghost', 'href' => $url($selecionado, 'calendario')]) ?>
         <?= component('button', ['label' => 'Dia', 'variant' => $modo === 'dia' ? 'outline' : 'ghost', 'href' => $url($selecionado, 'dia')]) ?>
         <?= component('button', ['label' => 'Semana', 'variant' => $modo === 'semana' ? 'outline' : 'ghost', 'href' => $url($selecionado, 'semana')]) ?>
         <?php if ($pode_editar) { ?>
@@ -23,6 +25,9 @@ $dias = ['Mon' => 'Segunda', 'Tue' => 'Terça', 'Wed' => 'Quarta', 'Thu' => 'Qui
         <?= component('input', ['name' => 'data', 'label' => 'Ir para a data', 'type' => 'date', 'value' => $selecionado->format('Y-m-d'), 'required' => true]) ?>
         <?= component('button', ['label' => 'Ver data', 'type' => 'submit', 'variant' => 'outline']) ?>
     </form>
+    <?php if ($modo === 'calendario') { ?>
+        <?php $this->load->view('agenda/calendario', ['url' => $url]); ?>
+    <?php } else { ?>
     <?php for ($dia = $inicio; $dia < $fim; $dia = $dia->modify('+1 day')) {
         $diaInicio = $dia->format('Y-m-d H:i:s');
         $diaFim = $dia->modify('+1 day')->format('Y-m-d H:i:s');
@@ -61,5 +66,6 @@ $dias = ['Mon' => 'Segunda', 'Tue' => 'Terça', 'Wed' => 'Quarta', 'Thu' => 'Qui
                 </article>
             <?php } ?>
         </section>
+    <?php } ?>
     <?php } ?>
 </div>

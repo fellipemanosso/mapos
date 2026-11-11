@@ -18,7 +18,11 @@ O término de uma reserva pode coincidir com o início ocupado da seguinte.
 O banco serializa a gravação por profissional para conferir conflitos também
 quando duas reservas são salvas simultaneamente.
 
-As visões diária e semanal mostram reservas por dia. A agenda admite várias
+O calendário mensal em grade é a visão padrão. Clique no dia para ver seus
+horários ou na reserva para abrir sua edição. As visões diária e semanal
+continuam disponíveis. O mês inclui semanas completas; dias de outros meses
+aparecem com destaque reduzido. Dias com mais de três reservas têm um link
+para a lista completa. A agenda admite várias
 profissionais, mas não permite sobreposição para a mesma profissional.
 Reservas canceladas e atendimentos com status Cancelado liberam o horário.
 Cancelar uma reserva preserva o atendimento, os itens e os pagamentos.
