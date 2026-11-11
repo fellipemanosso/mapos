@@ -10,9 +10,11 @@ $dias = ['Mon' => 'Segunda', 'Tue' => 'Terça', 'Wed' => 'Quarta', 'Thu' => 'Qui
         <p class="text-caption text-muted">Serviços, deslocamentos e bloqueios · horário de Brasília</p>
     </header>
     <div class="flex flex-wrap items-center gap-2">
+        <?php if ($modo !== 'calendario') { ?>
         <?= component('button', ['label' => 'Anterior', 'variant' => 'outline', 'href' => $url($navegacao->modify('-' . $salto), $modo)]) ?>
         <?= component('button', ['label' => 'Hoje', 'variant' => 'outline', 'href' => $url(new DateTimeImmutable('today'), $modo)]) ?>
         <?= component('button', ['label' => 'Próximo', 'variant' => 'outline', 'href' => $url($navegacao->modify('+' . $salto), $modo)]) ?>
+        <?php } ?>
         <?= component('button', ['label' => 'Calendário', 'variant' => $modo === 'calendario' ? 'outline' : 'ghost', 'href' => $url($selecionado, 'calendario')]) ?>
         <?= component('button', ['label' => 'Dia', 'variant' => $modo === 'dia' ? 'outline' : 'ghost', 'href' => $url($selecionado, 'dia')]) ?>
         <?= component('button', ['label' => 'Semana', 'variant' => $modo === 'semana' ? 'outline' : 'ghost', 'href' => $url($selecionado, 'semana')]) ?>
@@ -20,11 +22,13 @@ $dias = ['Mon' => 'Segunda', 'Tue' => 'Terça', 'Wed' => 'Quarta', 'Thu' => 'Qui
             <?= component('button', ['label' => 'Bloquear horário', 'variant' => 'outline', 'href' => site_url('agenda/formulario') . '?tipo=bloqueio']) ?>
         <?php } ?>
     </div>
+    <?php if ($modo !== 'calendario') { ?>
     <form method="get" action="<?= e(site_url('agenda')) ?>" class="flex flex-wrap items-end gap-2">
         <input type="hidden" name="modo" value="<?= e($modo) ?>">
         <?= component('input', ['name' => 'data', 'label' => 'Ir para a data', 'type' => 'date', 'value' => $selecionado->format('Y-m-d'), 'required' => true]) ?>
         <?= component('button', ['label' => 'Ver data', 'type' => 'submit', 'variant' => 'outline']) ?>
     </form>
+    <?php } ?>
     <?php if ($modo === 'calendario') { ?>
         <?php $this->load->view('agenda/calendario', ['url' => $url]); ?>
     <?php } else { ?>

@@ -4,7 +4,7 @@
  *
  * @var string      $name
  * @var string      $label
- * @var string      $type         text | email | password | number | date | datetime-local | time | tel | url | search
+ * @var string      $type         text | email | password | number | date | month | datetime-local | time | tel | url | search
  * @var mixed       $value
  * @var string|null $placeholder
  * @var string|null $help         Texto de ajuda abaixo do campo

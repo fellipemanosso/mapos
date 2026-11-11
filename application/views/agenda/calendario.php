@@ -4,8 +4,18 @@ $titulo = $meses[(int) $selecionado->format('n')] . ' de ' . $selecionado->forma
 $hoje = date('Y-m-d');
 ?>
 <section class="rounded-xl border border-border bg-surface" aria-label="Calendário mensal">
-    <header class="px-4 py-3">
+    <header class="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
+        <div class="flex items-center gap-2">
+            <?= component('button', ['label' => 'Mês anterior', 'icon' => 'chevron-left', 'icon_only' => true, 'variant' => 'ghost', 'href' => $url($selecionado->modify('first day of this month')->modify('-1 month'), 'calendario')]) ?>
         <h2 class="text-heading-md font-display text-text"><?= e($titulo) ?></h2>
+            <?= component('button', ['label' => 'Próximo mês', 'icon' => 'chevron-right', 'icon_only' => true, 'variant' => 'ghost', 'href' => $url($selecionado->modify('first day of this month')->modify('+1 month'), 'calendario')]) ?>
+            <?= component('button', ['label' => 'Hoje', 'variant' => 'outline', 'size' => 'sm', 'href' => $url(new DateTimeImmutable('today'), 'calendario')]) ?>
+        </div>
+        <form method="get" action="<?= e(site_url('agenda')) ?>" class="flex items-end gap-2">
+            <input type="hidden" name="modo" value="calendario">
+            <?= component('input', ['name' => 'mes', 'label' => 'Ir para o mês', 'type' => 'month', 'value' => $selecionado->format('Y-m'), 'required' => true]) ?>
+            <?= component('button', ['label' => 'Ir', 'type' => 'submit', 'variant' => 'outline']) ?>
+        </form>
     </header>
     <div class="overflow-x-auto">
         <table class="w-full min-w-[700px] table-fixed border-collapse">
@@ -56,4 +66,3 @@ $hoje = date('Y-m-d');
         </table>
     </div>
 </section>
-

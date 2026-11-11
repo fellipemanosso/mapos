@@ -16,6 +16,10 @@ class Agenda extends MY_Controller
             return;
         }
         $data = $this->input->get('data');
+        $mes = $this->input->get('mes');
+        if (is_string($mes) && preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])$/D', $mes)) {
+            $data = $mes . '-01';
+        }
         $dia = is_string($data) ? DateTimeImmutable::createFromFormat('!Y-m-d', $data) : false;
         if (! $dia || $dia->format('Y-m-d') !== $data) {
             $dia = new DateTimeImmutable('today');
