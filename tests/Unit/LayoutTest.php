@@ -161,6 +161,9 @@ final class LayoutTest extends MaposTestCase
 
         foreach ($conjuntos as $conjunto) {
             $esperado = ['Início'];
+            if (in_array('vLancamento', $conjunto, true)) {
+                $esperado[] = 'Despesas';
+            }
             if (in_array('vOs', $conjunto, true)) {
                 $esperado[] = 'Agenda';
                 $esperado[] = 'Pacotes e sessões';
@@ -223,7 +226,7 @@ final class LayoutTest extends MaposTestCase
 
         $menu = layoutMenuVisivel(layoutMenu(), $this->permite($todas), 'Mapos', 'index');
 
-        $this->assertCount(12 + 8 + 7, self::rotulos($menu));
+        $this->assertCount(12 + 9 + 7, self::rotulos($menu));
     }
 
     /**

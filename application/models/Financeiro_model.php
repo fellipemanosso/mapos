@@ -312,6 +312,12 @@ class Financeiro_model extends CI_Model
     /** Atualiza o lançamento (linha existente) e devolve se deu certo. */
     public function atualizar(int $id, array $dados): bool
     {
+        if ($this->db->field_exists('despesa_grupo_id', 'lancamentos')) {
+            $atual = $this->db->where('idLancamentos', $id)->get('lancamentos')->row();
+            if (! empty($atual->despesa_grupo_id) && (($dados['tipo'] ?? 'despesa') !== 'despesa')) {
+                return false;
+            }
+        }
         if ($this->vinculadoARecebimento($id)) {
             return false;
         }

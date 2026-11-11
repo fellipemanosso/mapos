@@ -202,6 +202,15 @@ class Financeiro extends MY_Controller
                 $idCliente > 0 ? $this->financeiro_model->getCliente($idCliente) : null
             );
 
+            if (! empty($lancamento->despesa_grupo_id)) {
+                if (($dados['tipo'] ?? null) !== 'despesa') {
+                    $erros['tipo'] = 'Um lançamento desta compra deve continuar sendo despesa.';
+                }
+                if (($dados['data_pagamento'] ?? null) !== null && $dados['data_pagamento'] > date('Y-m-d')) {
+                    $erros['data_pagamento'] = 'O pagamento não pode ter data futura.';
+                }
+            }
+
             $parcelamento = ['parcelas' => 1, 'entrada' => 0, 'data_entrada' => null];
             if (! $editando) {
                 [$parcelamento, $errosParcelas] = financeiroParcelamentoDoFormulario($post, $dados);
@@ -227,6 +236,9 @@ class Financeiro extends MY_Controller
                     log_info(($editando ? 'Alterou um lançamento no financeiro. ID ' . (int) $lancamento->idLancamentos : 'Adicionou um lançamento em Financeiro'));
                     $this->session->set_flashdata('success', $mensagem);
 
+                    if (! empty($lancamento->despesa_grupo_id)) {
+                        return redirect('despesas/visualizar/' . (int) $lancamento->despesa_grupo_id);
+                    }
                     return redirect($this->urlDaListagemApos($retorno, (string) $dados['data_vencimento'], (string) $dados['tipo']));
                 }
 

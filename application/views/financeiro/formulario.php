@@ -53,6 +53,7 @@ for ($i = 1; $i <= FINANCEIRO_PARCELAS_MAX; $i++) {
         <?= component('alert', ['variant' => 'danger', 'message' => count($errosDeCampo) === 1 ? 'Confira o campo destacado.' : 'Confira os ' . count($errosDeCampo) . ' campos destacados.']) ?>
     <?php } ?>
 
+    <?php if (! empty($lancamento->despesa_grupo_id)) { ?><?= component('button', ['label' => 'Voltar à despesa', 'variant' => 'outline', 'href' => site_url('despesas/visualizar/' . (int) $lancamento->despesa_grupo_id)]) ?><?php } ?>
     <form method="post" action="<?= e(current_url() . listagemQuery($retorno)) ?>" novalidate class="flex flex-col gap-4" <?= js_module('formulario/padrao') ?>>
         <input type="hidden" name="<?= e($this->security->get_csrf_token_name()) ?>" value="<?= e($this->security->get_csrf_hash()) ?>">
 
@@ -63,7 +64,7 @@ for ($i = 1; $i <= FINANCEIRO_PARCELAS_MAX; $i++) {
                     'name' => 'tipo',
                     'label' => 'Tipo',
                     'required' => true,
-                    'options' => FINANCEIRO_TIPOS,
+                    'options' => ! empty($lancamento->despesa_grupo_id) ? ['despesa' => 'Despesa'] : FINANCEIRO_TIPOS,
                     'selected' => $valor('tipo'),
                     'error' => $errosDeCampo['tipo'] ?? null,
                 ]) ?>

@@ -82,6 +82,7 @@ if (! function_exists('layoutMenu')) {
             ['grupo' => 'Operação', 'label' => 'Atendimentos', 'icon' => 'file-text', 'url' => 'os', 'rota' => ['Os', 'index'], 'ativo' => ['Os']],
             ['grupo' => 'Operação', 'label' => 'Termos de Garantias', 'icon' => 'receipt', 'url' => 'garantias', 'rota' => ['Garantias', 'index'], 'ativo' => ['Garantias']],
             ['grupo' => 'Financeiro', 'label' => 'Lançamentos', 'icon' => 'chart-column', 'url' => 'financeiro/lancamentos', 'rota' => ['Financeiro', 'lancamentos'], 'ativo' => ['Financeiro']],
+            ['grupo' => 'Financeiro', 'label' => 'Despesas', 'icon' => 'banknote', 'url' => 'despesas', 'rota' => ['Despesas', 'index'], 'ativo' => ['Despesas']],
             ['grupo' => 'Financeiro', 'label' => 'Cobranças', 'icon' => 'circle-dollar-sign', 'url' => 'cobrancas/cobrancas', 'rota' => ['Cobrancas', 'cobrancas'], 'ativo' => ['Cobrancas']],
             [
                 'grupo' => 'Financeiro',

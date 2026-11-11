@@ -308,3 +308,7 @@ continuam no fluxo anterior. Consulte [Orçamentos e recebimentos](recebimentos.
 A migration `20261111030000_create_pacotes` adiciona pacotes e sessões vinculadas
 à agenda. Atualize o banco para usar o novo item **Pacotes e sessões** no menu.
 Consulte [Pacotes e sessões](pacotes.md).
+
+A migration `20261111040000_create_despesas` adiciona grupos de compras,
+parcelamentos, recorrências e comprovantes protegidos. Após atualizar o banco,
+use **Financeiro → Despesas**. Consulte [Despesas e compras parceladas](despesas.md).
