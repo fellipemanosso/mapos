@@ -43,6 +43,9 @@ $colunas = [
     ['label' => 'Ações', 'align' => 'right', 'nowrap' => true, 'render' => function ($l) use ($pode, $filtros) {
         $acoes = [];
         $nome = 'lançamento ' . $l->idLancamentos;
+        if (! empty($l->atendimento_id)) {
+            return ! empty($pode['ver_os']) ? [component('button', ['label' => 'Ver recebimentos do atendimento ' . $l->atendimento_id, 'icon' => 'eye', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('recebimentos/index/' . (int) $l->atendimento_id)])] : [];
+        }
         if ($pode['editar']) {
             $acoes[] = component('button', ['label' => 'Editar ' . $nome, 'icon' => 'pencil', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('financeiro/editar/' . $l->idLancamentos) . listagemQuery($filtros)]);
         }

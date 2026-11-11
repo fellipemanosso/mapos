@@ -299,3 +299,8 @@ duração dos serviços. Configure as durações em Serviços antes de agendar;
 os registros antigos recebem zero, sem alterar valores ou pagamentos.
 Veja [Agenda de atendimentos](agenda.md) e
 [Clientes e responsáveis](customizacao-atendimentos.md).
+
+A migration `20261111020000_add_recebimentos_atendimentos` adiciona o sinal
+previsto, o vencimento do saldo e os vínculos de recebimentos com o Financeiro.
+Atualize o banco antes de abrir **Orçamento e recebimentos**. Faturas antigas
+continuam no fluxo anterior. Consulte [Orçamentos e recebimentos](recebimentos.md).

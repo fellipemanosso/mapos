@@ -79,6 +79,7 @@ class Financeiro extends MY_Controller
             'editar' => $this->permite('eLancamento'),
             'excluir' => $this->permite('dLancamento'),
             'ver_cliente' => $this->permite('vCliente'),
+            'ver_os' => $this->permite('vOs'),
         ];
 
         if ($this->data['pode']['adicionar']) {
@@ -164,6 +165,10 @@ class Financeiro extends MY_Controller
             redirect(base_url());
         }
 
+        if ($this->financeiro_model->vinculadoARecebimento((int) $lancamento->idLancamentos)) {
+            $this->session->set_flashdata('error', 'Gerencie este lançamento em Orçamento e recebimentos do atendimento.');
+            return redirect('recebimentos/index/' . (int) $lancamento->atendimento_id);
+        }
         return $this->formulario($lancamento);
     }
 
@@ -295,6 +300,10 @@ class Financeiro extends MY_Controller
             redirect($listagem);
         }
 
+        if ($this->financeiro_model->vinculadoARecebimento((int) $id)) {
+            $this->session->set_flashdata('error', 'Use Orçamento e recebimentos do atendimento para estornar este registro.');
+            return redirect($listagem);
+        }
         if (! $this->financeiro_model->excluir((int) $id, $this->usuarioLogado())) {
             $this->session->set_flashdata('error', 'Ocorreu um erro ao tentar excluir o lançamento.');
             redirect($listagem);

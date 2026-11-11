@@ -27,7 +27,7 @@ if (! function_exists('osEditavel')) {
      */
     function osEditavel(object $os, bool $podeEditar, bool $controleEditos): bool
     {
-        if (! $podeEditar) {
+        if (! $podeEditar || (int) ($os->financeiro_confirmado ?? 0) === 1) {
             return false;
         }
 

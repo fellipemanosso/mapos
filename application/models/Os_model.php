@@ -247,6 +247,12 @@ class Os_model extends CI_Model
             $os->agendamentos = $this->db->where('os_id', (int) $os->idOs)->where('cancelado', 0)->order_by('inicio')->get('agenda')->result();
         }
 
+        if ($os && (int) ($os->financeiro_confirmado ?? 0) === 1 && $this->db->field_exists('atendimento_id', 'lancamentos')) {
+            $pagamentos = $this->db->select_sum('recebimento_valor', 'recebido')->where('atendimento_id', (int) $os->idOs)
+                ->where('recebimento_tipo !=', 'saldo')->where('estornado_em', null)->get('lancamentos')->row();
+            $os->recebido_total = (float) ($pagamentos->recebido ?? 0);
+        }
+
         return $os;
     }
 
@@ -526,6 +532,9 @@ class Os_model extends CI_Model
             return false;
         }
         if ($os = $this->getById($id)) {
+            if ((int) ($os->financeiro_confirmado ?? 0) === 1) {
+                return false;
+            }
             $osT = (int) ($os->status === 'Faturado' || $os->status === 'Cancelado' || $os->faturado == 1);
             if ($osT) {
                 return $this->data['configuration']['control_editos'] == '1';
@@ -562,6 +571,12 @@ class Os_model extends CI_Model
 
         $result = $this->valorTotalOS($id);
         $amount = $result['valor_desconto'] != 0 ? round(floatval($result['valor_desconto']), 2) : round(floatval($result['totalServico'] + $result['totalProdutos']), 2);
+
+        if ($this->db->field_exists('atendimento_id', 'lancamentos')) {
+            $pagamentos = $this->db->select_sum('recebimento_valor', 'recebido')->where('atendimento_id', (int) $id)
+                ->where('recebimento_tipo !=', 'saldo')->where('estornado_em', null)->get('lancamentos')->row();
+            $amount = round($amount - (float) ($pagamentos->recebido ?? 0), 2);
+        }
 
         if ($amount <= 0) {
             return null;

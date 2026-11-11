@@ -754,6 +754,11 @@ class Os extends MY_Controller
         }
 
         $osStockRefund = $this->os_model->getById($id);
+        if ($this->db->field_exists('atendimento_id', 'lancamentos')
+            && $this->db->where('atendimento_id', $id)->count_all_results('lancamentos') > 0) {
+            $this->session->set_flashdata('error', 'Este atendimento tem histórico financeiro e não pode ser excluído.');
+            return redirect($listagem);
+        }
         if ((int) $osStockRefund->faturado === 1
             && $this->os_model->faturaBaixada($id, isset($osStockRefund->lancamento) ? (int) $osStockRefund->lancamento : null)) {
             $this->session->set_flashdata('error', 'A fatura desto atendimento já tem pagamento baixado: estorne o recebimento antes de excluir o atendimento.');

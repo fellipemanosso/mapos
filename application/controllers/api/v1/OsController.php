@@ -238,6 +238,11 @@ class OsController extends REST_Controller
             ], REST_Controller::HTTP_BAD_REQUEST);
         }
 
+        if ((int) ($os->financeiro_confirmado ?? 0) === 1) {
+            $this->response(['status' => false, 'message' => 'Os valores deste atendimento estão confirmados por recebimentos.'], REST_Controller::HTTP_FORBIDDEN);
+            return;
+        }
+
         $_POST = (array) json_decode(file_get_contents('php://input'), true);
 
         if (! isset($_POST['dataInicial']) ||
@@ -384,6 +389,11 @@ class OsController extends REST_Controller
         }
 
         $osStockRefund = $this->os_model->getById($id);
+        if ($this->db->field_exists('atendimento_id', 'lancamentos')
+            && $this->db->where('atendimento_id', (int) $id)->count_all_results('lancamentos') > 0) {
+            $this->response(['status' => false, 'message' => 'Atendimento com histórico financeiro: a exclusão não é permitida.'], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
         //Verifica para poder fazer a devolução do produto para o estoque caso OS seja excluida.
         if (strtolower($osStockRefund->status) != 'cancelado') {
             $this->devolucaoEstoque($id);
@@ -1241,6 +1251,9 @@ class OsController extends REST_Controller
         }
 
         if ($os = $this->os_model->getById($id)) {
+            if ((int) ($os->financeiro_confirmado ?? 0) === 1) {
+                return false;
+            }
             $osT = (int) ($os->status === 'Faturado' || $os->status === 'Cancelado' || $os->faturado == 1);
             if ($osT) {
                 return $this->getConfig('control_editos') == '1';

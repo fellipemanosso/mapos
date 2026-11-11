@@ -527,8 +527,9 @@ final class OsTelaTest extends MaposTestCase
         $this->assertStringContainsString('000201PIX6304ABCD', $resumo);
         $this->assertStringContainsString('Calculado pelos produtos e serviços', $resumo);
         $this->assertStringContainsString('https://wa.me/5511999998888?text=Ol%C3%A1%20Ana%0AOS%209', $resumo);
-        $this->assertStringContainsString('data-modal-abrir="faturar-os"', $resumo);
-        $this->assertStringContainsString('id="form-faturar"', $resumo);
+        $this->assertStringContainsString('recebimentos/index/9', $resumo);
+        $this->assertStringContainsString('Orçamento e recebimentos', $resumo);
+        $this->assertStringNotContainsString('id="form-faturar"', $resumo);
         $this->assertStringContainsString('Registro do atendimento', $resumo);
         $this->assertStringContainsString('Não informado', $resumo);
         $this->assertStringContainsString('os/editar/', $resumo);

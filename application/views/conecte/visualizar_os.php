@@ -57,6 +57,15 @@ $textos = $campos([
         <?= component('kpi-card', ['label' => 'Total', 'value' => dinheiro($totais['total']), 'icon' => 'circle-dollar-sign', 'caption' => $totais['desconto'] > 0 ? 'Com ' . dinheiro($totais['desconto']) . ' de desconto' : null]) ?>
     </div>
 
+    <?php if (isset($os->recebido_total)) { ?>
+        <section class="<?= e($caixa) ?>" aria-label="Pagamentos do atendimento">
+            <h2 class="text-heading-sm text-text">Pagamentos</h2>
+            <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                <p class="text-body-md text-text"><?= e('Recebido: ' . dinheiro($os->recebido_total)) ?></p>
+                <p class="text-body-md text-text"><?= e('Saldo a receber: ' . dinheiro(max(0, $totais['total'] - $os->recebido_total))) ?></p>
+            </div>
+        </section>
+    <?php } ?>
     <div class="grid gap-4 lg:grid-cols-3">
         <section class="<?= e($caixa) ?>" aria-labelledby="secao-dados">
             <h2 id="secao-dados" class="text-heading-sm text-text">Dados do atendimento</h2>

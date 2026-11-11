@@ -234,6 +234,20 @@ final class FinanceiroTelasTest extends MaposTestCase
         return $carregador->view($view, [], true);
     }
 
+    public function testLancamentoVinculadoAbreRecebimentosSemEdicaoAvulsa(): void
+    {
+        $dados = $this->dadosDaListagem();
+        $dados['results'] = [$dados['results'][0]];
+        $dados['results'][0]->atendimento_id = 1;
+        $dados['results'][0]->estornado_em = '2026-11-11 12:00:00';
+        $dados['pode']['ver_os'] = true;
+        $html = $this->renderizar('financeiro/lancamentos', $dados);
+        $this->assertStringContainsString('recebimentos/index/1', $html);
+        $this->assertStringContainsString('Estornado', $html);
+        $this->assertStringNotContainsString('Editar lançamento 7', $html);
+        $this->assertStringNotContainsString('Excluir lançamento 7', $html);
+    }
+
     private function dadosDaListagem(bool $comPermissao = true, array $mudancas = []): array
     {
         $xss = '<script>alert(1)</script>';

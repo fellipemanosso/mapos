@@ -61,9 +61,7 @@ $textos = [
             <?php if (! empty($pode['agendar']) && $os->status !== 'Cancelado') { ?>
                 <?= component('button', ['label' => 'Agendar atendimento', 'variant' => 'outline', 'href' => site_url('agenda/formulario') . '?os=' . (int) $os->idOs]) ?>
             <?php } ?>
-            <?php if ($pode['faturar']) { ?>
-                <?= component('button', ['label' => 'Faturar', 'icon' => 'circle-dollar-sign', 'variant' => 'outline', 'attrs' => ['data-modal-abrir' => 'faturar-os']]) ?>
-            <?php } ?>
+            <?= component('button', ['label' => 'Orçamento e recebimentos', 'variant' => 'outline', 'href' => site_url('recebimentos/index/' . $idOs)]) ?>
             <?= component('button', ['label' => 'Imprimir', 'icon' => 'printer', 'variant' => 'ghost', 'href' => site_url('os/imprimir/' . $idOs), 'attrs' => ['target' => '_blank', 'rel' => 'noopener']]) ?>
             <?= component('button', ['label' => 'Cupom 80mm', 'icon' => 'receipt', 'variant' => 'ghost', 'href' => site_url('os/imprimirTermica/' . $idOs), 'attrs' => ['target' => '_blank', 'rel' => 'noopener']]) ?>
             <?php if ($os->garantias_id) { ?>
@@ -95,7 +93,7 @@ $textos = [
 
     <?php $this->load->view('agenda/horarios', ['agendamentos' => $os->status === 'Cancelado' ? [] : ($os->agendamentos ?? []), 'editar_agenda' => ! empty($pode['agendar'])]); ?>
     <?php if ($fechada && ! $pode['editar']) { ?>
-        <?= component('alert', ['variant' => 'info', 'message' => 'Esto atendimento está ' . ($os->status === 'Cancelado' ? 'cancelada' : 'faturada') . ': produtos, serviços, anexos, anotações e desconto não podem mais ser alterados.']) ?>
+        <?= component('alert', ['variant' => 'info', 'message' => 'Este atendimento está ' . ($os->status === 'Cancelado' ? 'cancelado' : 'com valores confirmados') . ': os itens e valores não podem mais ser alterados. Consulte Orçamento e recebimentos para registrar pagamentos ou corrigir um recebimento.']) ?>
     <?php } ?>
 
     <div data-os-parte="abas"><?php $this->load->view('os/partes/abas'); ?></div>
@@ -304,39 +302,6 @@ foreach ($exclusoes as $tipo => [$rota, $titulo, $consequencia]) { ?>
         'message' => 'Produtos, serviços, anexos (inclusive os arquivos), anotações e o histórico do atendimento serão removidos.' . ((int) $os->faturado === 1 ? ' O lançamento da fatura também sai do financeiro.' : '') . ' Essa ação não pode ser desfeita.',
         'confirm_label' => 'Excluir OS',
         'confirm_attrs' => ['form' => 'form-excluir-os'],
-    ]) ?>
-<?php } ?>
-
-<?php if ($pode['faturar']) { ?>
-    <form id="form-faturar" method="post" action="<?= e(site_url('os/faturar')) ?>" novalidate hidden data-os-acao="faturar">
-        <input type="hidden" name="idOs" value="<?= e($idOs) ?>">
-    </form>
-    <?= component('modal', [
-        'id' => 'faturar-os',
-        'title' => 'Faturar Atendimento #' . $idOs,
-        'body' => [
-            component('alert', [
-                'variant' => $totais['total'] > 0 ? 'info' : 'warning',
-                'message' => $totais['total'] > 0
-                    ? 'Será lançada uma receita de ' . dinheiro($totais['total']) . ($totais['desconto'] > 0 ? ' (' . dinheiro($totais['bruto']) . ' menos ' . dinheiro($totais['desconto']) . ' de desconto)' : '') . ' para ' . $os->nomeCliente . '. A OS passa a Faturado e não pode mais ser alterada.'
-                    : 'Adicione produtos ou serviços antes de faturar.',
-            ]),
-            new HtmlSeguro('<div class="mt-4 grid gap-4 sm:grid-cols-2">'),
-            new HtmlSeguro('<div class="sm:col-span-2">'),
-            component('input', ['name' => 'descricao', 'id' => 'fatura-descricao', 'label' => 'Descrição', 'value' => 'Fatura de OS Nº: ' . $idOs, 'required' => true, 'attrs' => ['form' => 'form-faturar', 'maxlength' => '255', 'data-msg-vazio' => 'Informe a descrição do lançamento.']]),
-            new HtmlSeguro('</div>'),
-            component('input', ['name' => 'vencimento', 'id' => 'fatura-vencimento', 'label' => 'Vencimento', 'type' => 'date', 'value' => date('Y-m-d'), 'required' => true, 'attrs' => ['form' => 'form-faturar', 'data-msg-vazio' => 'Informe o vencimento.']]),
-            component('select', ['name' => 'formaPgto', 'id' => 'fatura-forma', 'label' => 'Forma de pagamento', 'options' => array_combine(OS_FORMAS_PAGAMENTO, OS_FORMAS_PAGAMENTO), 'placeholder' => 'Escolha', 'required' => true, 'attrs' => ['form' => 'form-faturar', 'data-msg-vazio' => 'Escolha a forma de pagamento.']]),
-            component('checkbox', ['name' => 'recebido', 'id' => 'fatura-recebido', 'label' => 'Já foi recebido', 'help' => 'Marca o lançamento como pago.', 'attrs' => ['form' => 'form-faturar', 'data-os-recebido' => 'fatura-recebimento']]),
-            component('input', ['name' => 'recebimento', 'id' => 'fatura-recebimento', 'label' => 'Data do recebimento', 'type' => 'date', 'value' => date('Y-m-d'), 'disabled' => true, 'help' => 'Habilitada ao marcar "Já foi recebido".', 'attrs' => ['form' => 'form-faturar', 'data-msg-vazio' => 'Informe a data do recebimento.']]),
-            new HtmlSeguro('<div class="sm:col-span-2">'),
-            component('textarea', ['name' => 'observacoes', 'id' => 'fatura-observacoes', 'label' => 'Observações', 'rows' => 2, 'attrs' => ['form' => 'form-faturar']]),
-            new HtmlSeguro('</div></div>'),
-        ],
-        'footer' => [
-            component('button', ['label' => 'Cancelar', 'variant' => 'ghost', 'attrs' => ['data-modal-fechar' => true]]),
-            component('button', ['label' => 'Faturar', 'icon' => 'circle-dollar-sign', 'type' => 'submit', 'disabled' => $totais['total'] <= 0, 'attrs' => ['form' => 'form-faturar', 'data-rotulo-carregando' => 'Faturando…']]),
-        ],
     ]) ?>
 <?php } ?>
 

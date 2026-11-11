@@ -131,6 +131,13 @@ $config['permissions_map'] = [
         'atualizarMapos' => 'cSistema',
     ],
 
+    'Recebimentos' => [
+        'index' => 'vOs',
+        'orcamento' => 'eOs',
+        'receber' => ['todas' => ['eOs', 'aLancamento']],
+        'estornar' => ['todas' => ['eOs', 'eLancamento']],
+    ],
+
     'Os' => [
         'dependentes' => ['aOs', 'eOs'],
         'index' => 'vOs',

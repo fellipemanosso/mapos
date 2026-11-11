@@ -29,3 +29,10 @@ $descricaoDesconto = match (true) {
     <?= component('kpi-card', ['label' => 'Desconto', 'value' => dinheiro($totais['desconto']), 'icon' => 'percent', 'caption' => $descricaoDesconto]) ?>
     <?= component('kpi-card', ['label' => 'Total', 'value' => dinheiro($totais['total']), 'icon' => 'circle-dollar-sign', 'caption' => 'Calculado pelos produtos e serviços']) ?>
 </div>
+
+<?php if (isset($os->recebido_total)) { ?>
+    <div class="mt-3 flex flex-wrap items-center gap-4 rounded-md border border-border bg-surface-subtle p-3 text-body-md text-text">
+        <span><?= e('Recebido: ' . dinheiro($os->recebido_total)) ?></span>
+        <span><?= e('Saldo a receber: ' . dinheiro(max(0, $totais['total'] - $os->recebido_total))) ?></span>
+    </div>
+<?php } ?>

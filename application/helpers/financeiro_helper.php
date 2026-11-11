@@ -117,6 +117,9 @@ if (! function_exists('financeiroStatusPill')) {
     {
         $campo = static fn (string $nome) => is_array($lancamento) ? ($lancamento[$nome] ?? null) : ($lancamento->{$nome} ?? null);
 
+        if ($campo('estornado_em')) {
+            return ['label' => 'Estornado', 'variant' => 'neutral'];
+        }
         if ((int) $campo('baixado') === 1) {
             return ['label' => 'Pago', 'variant' => 'success'];
         }

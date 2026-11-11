@@ -312,6 +312,9 @@ class Financeiro_model extends CI_Model
     /** Atualiza o lançamento (linha existente) e devolve se deu certo. */
     public function atualizar(int $id, array $dados): bool
     {
+        if ($this->vinculadoARecebimento($id)) {
+            return false;
+        }
         $this->db->where('idLancamentos', $id)->update('lancamentos', $dados);
 
         return $this->db->affected_rows() >= 0;
@@ -325,6 +328,9 @@ class Financeiro_model extends CI_Model
      */
     public function excluir(int $id, ?int $usuario): bool
     {
+        if ($this->vinculadoARecebimento($id)) {
+            return false;
+        }
         $this->db->trans_begin();
 
         $this->db->set('lancamentos_id', null)->set('faturado', 0)->set('status', 'Finalizado')
@@ -349,6 +355,15 @@ class Financeiro_model extends CI_Model
         $this->db->trans_commit();
 
         return true;
+    }
+
+    public function vinculadoARecebimento(int $id): bool
+    {
+        if (! $this->db->field_exists('atendimento_id', 'lancamentos')) {
+            return false;
+        }
+        $linha = $this->db->select('atendimento_id')->where('idLancamentos', $id)->get('lancamentos')->row();
+        return ! empty($linha->atendimento_id);
     }
 
     private function osModel(): object
