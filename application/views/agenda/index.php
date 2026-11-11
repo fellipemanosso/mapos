@@ -57,7 +57,8 @@ $dias = ['Mon' => 'Segunda', 'Tue' => 'Terça', 'Wed' => 'Quarta', 'Thu' => 'Qui
                         <p class="text-caption text-muted"><?= e('Profissional: ' . $reserva->profissional) ?></p>
                         <p class="text-caption text-muted"><?= e('Reservado de ' . date('d/m H:i', strtotime($reserva->ocupado_inicio)) . ' até ' . date('d/m H:i', strtotime($reserva->ocupado_fim)) . ' · Deslocamento: ' . $reserva->deslocamento_min . ' min · Intervalo: ' . $reserva->intervalo_min . ' min') ?></p>
                     </div>
-                    <?php if ($pode_editar) { ?>
+                    <?php if (! empty($reserva->pacote_id)) { ?><?= component('link', ['label' => 'Ver pacote e sessões', 'href' => site_url('pacotes/visualizar/' . (int) $reserva->pacote_id)]) ?><?php } ?>
+                    <?php if ($pode_editar && empty($reserva->sessao_realizada_em)) { ?>
                         <div class="flex flex-wrap items-start gap-2">
                             <?= component('button', ['label' => 'Editar horário', 'variant' => 'outline', 'href' => site_url('agenda/formulario/' . (int) $reserva->id)]) ?>
                             <?= component('button', ['label' => 'Cancelar reserva', 'variant' => 'ghost', 'attrs' => ['data-modal-abrir' => $modalId]]) ?>

@@ -74,6 +74,7 @@ if (! function_exists('layoutMenu')) {
         return [
             ['grupo' => 'Operação', 'label' => 'Início', 'icon' => 'house', 'url' => '', 'rota' => ['Mapos', 'index'], 'ativo' => ['Mapos/index']],
             ['grupo' => 'Operação', 'label' => 'Agenda', 'icon' => 'file-text', 'url' => 'agenda', 'rota' => ['Agenda', 'index'], 'ativo' => ['Agenda']],
+            ['grupo' => 'Operação', 'label' => 'Pacotes e sessões', 'icon' => 'package', 'url' => 'pacotes', 'rota' => ['Pacotes', 'index'], 'ativo' => ['Pacotes']],
             ['grupo' => 'Operação', 'label' => 'Cliente / Fornecedor', 'icon' => 'user', 'url' => 'clientes', 'rota' => ['Clientes', 'index'], 'ativo' => ['Clientes']],
             ['grupo' => 'Operação', 'label' => 'Produtos', 'icon' => 'shopping-basket', 'url' => 'produtos', 'rota' => ['Produtos', 'index'], 'ativo' => ['Produtos']],
             ['grupo' => 'Operação', 'label' => 'Serviços', 'icon' => 'wrench', 'url' => 'servicos', 'rota' => ['Servicos', 'index'], 'ativo' => ['Servicos']],

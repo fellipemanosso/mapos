@@ -46,6 +46,9 @@ $hoje = date('Y-m-d');
                                     <?php foreach (array_slice($reservas, 0, 2) as $reserva) {
                                         $bloqueio = $reserva->tipo === 'bloqueio';
                                         $destino = $pode_editar ? site_url('agenda/formulario/' . (int) $reserva->id) : ($reserva->os_id ? site_url('os/visualizar/' . (int) $reserva->os_id) : $url($data, 'dia'));
+                                        if (! empty($reserva->pacote_id)) {
+                                            $destino = site_url('pacotes/visualizar/' . (int) $reserva->pacote_id);
+                                        }
                                         $pessoa = $reserva->beneficiario ?: $reserva->nomeCliente;
                                         ?>
                                         <a href="<?= e($destino) ?>" class="block shrink-0 truncate rounded-sm px-1 text-caption focus-visible:outline-3 focus-visible:outline-ring <?= e($bloqueio ? 'bg-neutral-soft text-neutral-ink' : 'bg-info-soft text-info-ink') ?>" title="<?= e($reserva->titulo . ($pessoa ? ' · ' . $pessoa : '') . ' · Reservado ' . date('d/m H:i', strtotime($reserva->ocupado_inicio)) . ' até ' . date('d/m H:i', strtotime($reserva->ocupado_fim))) ?>">

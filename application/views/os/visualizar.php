@@ -58,7 +58,9 @@ $textos = [
             <p class="text-caption [overflow-wrap:anywhere] text-muted"><?= e($os->nomeCliente . ' · Profissional: ' . $os->nome) ?></p>
         </div>
         <div class="flex flex-wrap gap-2">
-            <?php if (! empty($pode['agendar']) && $os->status !== 'Cancelado') { ?>
+            <?php if (! empty($os->pacote_id)) { ?>
+                <?= component('button', ['label' => 'Ver sessões do pacote', 'variant' => 'outline', 'href' => site_url('pacotes/visualizar/' . (int) $os->pacote_id)]) ?>
+            <?php } elseif (! empty($pode['agendar']) && $os->status !== 'Cancelado') { ?>
                 <?= component('button', ['label' => 'Agendar atendimento', 'variant' => 'outline', 'href' => site_url('agenda/formulario') . '?os=' . (int) $os->idOs]) ?>
             <?php } ?>
             <?= component('button', ['label' => 'Orçamento e recebimentos', 'variant' => 'outline', 'href' => site_url('recebimentos/index/' . $idOs)]) ?>
@@ -91,7 +93,7 @@ $textos = [
         </div>
     </header>
 
-    <?php $this->load->view('agenda/horarios', ['agendamentos' => $os->status === 'Cancelado' ? [] : ($os->agendamentos ?? []), 'editar_agenda' => ! empty($pode['agendar'])]); ?>
+    <?php $this->load->view('agenda/horarios', ['agendamentos' => $os->status === 'Cancelado' ? [] : ($os->agendamentos ?? []), 'editar_agenda' => ! empty($pode['agendar']) && empty($os->pacote_id)]); ?>
     <?php if ($fechada && ! $pode['editar']) { ?>
         <?= component('alert', ['variant' => 'info', 'message' => 'Este atendimento está ' . ($os->status === 'Cancelado' ? 'cancelado' : 'com valores confirmados') . ': os itens e valores não podem mais ser alterados. Consulte Orçamento e recebimentos para registrar pagamentos ou corrigir um recebimento.']) ?>
     <?php } ?>

@@ -253,6 +253,15 @@ class Os_model extends CI_Model
             $os->recebido_total = (float) ($pagamentos->recebido ?? 0);
         }
 
+        if ($os && $this->db->table_exists('pacotes')) {
+            $pacote = $this->db->where('os_id', (int) $os->idOs)->get('pacotes')->row();
+            $os->pacote_id = $pacote ? (int) $pacote->id : null;
+            if ($pacote) {
+                $os->pacote_progresso = $this->db->select('COUNT(*) AS total, SUM(CASE WHEN realizado_em IS NOT NULL THEN 1 ELSE 0 END) AS realizadas', false)
+                    ->where('pacote_id', $pacote->id)->get('pacote_sessoes')->row();
+            }
+        }
+
         return $os;
     }
 

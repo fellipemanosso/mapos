@@ -50,6 +50,16 @@ class Agenda extends MY_Controller
             show_404();
             return;
         }
+        $referencia = $evento->pacote_sessao_id ?? ($this->input->method() === 'post' ? $this->input->post('pacote_sessao_id') : $this->input->get('sessao'));
+        $sessao = null;
+        if ($referencia !== null && $referencia !== '') {
+            $this->load->model('pacotes_model');
+            $sessao = ctype_digit((string) $referencia) ? $this->pacotes_model->sessao((int) $referencia) : null;
+            if (! $sessao || $sessao->realizado_em || $sessao->status === 'Cancelado') {
+                show_404();
+                return;
+            }
+        }
         $servicos = $this->db->order_by('nome')->get('servicos')->result();
         $profissionais = $this->db->where('situacao', 1)->get('usuarios')->result();
         $atendimentos = $this->db->select('os.idOs, clientes.nomeCliente, dependentes.nome as beneficiario')
@@ -65,6 +75,12 @@ class Agenda extends MY_Controller
             $valores['servicos'] = array_column(json_decode($evento->servicos_json, true) ?: [], 'id');
         } elseif (ctype_digit((string) $valores['os_id'])) {
             $valores['servicos'] = array_column($this->db->select('servicos_id')->where('os_id', (int) $valores['os_id'])->get('servicos_os')->result_array(), 'servicos_id');
+        }
+        if ($sessao && ! $evento) {
+            $valores['os_id'] = (string) $sessao->os_id;
+            $valores['tipo'] = 'atendimento';
+            $valores['duracao_min'] = (string) $sessao->duracao_min;
+            $valores['servicos'] = [(string) $sessao->servicos_id];
         }
         $erros = [];
         if ($this->input->method() === 'post') {
@@ -107,6 +123,7 @@ class Agenda extends MY_Controller
                     'os_id' => $bloqueio ? null : (int) $texto('os_id'), 'usuarios_id' => (int) $texto('usuarios_id'),
                     'tipo' => $texto('tipo'), 'titulo' => $bloqueio ? $texto('titulo') : implode(' + ', array_column($selecionados, 'nome')),
                     'duracao_min' => $duracao, 'deslocamento_min' => (int) $texto('deslocamento_min'), 'intervalo_min' => (int) $texto('intervalo_min'),
+                    'pacote_sessao_id' => $sessao ? (int) $sessao->id : null,
                     'servicos_json' => json_encode(array_map(static fn ($s) => ['id' => (int) $s->idServicos, 'nome' => $s->nome, 'duracao_min' => (int) $s->duracao_min], $selecionados)),
                 ];
                 if (mb_strlen($dados['titulo']) > 255) {
@@ -124,7 +141,7 @@ class Agenda extends MY_Controller
                 }
             }
         }
-        $this->data += ['evento' => $evento, 'valores' => $valores, 'erros' => $erros, 'servicos' => $servicos, 'profissionais' => $profissionais, 'atendimentos' => $atendimentos];
+        $this->data += ['sessao' => $sessao, 'evento' => $evento, 'valores' => $valores, 'erros' => $erros, 'servicos' => $servicos, 'profissionais' => $profissionais, 'atendimentos' => $atendimentos];
         $this->data['view'] = 'agenda/formulario';
         return $this->layout();
     }
@@ -143,7 +160,12 @@ class Agenda extends MY_Controller
             show_404();
             return;
         }
-        $this->db->where('id', (int) $id)->update('agenda', ['cancelado' => 1]);
+        try {
+            $this->agenda_model->cancelar((int) $id);
+        } catch (DomainException $e) {
+            $this->session->set_flashdata('error', $e->getMessage());
+            return redirect('agenda');
+        }
         $this->session->set_flashdata('success', 'Reserva cancelada. O atendimento e seus pagamentos foram preservados.');
         return redirect('agenda');
     }

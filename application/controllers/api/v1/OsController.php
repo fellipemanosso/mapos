@@ -389,6 +389,10 @@ class OsController extends REST_Controller
         }
 
         $osStockRefund = $this->os_model->getById($id);
+        if (! empty($osStockRefund->pacote_id)) {
+            $this->response(['status' => false, 'message' => 'Atendimento vinculado a pacote não pode ser excluído.'], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
         if ($this->db->field_exists('atendimento_id', 'lancamentos')
             && $this->db->where('atendimento_id', (int) $id)->count_all_results('lancamentos') > 0) {
             $this->response(['status' => false, 'message' => 'Atendimento com histórico financeiro: a exclusão não é permitida.'], REST_Controller::HTTP_BAD_REQUEST);

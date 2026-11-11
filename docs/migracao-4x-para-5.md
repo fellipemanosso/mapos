@@ -304,3 +304,7 @@ A migration `20261111020000_add_recebimentos_atendimentos` adiciona o sinal
 previsto, o vencimento do saldo e os vínculos de recebimentos com o Financeiro.
 Atualize o banco antes de abrir **Orçamento e recebimentos**. Faturas antigas
 continuam no fluxo anterior. Consulte [Orçamentos e recebimentos](recebimentos.md).
+
+A migration `20261111030000_create_pacotes` adiciona pacotes e sessões vinculadas
+à agenda. Atualize o banco para usar o novo item **Pacotes e sessões** no menu.
+Consulte [Pacotes e sessões](pacotes.md).

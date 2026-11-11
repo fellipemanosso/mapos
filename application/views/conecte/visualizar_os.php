@@ -50,6 +50,12 @@ $textos = $campos([
     </header>
 
     <?php $this->load->view('agenda/horarios', ['agendamentos' => $os->status === 'Cancelado' ? [] : ($os->agendamentos ?? []), 'editar_agenda' => false]); ?>
+    <?php if (isset($os->pacote_progresso)) { ?>
+        <section class="<?= e($caixa) ?>" aria-label="Sessões do pacote">
+            <h2 class="text-heading-sm text-text">Sessões do pacote</h2>
+            <p class="mt-2 text-body-md text-text"><?= e((int) $os->pacote_progresso->realizadas . ' realizadas · ' . ((int) $os->pacote_progresso->total - (int) $os->pacote_progresso->realizadas) . ' restantes · ' . (int) $os->pacote_progresso->total . ' contratadas') ?></p>
+        </section>
+    <?php } ?>
     <?php // Uma coluna no celular: em duas, o valor em reais não cabe na linha do kpi-card.?>
     <div class="grid gap-4 sm:grid-cols-3">
         <?= component('kpi-card', ['label' => 'Produtos', 'value' => dinheiro($totais['produtos']), 'icon' => 'package']) ?>

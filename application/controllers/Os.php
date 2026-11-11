@@ -754,6 +754,10 @@ class Os extends MY_Controller
         }
 
         $osStockRefund = $this->os_model->getById($id);
+        if (! empty($osStockRefund->pacote_id)) {
+            $this->session->set_flashdata('error', 'Este atendimento está vinculado a um pacote e não pode ser excluído.');
+            return redirect($listagem);
+        }
         if ($this->db->field_exists('atendimento_id', 'lancamentos')
             && $this->db->where('atendimento_id', $id)->count_all_results('lancamentos') > 0) {
             $this->session->set_flashdata('error', 'Este atendimento tem histórico financeiro e não pode ser excluído.');

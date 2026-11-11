@@ -1,7 +1,11 @@
 <?php
+$sessao = $sessao ?? null;
 $campo = static fn ($nome, $label, $extras = []) => $extras + ['name' => $nome, 'label' => $label, 'value' => $valores[$nome] ?? null, 'error' => $erros[$nome] ?? null];
 $opcoesOs = [];
 foreach ($atendimentos as $atendimento) {
+    if ($sessao && (int) $atendimento->idOs !== (int) $sessao->os_id) {
+        continue;
+    }
     $opcoesOs[$atendimento->idOs] = '#' . $atendimento->idOs . ' · ' . $atendimento->nomeCliente . ($atendimento->beneficiario ? ' · ' . $atendimento->beneficiario : '');
 }
 ?>
@@ -13,10 +17,15 @@ foreach ($atendimentos as $atendimento) {
     <?php if (isset($erros['_geral'])) { ?>
         <?= component('alert', ['variant' => 'danger', 'message' => $erros['_geral']]) ?>
     <?php } ?>
+    <?php if ($sessao) { ?>
+        <?= component('alert', ['variant' => 'info', 'message' => $sessao->pacote_nome . ' · Sessão ' . $sessao->numero . ' · ' . $sessao->nome_servico]) ?>
+        <?= component('link', ['label' => 'Voltar ao pacote', 'href' => site_url('pacotes/visualizar/' . (int) $sessao->pacote_id)]) ?>
+    <?php } ?>
     <form method="post" action="<?= e(current_url()) ?>" class="flex flex-col gap-4" novalidate <?= js_module('agenda/formulario') ?>>
+        <input type="hidden" name="pacote_sessao_id" value="<?= e($sessao ? (int) $sessao->id : '') ?>">
         <input type="hidden" name="<?= e($this->security->get_csrf_token_name()) ?>" value="<?= e($this->security->get_csrf_hash()) ?>">
         <section class="grid gap-4 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 sm:p-6">
-            <?= component('select', ['name' => 'tipo', 'label' => 'Tipo de reserva', 'options' => ['atendimento' => 'Atendimento', 'bloqueio' => 'Bloqueio de horário'], 'selected' => $valores['tipo'], 'error' => $erros['tipo'] ?? null]) ?>
+            <?= component('select', ['name' => 'tipo', 'label' => 'Tipo de reserva', 'options' => $sessao ? ['atendimento' => 'Sessão do pacote'] : ['atendimento' => 'Atendimento', 'bloqueio' => 'Bloqueio de horário'], 'selected' => $valores['tipo'], 'error' => $erros['tipo'] ?? null]) ?>
             <?= component('select', ['name' => 'usuarios_id', 'label' => 'Profissional', 'options' => array_column($profissionais, 'nome', 'idUsuarios'), 'selected' => $valores['usuarios_id'], 'required' => true, 'error' => $erros['usuarios_id'] ?? null]) ?>
             <div data-agenda-atendimento class="sm:col-span-2">
                 <?= component('select', ['name' => 'os_id', 'label' => 'Atendimento e cliente', 'placeholder' => 'Selecione o atendimento', 'options' => $opcoesOs, 'selected' => $valores['os_id'], 'error' => $erros['os_id'] ?? null, 'help' => 'O orçamento e os pagamentos continuam no atendimento.']) ?>
@@ -33,7 +42,10 @@ foreach ($atendimentos as $atendimento) {
                 <?= component('alert', ['variant' => 'danger', 'message' => $erros['servicos']]) ?>
             <?php } ?>
             <div class="mt-4 grid gap-4 sm:grid-cols-2">
-                <?php foreach ($servicos as $servico) { ?>
+                <?php foreach ($servicos as $servico) {
+                    if ($sessao && (int) $servico->idServicos !== (int) $sessao->servicos_id) {
+                        continue;
+                    } ?>
                     <?= component('checkbox', ['name' => 'servicos[]', 'id' => 'agenda-servico-' . (int) $servico->idServicos, 'value' => (string) $servico->idServicos, 'label' => $servico->nome . ' · ' . (int) $servico->duracao_min . ' min', 'checked' => in_array((string) $servico->idServicos, array_map('strval', $valores['servicos']), true), 'attrs' => ['data-duracao-min' => (int) $servico->duracao_min]]) ?>
                 <?php } ?>
             </div>

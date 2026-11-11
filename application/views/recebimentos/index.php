@@ -12,6 +12,7 @@ $valor = function (string $campo, string $padrao, string $grupo) use ($formulari
             <h1 class="font-display text-heading-xl text-text"><?= e('Orçamento e recebimentos #' . $id) ?></h1>
             <p class="text-caption text-muted"><?= e(($os->beneficiario_nome ?? $os->nomeCliente) . ' · Cliente: ' . $os->nomeCliente) ?></p>
         </div>
+        <?php if (! empty($os->pacote_id)) { ?><?= component('button', ['label' => 'Ver sessões do pacote', 'variant' => 'outline', 'href' => site_url('pacotes/visualizar/' . (int) $os->pacote_id)]) ?><?php } ?>
         <?= component('button', ['label' => 'Voltar ao atendimento', 'variant' => 'outline', 'href' => site_url('os/visualizar/' . $id)]) ?>
     </header>
     <?php if (isset($erros['_geral'])) { ?><?= component('alert', ['variant' => 'danger', 'message' => $erros['_geral']]) ?><?php } ?>
