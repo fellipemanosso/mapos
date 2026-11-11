@@ -1,6 +1,6 @@
 <?php
 /**
- * Anexos da OS (#2842): miniatura das imagens (gerada no upload) ou um ícone
+ * Anexos do atendimento (#2842): miniatura das imagens (gerada no upload) ou um ícone
  * de arquivo, com os links de abrir e baixar. Excluir abre o modal-confirm
  * "excluir-anexo" da tela.
  *
@@ -10,13 +10,13 @@
 if ($anexos === []) { ?>
     <?= component('empty-state', [
         'title' => 'Nenhum anexo',
-        'message' => $pode['editar'] ? 'Fotos do equipamento, laudos e notas fiscais enviados pelo formulário acima aparecem aqui.' : 'Esta OS não tem anexos.',
+        'message' => $pode['editar'] ? 'Fotos do equipamento, laudos e notas fiscais enviados pelo formulário acima aparecem aqui.' : 'Esto atendimento não tem anexos.',
         'icon' => 'paperclip',
     ]) ?>
 <?php return;
 }
 ?>
-<ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4" aria-label="Anexos da OS">
+<ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4" aria-label="Anexos do atendimento">
     <?php foreach ($anexos as $indice => $anexo) { ?>
         <?php
         $extensao = strtoupper((string) pathinfo((string) $anexo->anexo, PATHINFO_EXTENSION));

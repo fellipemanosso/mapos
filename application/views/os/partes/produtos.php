@@ -1,6 +1,6 @@
 <?php
 /**
- * Produtos da OS (#2842). Excluir abre o modal-confirm "excluir-produto" da
+ * Produtos do atendimento (#2842). Excluir abre o modal-confirm "excluir-produto" da
  * tela (os/visualizar), que leva o id do item por data-valor-id.
  *
  * @var list<object> $produtos
@@ -35,12 +35,12 @@ if ($pode['editar']) {
 ?>
 <div class="flex flex-col gap-2">
     <?= component('data-table', [
-        'caption' => 'Produtos da OS',
+        'caption' => 'Produtos do atendimento',
         'rows' => $produtos,
         'columns' => $colunas,
         'empty' => component('empty-state', [
-            'title' => 'Nenhum produto na OS',
-            'message' => $pode['editar'] ? 'Adicione as peças e os produtos usados pelo formulário acima.' : 'Esta OS não tem produtos.',
+            'title' => 'Nenhum produto no atendimento',
+            'message' => $pode['editar'] ? 'Adicione as peças e os produtos usados pelo formulário acima.' : 'Esto atendimento não tem produtos.',
             'icon' => 'package',
             'class' => 'border-0',
         ]),

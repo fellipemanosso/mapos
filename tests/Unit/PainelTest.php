@@ -212,7 +212,7 @@ final class PainelTest extends MaposTestCase
         $todos = $mapos->osResumoPorStatus();
         $this->assertSame(2, $todos['Aberto']['qtd']);
         $this->assertSame(350.0, $todos['Aberto']['valor'], 'Soma dos itens das OS do status (100+50 e 200).');
-        $this->assertSame(500.0, $todos['Faturado']['valor'], 'O valor_desconto da OS prevalece sobre os itens.');
+        $this->assertSame(500.0, $todos['Faturado']['valor'], 'O valor_desconto do atendimento prevalece sobre os itens.');
         $this->assertSame(0.0, $todos['Orçamento']['valor'], 'Sem itens nem desconto, zero.');
 
         // Só as OS abertas em outubro/2026 (pela dataInicial).
@@ -235,7 +235,7 @@ final class PainelTest extends MaposTestCase
         $this->banco();
 
         $linhas = $this->mapos()->osParaPainel(PAINEL_OS_ANDAMENTO, 10);
-        $this->assertSame([6, 2, 1, 3], array_map('intval', array_column($linhas, 'idOs')), 'Mesma data: a OS mais nova primeiro; sem data no fim.');
+        $this->assertSame([6, 2, 1, 3], array_map('intval', array_column($linhas, 'idOs')), 'Mesma data: o atendimento mais nova primeiro; sem data no fim.');
         $this->assertNull($linhas[0]->nomeCliente, 'Cliente removido não some da lista.');
         $this->assertCount(2, $this->mapos()->osParaPainel(PAINEL_OS_ANDAMENTO, 2));
     }

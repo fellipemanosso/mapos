@@ -65,14 +65,14 @@ $grade = 'mt-4 grid gap-4 sm:grid-cols-2';
                     <?= component('button', ['label' => 'Buscar CNPJ', 'icon' => 'search', 'variant' => 'outline', 'class' => 'mt-7', 'attrs' => ['data-buscar-cnpj' => true, 'title' => 'Preenche os dados da empresa pela Receita']]) ?>
                 </div>
                 <?= component('input', $campo('nomeCliente', [
-                    'label' => 'Nome ou razão social',
+                    'label' => 'Nome da cliente ou responsável',
                     'required' => true,
                     'autocomplete' => 'name',
                     'attrs' => ['maxlength' => 255, 'autofocus' => ! $editando, 'data-msg-vazio' => 'Informe o nome do cliente.'],
                 ])) ?>
                 <?= component('input', $campo('contato', [
                     'label' => 'Pessoa de contato',
-                    'help' => 'Em empresas, quem atende pelo cliente.',
+                    'help' => 'Para bebês, cadastre a responsável aqui e adicione o bebê na ficha da cliente.',
                     'attrs' => ['maxlength' => 45],
                 ])) ?>
             </div>
@@ -96,7 +96,7 @@ $grade = 'mt-4 grid gap-4 sm:grid-cols-2';
 
         <section class="<?= e($caixa) ?>" aria-labelledby="secao-acesso">
             <h2 id="secao-acesso" class="text-heading-sm text-text">Área do cliente</h2>
-            <p class="mt-0.5 text-caption text-muted">Acesso do cliente para acompanhar ordens de serviço, compras e cobranças.</p>
+            <p class="mt-0.5 text-caption text-muted">Acesso do cliente para acompanhar atendimentos, compras e cobranças.</p>
             <div class="<?= e($grade) ?>">
                 <div class="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
                     <?= component('input', [

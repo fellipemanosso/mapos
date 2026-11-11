@@ -1,6 +1,6 @@
 <?php
 /**
- * Ordens de serviço do cliente (#2848), no padrão das listagens (#2852):
+ * Atendimentos do cliente (#2848), no padrão das listagens (#2852):
  * data-table que vira cartões abaixo de 640px, paginação do componente e
  * "Abrir OS" como ação principal, na Top Nav.
  *
@@ -11,17 +11,17 @@
 ?>
 <div class="flex flex-col gap-4">
     <header>
-        <h1 class="font-display text-heading-xl text-text">Ordens de serviço</h1>
-        <p class="text-caption text-muted" aria-live="polite"><?= e($total === 1 ? '1 ordem de serviço' : number_format($total, 0, ',', '.') . ' ordens de serviço') ?></p>
+        <h1 class="font-display text-heading-xl text-text">Atendimentos</h1>
+        <p class="text-caption text-muted" aria-live="polite"><?= e($total === 1 ? '1 atendimento' : number_format($total, 0, ',', '.') . ' atendimentos') ?></p>
     </header>
 
     <?= component('data-table', [
         'columns' => conecteColunasOs(true),
         'rows' => $results,
-        'caption' => 'Ordens de serviço',
+        'caption' => 'Atendimentos',
         'empty' => component('empty-state', [
-            'title' => 'Nenhuma ordem de serviço ainda',
-            'message' => 'Precisa de conserto ou manutenção? Abra uma OS e a assistência entra em contato.',
+            'title' => 'Nenhum atendimento ainda',
+            'message' => 'Precisa de conserto ou manutenção? Abra um atendimento e a assistência entra em contato.',
             'icon' => 'wrench',
             'action' => component('button', ['label' => 'Abrir OS', 'icon' => 'plus', 'variant' => 'outline', 'href' => site_url('mine/adicionarOs')]),
             'class' => 'border-0',

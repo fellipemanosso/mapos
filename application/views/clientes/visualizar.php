@@ -22,7 +22,7 @@
  */
 $id = (int) $cliente->idClientes;
 $url = static fn (string $aba) => site_url('clientes/visualizar/' . $id) . ($aba === 'dados' ? '' : listagemQuery(['aba' => $aba]));
-// Descrição da OS (HTML do editor) como texto curto, cortando por caractere.
+// Descrição do atendimento (HTML do editor) como texto curto, cortando por caractere.
 $texto = static fn ($html, int $limite = 90) => mb_strimwidth(trim((string) preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags((string) $html), ENT_QUOTES, 'UTF-8'))), 0, $limite, '…', 'UTF-8');
 $campos = static fn (array $itens) => array_filter($itens, static fn ($valor) => $valor !== null && $valor !== '');
 
@@ -74,7 +74,7 @@ $secoes = [
         'label' => 'Seções do cliente',
         'items' => [
             ['label' => 'Dados', 'url' => $url('dados'), 'active' => $aba === 'dados', 'icon' => 'user'],
-            ['label' => 'Ordens de serviço', 'short' => 'OS', 'url' => $url('os'), 'active' => $aba === 'os', 'icon' => 'file-text', 'count' => $total_os],
+            ['label' => 'Atendimentos', 'short' => 'OS', 'url' => $url('os'), 'active' => $aba === 'os', 'icon' => 'file-text', 'count' => $total_os],
             ['label' => 'Vendas', 'url' => $url('vendas'), 'active' => $aba === 'vendas', 'icon' => 'shopping-cart', 'count' => $total_vendas],
         ],
     ]) ?>
@@ -99,11 +99,36 @@ $secoes = [
                 </section>
             <?php } ?>
         </div>
+        <?php if (! $cliente->fornecedor) { ?>
+            <section class="rounded-xl border border-border bg-surface p-4 sm:p-6">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <h2 class="text-heading-sm text-text">Bebês e dependentes</h2>
+                    <?php if ($pode['editar']) { ?>
+                        <?= component('button', ['label' => 'Adicionar dependente', 'icon' => 'plus', 'variant' => 'outline', 'href' => site_url('clientes/dependente/' . $id)]) ?>
+                    <?php } ?>
+                </div>
+                <p class="mt-3 text-caption text-muted">Cada pessoa tem seu próprio nome e histórico de atendimentos. Esta cliente é a responsável pelo contato e pagamento.</p>
+                <?php if ($dependentes === []) { ?>
+                    <p class="mt-3 text-body-md text-muted">Nenhum dependente cadastrado. A cliente também pode receber atendimentos em seu próprio nome.</p>
+                <?php } ?>
+                <?php foreach ($dependentes as $dependente) { ?>
+                    <div class="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
+                        <div>
+                            <p class="text-label-md text-text"><?= e($dependente->nome) ?></p>
+                            <p class="text-caption text-muted"><?= e($dependente->parentesco . ($dependente->nascimento ? ' · Nascimento: ' . dataBr($dependente->nascimento) : '')) ?></p>
+                        </div>
+                        <?php if ($pode['editar']) { ?>
+                            <?= component('button', ['label' => 'Editar ' . $dependente->nome, 'icon' => 'pencil', 'variant' => 'ghost', 'href' => site_url('clientes/dependente/' . $id . '/' . (int) $dependente->id)]) ?>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+            </section>
+        <?php } ?>
     <?php } elseif ($aba === 'os') { ?>
         <?= component('data-table', [
-            'caption' => 'Ordens de serviço do cliente',
+            'caption' => 'Atendimentos do cliente',
             'rows' => $os,
-            'empty' => component('empty-state', ['title' => 'Nenhuma ordem de serviço', 'message' => 'As ordens de serviço deste cliente aparecem aqui.', 'icon' => 'file-text', 'class' => 'border-0']),
+            'empty' => component('empty-state', ['title' => 'Nenhum atendimento', 'message' => 'As atendimentos deste cliente aparecem aqui.', 'icon' => 'file-text', 'class' => 'border-0']),
             'columns' => [
                 ['key' => 'idOs', 'label' => 'Nº', 'align' => 'right', 'nowrap' => true],
                 ['label' => 'Status', 'nowrap' => true, 'render' => fn ($o) => component('pill-status', osStatusPill($o->status))],
@@ -113,10 +138,10 @@ $secoes = [
                 ['label' => 'Ações', 'align' => 'right', 'nowrap' => true, 'render' => function ($o) use ($pode) {
                     $acoes = [];
                     if ($pode['ver_os']) {
-                        $acoes[] = component('button', ['label' => 'Ver OS ' . $o->idOs, 'icon' => 'eye', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('os/visualizar/' . $o->idOs)]);
+                        $acoes[] = component('button', ['label' => 'Ver atendimento ' . $o->idOs, 'icon' => 'eye', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('os/visualizar/' . $o->idOs)]);
                     }
                     if ($pode['editar_os']) {
-                        $acoes[] = component('button', ['label' => 'Editar OS ' . $o->idOs, 'icon' => 'pencil', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('os/editar/' . $o->idOs)]);
+                        $acoes[] = component('button', ['label' => 'Editar atendimento ' . $o->idOs, 'icon' => 'pencil', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('os/editar/' . $o->idOs)]);
                     }
 
                     return $acoes;
@@ -164,7 +189,7 @@ $secoes = [
             new HtmlSeguro('<strong class="font-semibold text-text">'),
             $cliente->nomeCliente,
             new HtmlSeguro('</strong>'),
-            ' e tudo o que estiver ligado a ele (ordens de serviço, vendas e lançamentos) serão removidos. Essa ação não pode ser desfeita.',
+            ' e tudo o que estiver ligado a ele (atendimentos, vendas e lançamentos) serão removidos. Essa ação não pode ser desfeita.',
         ],
         'confirm_label' => 'Excluir',
         'confirm_attrs' => ['form' => 'form-excluir-cliente'],

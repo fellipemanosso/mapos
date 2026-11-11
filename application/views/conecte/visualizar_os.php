@@ -1,7 +1,7 @@
 <?php
 /**
  * OS do cliente (#2848): substitui as telas visualizar_os e detalhes_os da
- * v4. Só leitura: status, valores em kpi-card, dados e textos da OS,
+ * v4. Só leitura: status, valores em kpi-card, dados e textos do atendimento,
  * produtos e serviços (os/partes/*, sem as ações do painel), anexos e o PIX.
  *
  * @var object      $os
@@ -17,30 +17,31 @@ $caixa = 'rounded-xl border border-border bg-surface p-4 sm:p-6';
 $campos = static fn (array $itens) => array_filter($itens, static fn ($valor) => $valor !== null && $valor !== '');
 
 $dados = $campos([
+    'Quem recebe o atendimento' => $os->beneficiario_nome ?? $os->nomeCliente ?? null,
     'Entrada' => dataBr($os->dataInicial),
-    'Previsão de entrega' => dataBr($os->dataFinal),
-    'Técnico responsável' => (string) $os->nome,
+    'Conclusão prevista' => dataBr($os->dataFinal),
+    'Profissional responsável' => (string) $os->nome,
     'Garantia' => (int) $os->garantia > 0
         ? (int) $os->garantia . ' dias' . ($garantia_ate ? ($garantia_ate >= date('Y-m-d') ? ', até ' : ', venceu em ') . dataBr($garantia_ate) : ', a partir da entrega')
         : null,
 ]);
 
 $textos = $campos([
-    'Equipamento ou serviço' => trim(strip_tags((string) $os->descricaoProduto)) !== '' ? osTextoExibicao($os->descricaoProduto) : null,
-    'Defeito informado' => trim(strip_tags((string) $os->defeito)) !== '' ? osTextoExibicao($os->defeito) : null,
+    'Serviço solicitado' => trim(strip_tags((string) $os->descricaoProduto)) !== '' ? osTextoExibicao($os->descricaoProduto) : null,
+    'Relato da cliente' => trim(strip_tags((string) $os->defeito)) !== '' ? osTextoExibicao($os->defeito) : null,
     'Observações' => trim(strip_tags((string) $os->observacoes)) !== '' ? osTextoExibicao($os->observacoes) : null,
-    'Laudo técnico' => trim(strip_tags((string) $os->laudoTecnico)) !== '' ? osTextoExibicao($os->laudoTecnico) : null,
+    'Registro do atendimento' => trim(strip_tags((string) $os->laudoTecnico)) !== '' ? osTextoExibicao($os->laudoTecnico) : null,
 ]);
 ?>
 <div class="flex flex-col gap-4">
     <div>
-        <?= component('button', ['label' => 'Ordens de serviço', 'icon' => 'chevron-left', 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('mine/os'), 'class' => '-ml-3']) ?>
+        <?= component('button', ['label' => 'Atendimentos', 'icon' => 'chevron-left', 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('mine/os'), 'class' => '-ml-3']) ?>
     </div>
 
     <header class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-3">
-                <h1 class="font-display text-heading-xl text-text"><?= e('OS #' . $idOs) ?></h1>
+                <h1 class="font-display text-heading-xl text-text"><?= e('Atendimento #' . $idOs) ?></h1>
                 <?= component('pill-status', osStatusPill($os->status)) ?>
             </div>
             <p class="text-caption text-muted"><?= e('Aberta em ' . dataBr($os->dataInicial)) ?></p>
@@ -57,7 +58,7 @@ $textos = $campos([
 
     <div class="grid gap-4 lg:grid-cols-3">
         <section class="<?= e($caixa) ?>" aria-labelledby="secao-dados">
-            <h2 id="secao-dados" class="text-heading-sm text-text">Dados da OS</h2>
+            <h2 id="secao-dados" class="text-heading-sm text-text">Dados do atendimento</h2>
             <dl class="mt-3 flex flex-col gap-3">
                 <?php foreach ($dados as $rotulo => $valor) { ?>
                     <div>
@@ -68,9 +69,9 @@ $textos = $campos([
             </dl>
         </section>
         <section class="<?= e($caixa) ?> lg:col-span-2" aria-labelledby="secao-equipamento">
-            <h2 id="secao-equipamento" class="text-heading-sm text-text">Equipamento e serviço</h2>
+            <h2 id="secao-equipamento" class="text-heading-sm text-text">Serviço e informações do atendimento</h2>
             <?php if ($textos === []) { ?>
-                <p class="mt-3 text-caption text-muted">A assistência ainda não preencheu os detalhes desta OS.</p>
+                <p class="mt-3 text-caption text-muted">A assistência ainda não preencheu os detalhes desto atendimento.</p>
             <?php } else { ?>
                 <dl class="mt-3 grid gap-4 sm:grid-cols-2">
                     <?php foreach ($textos as $rotulo => $valor) { ?>

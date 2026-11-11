@@ -1,6 +1,6 @@
 <?php
 /**
- * PIX da OS (#2842): QR Code e o código "copia e cola", os dois gerados no
+ * PIX do atendimento (#2842): QR Code e o código "copia e cola", os dois gerados no
  * servidor com o total atual (Os_model::getQrCode() e getPixPayload()). Na
  * v4 o copia e cola saía da imagem do QR, decodificada no navegador pelo
  * jsQR (carregado do rawgit).

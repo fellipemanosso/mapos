@@ -32,7 +32,7 @@ $caixa = 'rounded-xl border border-border bg-surface p-4 sm:p-6';
 <div class="flex max-w-4xl flex-col gap-4 pt-2 pb-8" <?= js_module('produtos/formulario') ?>>
     <header>
         <h1 class="font-display text-heading-xl text-text"><?= e($editando ? 'Editar produto' : 'Novo produto') ?></h1>
-        <p class="text-caption text-muted"><?= e($editando ? $produto->descricao : 'Peça, acessório ou item vendido e usado nas ordens de serviço.') ?></p>
+        <p class="text-caption text-muted"><?= e($editando ? $produto->descricao : 'Peça, acessório ou item vendido e usado nas atendimentos.') ?></p>
     </header>
 
     <?php if ($erroGeral !== null) { ?>

@@ -95,7 +95,7 @@ class Mapos extends MY_Controller
         $this->data = array_merge($this->data, $painel);
 
         if ($this->permite('aOs')) {
-            $this->data['topbar_acao'] = ['label' => 'Nova OS', 'icon' => 'plus', 'href' => site_url('os/adicionar')];
+            $this->data['topbar_acao'] = ['label' => 'Novo atendimento', 'icon' => 'plus', 'href' => site_url('os/adicionar')];
         } elseif ($this->permite('aVenda')) {
             $this->data['topbar_acao'] = ['label' => 'Nova venda', 'icon' => 'plus', 'href' => site_url('vendas/adicionar')];
         }
@@ -510,8 +510,8 @@ class Mapos extends MY_Controller
                 ], $r['clientes'])];
             }
             if ($this->permite('vOs')) {
-                $grupos[] = ['chave' => 'os', 'titulo' => 'Ordens de serviço', 'itens' => array_map(static fn ($o) => [
-                    'titulo' => 'OS #' . (int) $o->idOs,
+                $grupos[] = ['chave' => 'os', 'titulo' => 'Atendimentos', 'itens' => array_map(static fn ($o) => [
+                    'titulo' => 'Atendimento #' . (int) $o->idOs,
                     'detalhe' => trim(implode(' · ', array_filter([(string) $o->nomeCliente, (string) $o->status]))),
                     'url' => site_url('os/visualizar/' . (int) $o->idOs),
                 ], $r['os'])];

@@ -128,7 +128,7 @@ $vazio = $temFiltro
         // do botão da linha; aqui só o marcador vazio, sem dado do usuário.
         'message' => [
             new HtmlSeguro('<strong class="font-semibold text-text" data-modal-valor="nome"></strong>'),
-            ' e tudo o que estiver ligado a ele (ordens de serviço, vendas e lançamentos) serão removidos. Essa ação não pode ser desfeita.',
+            ' e tudo o que estiver ligado a ele (atendimentos, vendas e lançamentos) serão removidos. Essa ação não pode ser desfeita.',
         ],
         'confirm_label' => 'Excluir',
         'confirm_attrs' => ['form' => 'form-excluir-cliente'],

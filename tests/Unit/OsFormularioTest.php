@@ -74,7 +74,7 @@ final class OsFormularioTest extends MaposTestCase
         [, $erros] = osDadosDoFormulario(['clientes_id' => '', 'usuarios_id' => 'abc', 'status' => 'Inventado', 'garantia' => '-1'] + self::POST);
 
         $this->assertSame('Escolha um cliente da lista.', $erros['cliente']);
-        $this->assertSame('Escolha um técnico da lista.', $erros['tecnico']);
+        $this->assertSame('Escolha uma profissional da lista.', $erros['tecnico']);
         $this->assertSame('Escolha um status da lista.', $erros['status']);
         $this->assertArrayHasKey('garantia', $erros);
 
@@ -323,7 +323,7 @@ final class OsFormularioTest extends MaposTestCase
 
         $this->assertNotEmpty($grupo);
         $this->assertMatchesRegularExpression("/'field' => 'clientes_id',\\s*'label' => 'Cliente',/", $grupo[0]);
-        $this->assertMatchesRegularExpression("/'field' => 'usuarios_id',\\s*'label' => 'Técnico responsável',/", $grupo[0]);
+        $this->assertMatchesRegularExpression("/'field' => 'usuarios_id',\\s*'label' => 'Profissional responsável',/", $grupo[0]);
         $this->assertMatchesRegularExpression("/'field' => 'dataInicial',\\s*'label' => 'Data inicial',/", $grupo[0]);
     }
 }

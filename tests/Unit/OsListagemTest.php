@@ -103,7 +103,7 @@ final class OsListagemTest extends MaposTestCase
     {
         $model = $this->model();
 
-        // "3" casa com a OS 3 (Faturado); com o filtro de status Aberto, nada.
+        // "3" casa com o atendimento 3 (Faturado); com o filtro de status Aberto, nada.
         $this->assertContains(3, $this->ids($model->listar(['pesquisa' => '3'], 10, 0)));
         $this->assertSame([], $model->listar(['pesquisa' => '3', 'status' => 'Aberto'], 10, 0));
     }
@@ -262,7 +262,7 @@ final class OsListagemTest extends MaposTestCase
 
     /**
      * A listagem segue o padrão das telas migradas e o excluir limpa tudo o que
-     * é da OS.
+     * é do atendimento.
      */
     public function testControllerEViewSeguemOPadrao(): void
     {
@@ -271,7 +271,7 @@ final class OsListagemTest extends MaposTestCase
         preg_match('/public function excluir\(\).*?\n    }\n/s', $controller, $excluir);
 
         $this->assertNotEmpty($gerenciar);
-        $this->assertStringContainsString("'Nova OS'", $gerenciar[0]);
+        $this->assertStringContainsString("'Novo atendimento'", $gerenciar[0]);
         $this->assertNotEmpty($excluir);
         $this->assertStringContainsString("delete('anotacoes_os', 'os_id', \$id)", $excluir[0]);
         $this->assertStringContainsString('osArquivosDosAnexos(', $excluir[0]);

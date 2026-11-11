@@ -26,7 +26,7 @@
                     <span>E-mail: <?php echo e($emitente->email . ' - Fone: ' . $emitente->telefone); ?></span>
                 </div>
                 <div class="flex w-1/5 flex-col text-center">
-                    <span>Garantia OS: <?= e($osGarantia->idOs ? $osGarantia->idOs : "") ?></span>
+                    <span>Garantio atendimento: <?= e($osGarantia->idOs ? $osGarantia->idOs : "") ?></span>
                 <span>Emissão: <?= $osGarantia->osDataFinal ? date('d/m/Y', strtotime($osGarantia->osDataFinal)) : "" ?></span>
                 </div>
             </div>

@@ -52,6 +52,7 @@ $config['permissions_map'] = [
         'gerenciar' => 'vCliente',
         'adicionar' => 'aCliente',
         'cadastroRapido' => 'aCliente',
+        'dependente' => 'eCliente',
         'editar' => 'eCliente',
         'visualizar' => 'vCliente',
         'excluir' => 'dCliente',
@@ -126,6 +127,7 @@ $config['permissions_map'] = [
     ],
 
     'Os' => [
+        'dependentes' => ['aOs', 'eOs'],
         'index' => 'vOs',
         'gerenciar' => 'vOs',
         'visualizar' => 'vOs',

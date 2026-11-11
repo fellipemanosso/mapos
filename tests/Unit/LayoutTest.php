@@ -253,7 +253,7 @@ final class LayoutTest extends MaposTestCase
         $relatorio = layoutMenuVisivel(layoutMenu(), $this->permite($todas), 'Relatorios', 'osCustom');
         $grupo = array_values(array_filter($relatorio, fn ($i) => $i['label'] === 'Relatórios'))[0];
         $this->assertTrue($grupo['atual']);
-        $this->assertSame(['Ordens de Serviço'], array_column(array_filter($grupo['itens'], fn ($i) => $i['atual']), 'label'));
+        $this->assertSame(['Atendimentos'], array_column(array_filter($grupo['itens'], fn ($i) => $i['atual']), 'label'));
 
         $configuracoes = array_values(array_filter($relatorio, fn ($i) => $i['label'] === 'Configurações'))[0];
         $this->assertFalse($configuracoes['atual']);
@@ -285,7 +285,7 @@ final class LayoutTest extends MaposTestCase
             layoutBreadcrumb(['clientes', 'editar', '7'], $site)
         );
         // A listagem (gerenciar/index), em qualquer página, fica só com o controller.
-        $this->assertSame(['Início', 'Ordens de serviço'], array_column(layoutBreadcrumb(['os', 'gerenciar', null], $site), 'label'));
+        $this->assertSame(['Início', 'Atendimentos'], array_column(layoutBreadcrumb(['os', 'gerenciar', null], $site), 'label'));
         $this->assertSame(['Início', 'Serviços', 'Editar'], array_column(layoutBreadcrumb(['servicos', 'editar', '3'], $site), 'label'));
         $this->assertSame(['Início', 'Clientes'], array_column(layoutBreadcrumb(['clientes', 'gerenciar', '10'], $site), 'label'));
     }

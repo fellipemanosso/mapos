@@ -1,7 +1,7 @@
 <?php
 /**
  * Tela da venda (#2843), migrada para os componentes da v5, no mesmo desenho
- * da tela da OS (views/os/visualizar.php).
+ * da tela do atendimento (views/os/visualizar.php).
  *
  * - Cabeçalho com o número, o status (pill-status) e o cliente. "Editar venda"
  *   é a ação principal, na topbar; faturar, impressões, cobrança e excluir são

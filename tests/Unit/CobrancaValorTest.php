@@ -8,7 +8,7 @@ use Libraries\Gateways\Contracts\PaymentGateway;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
- * Valor da cobrança (#3014): os gateways cobram o mesmo total que a tela da OS
+ * Valor da cobrança (#3014): os gateways cobram o mesmo total que a tela do atendimento
  * e da venda mostra, em vez de recalcular os itens cada um do seu jeito.
  */
 final class CobrancaValorTest extends MaposTestCase
@@ -78,7 +78,7 @@ final class CobrancaValorTest extends MaposTestCase
     }
 
     /**
-     * Cria uma OS com os serviços e produtos informados e devolve o que o
+     * Cria um atendimento com os serviços e produtos informados e devolve o que o
      * gateway recebe de findEntity(). Cada serviço é um array de colunas de
      * servicos_os.
      */
@@ -134,7 +134,7 @@ final class CobrancaValorTest extends MaposTestCase
         );
 
         $this->assertSame(525.0, $this->valorDaOs($os));
-        $this->assertSame(525.0, $this->gateway()->ci()->Os_model->totais($os)['total'], 'Mesmo total da tela da OS.');
+        $this->assertSame(525.0, $this->gateway()->ci()->Os_model->totais($os)['total'], 'Mesmo total da tela do atendimento.');
     }
 
     public function testDescontoPorItemEDescontoGeralComoATela(): void

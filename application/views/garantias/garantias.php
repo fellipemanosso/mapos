@@ -49,7 +49,7 @@ $vazio = $temFiltro
     ])
     : component('empty-state', [
         'title' => 'Nenhum termo de garantia cadastrado',
-        'message' => 'Os termos cadastrados podem ser vinculados às ordens de serviço e vendas, e saem na impressão.',
+        'message' => 'Os termos cadastrados podem ser vinculados às atendimentos e vendas, e saem na impressão.',
         'icon' => 'file-text',
         'action' => $pode['adicionar'] ? component('button', ['label' => 'Cadastrar termo', 'icon' => 'plus', 'variant' => 'outline', 'href' => site_url('garantias/adicionar')]) : null,
         'class' => 'border-0',
@@ -101,7 +101,7 @@ $vazio = $temFiltro
         // O nome entra pelo modal.js (textContent); aqui só o marcador vazio.
         'message' => [
             new HtmlSeguro('<strong class="font-semibold text-text" data-modal-valor="nome"></strong>'),
-            ' será removido. Se alguma OS usa este termo, a exclusão é recusada. Essa ação não pode ser desfeita.',
+            ' será removido. Se algum atendimento usa este termo, a exclusão é recusada. Essa ação não pode ser desfeita.',
         ],
         'confirm_label' => 'Excluir',
         'confirm_attrs' => ['form' => 'form-excluir-garantia'],

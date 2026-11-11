@@ -1,6 +1,6 @@
 <?php
 /**
- * Modal de cadastro rápido de cliente (#3003), usado pelas telas da OS e da
+ * Modal de cadastro rápido de cliente (#3003), usado pelas telas do atendimento e da
  * venda quando o usuário tem a permissão aCliente. Fica depois do </form> da
  * tela, para não aninhar formulários: os campos do modal apontam para o
  * formulário oculto pelo atributo form.

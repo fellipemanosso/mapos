@@ -1,6 +1,6 @@
 <?php
 /**
- * Resumo dos valores da OS (#2842) em kpi-card. O total é calculado pelos
+ * Resumo dos valores do atendimento (#2842) em kpi-card. O total é calculado pelos
  * produtos e serviços menos o desconto (os_model->totais()).
  *
  * @var array{produtos: float, servicos: float, bruto: float, desconto: float, total: float, tipo: string|null, informado: float, descontoItens: float} $totais

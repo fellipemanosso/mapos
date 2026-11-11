@@ -3,7 +3,7 @@
  * Desconto individual do item (#2880) no formulário de adicionar produto ou
  * serviço, em R$ ou %. Opcional: vazio ou 0 é sem desconto. O servidor
  * calcula o subtotal do item (osDescontoDoItem()); estes campos só enviam o
- * que foi digitado. Usado pelas telas da OS e da venda.
+ * que foi digitado. Usado pelas telas do atendimento e da venda.
  */
 ?>
 <div class="grid gap-4 sm:col-span-2 sm:grid-cols-[9rem_minmax(0,12rem)] lg:col-span-4">

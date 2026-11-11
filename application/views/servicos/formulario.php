@@ -15,7 +15,7 @@ $errosDeCampo = array_diff_key($erros, ['_geral' => true]);
 <div class="flex max-w-2xl flex-col gap-4 pt-2 pb-8">
     <header>
         <h1 class="font-display text-heading-xl text-text"><?= e($editando ? 'Editar serviço' : 'Novo serviço') ?></h1>
-        <p class="text-caption text-muted"><?= e($editando ? $servico->nome : 'Mão de obra ou serviço cobrado nas ordens de serviço.') ?></p>
+        <p class="text-caption text-muted"><?= e($editando ? $servico->nome : 'Mão de obra ou serviço cobrado nas atendimentos.') ?></p>
     </header>
 
     <?php if ($erroGeral !== null) { ?>
@@ -49,7 +49,7 @@ $errosDeCampo = array_diff_key($erros, ['_geral' => true]);
                 <?= component('input', [
                     'name' => 'descricao',
                     'label' => 'Descrição',
-                    'help' => 'Aparece junto do nome na OS. Até 45 caracteres.',
+                    'help' => 'Aparece junto do nome no atendimento. Até 45 caracteres.',
                     'value' => $valores['descricao'] !== '' ? $valores['descricao'] : null,
                     'error' => $errosDeCampo['descricao'] ?? null,
                     'attrs' => ['maxlength' => 45],

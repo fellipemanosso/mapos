@@ -167,7 +167,7 @@ final class RelatoriosTest extends MaposTestCase
         $this->db->query('CREATE TABLE servicos_os (idServicos_os INTEGER PRIMARY KEY AUTOINCREMENT, os_id INTEGER, servicos_id INTEGER, quantidade REAL, preco REAL, subTotal REAL)');
         $this->db->query("INSERT INTO clientes (nomeCliente) VALUES ('João Silva')");
         $this->db->query('INSERT INTO os (clientes_id) VALUES (1)');
-        // Catálogo: barato = 40; cobrado na OS: 55 x 3.
+        // Catálogo: barato = 40; cobrado no atendimento: 55 x 3.
         $this->db->query('INSERT INTO servicos_os (os_id, servicos_id, quantidade, preco, subTotal) VALUES (1, 1, 3, 55, 165)');
 
         $linhas = $model->servicosCustom(null, null, null, 'João');
@@ -176,7 +176,7 @@ final class RelatoriosTest extends MaposTestCase
         $this->assertEquals(3, $linhas[0]->quantidade);
         $this->assertEquals(165, $linhas[0]->subTotal);
 
-        // A faixa vale sobre o preço da OS, não o do catálogo.
+        // A faixa vale sobre o preço do atendimento, não o do catálogo.
         $this->assertCount(0, $model->servicosCustom('40', '45', null, 'João'));
         $this->assertCount(1, $model->servicosCustom('50', '60', null, 'João'));
     }

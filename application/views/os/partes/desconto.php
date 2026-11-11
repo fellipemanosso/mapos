@@ -1,10 +1,10 @@
 <?php
 /**
- * Desconto da OS (#2842), em R$ ou %. O servidor calcula o total com
+ * Desconto do atendimento (#2842), em R$ ou %. O servidor calcula o total com
  * desconto (Os::adicionarDesconto(), osCalcularDesconto()); o módulo os/tela
  * envia sem recarregar e troca este trecho e os totais.
  *
- * Só aparece com a OS editável: depois de faturada, o desconto fica no
+ * Só aparece com o atendimento editável: depois de faturada, o desconto fica no
  * kpi-card dos totais.
  *
  * @var object $os
@@ -21,7 +21,7 @@ $valorAtual = $totais['desconto'] > 0 ? rtrim(rtrim(number_format($totais['infor
     <h2 id="secao-desconto" class="text-heading-sm text-text">Desconto</h2>
     <p class="mt-1 text-caption text-muted">
         <?= e($totais['desconto'] > 0
-            ? 'Desconto de ' . dinheiro($totais['desconto']) . '. Total da OS: ' . dinheiro($totais['total']) . '.'
+            ? 'Desconto de ' . dinheiro($totais['desconto']) . '. Total do atendimento: ' . dinheiro($totais['total']) . '.'
             : 'Sem desconto. Adicionar ou remover produtos e serviços também tira o desconto.') ?>
     </p>
     <form method="post" action="<?= e(site_url('os/adicionarDesconto')) ?>" novalidate class="mt-4 grid gap-4 sm:grid-cols-[9rem_minmax(0,16rem)_auto] sm:items-start" data-os-acao="desconto">

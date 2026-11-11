@@ -18,8 +18,8 @@ $campos = static fn (array $itens) => array_filter($itens, static fn ($valor) =>
 $referencia = null;
 if (! empty($result->os_id)) {
     $referencia = $pode['ver_os']
-        ? component('link', ['label' => 'Ordem de serviço #' . (int) $result->os_id, 'href' => site_url('os/visualizar/' . (int) $result->os_id)])
-        : 'Ordem de serviço #' . (int) $result->os_id;
+        ? component('link', ['label' => 'Atendimento #' . (int) $result->os_id, 'href' => site_url('os/visualizar/' . (int) $result->os_id)])
+        : 'Atendimento #' . (int) $result->os_id;
 } elseif (! empty($result->vendas_id)) {
     $referencia = $pode['ver_venda']
         ? component('link', ['label' => 'Venda #' . (int) $result->vendas_id, 'href' => site_url('vendas/visualizar/' . (int) $result->vendas_id)])

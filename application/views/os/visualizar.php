@@ -1,8 +1,8 @@
 <?php
 /**
- * Tela da OS (#2842), migrada para os componentes da v5.
+ * Tela do atendimento (#2842), migrada para os componentes da v5.
  *
- * - Cabeçalho com o número, o status (pill-status) e o cliente. "Editar OS"
+ * - Cabeçalho com o número, o status (pill-status) e o cliente. "Editar atendimento"
  *   é a ação principal, na topbar; faturar, impressões, termo de garantia,
  *   WhatsApp, e-mail, cobrança e excluir são secundárias.
  * - Abas por link (?aba=): resumo, produtos, serviços, anexos, anotações e
@@ -27,23 +27,24 @@ $caixa = 'rounded-xl border border-border bg-surface p-4 sm:p-6';
 $campos = static fn (array $itens) => array_filter($itens, static fn ($valor) => $valor !== null && $valor !== '');
 
 $dados = $campos([
+    'Quem recebe o atendimento' => $os->beneficiario_nome ?? $os->nomeCliente,
     'Cliente' => $pode['ver_cliente']
         ? component('link', ['label' => $os->nomeCliente, 'href' => site_url('clientes/visualizar/' . (int) $os->clientes_id)])
         : $os->nomeCliente,
     'Contato' => trim(implode(' · ', array_filter([$os->celular_cliente, $os->telefone_cliente]))),
-    'Técnico responsável' => $os->nome,
+    'Profissional responsável' => $os->nome,
     'Entrada' => dataBr($os->dataInicial),
-    'Previsão de entrega' => dataBr($os->dataFinal),
+    'Conclusão prevista' => dataBr($os->dataFinal),
     'Garantia' => (int) $os->garantia > 0 ? (int) $os->garantia . ' dias' . ($garantia_ate ? ', até ' . dataBr($garantia_ate) : '') : null,
     'Termo de garantia' => $os->refGarantia ?? null,
 ]);
 
 $texto = static fn ($valor) => trim(strip_tags((string) $valor)) !== '' ? osTextoExibicao($valor) : null;
 $textos = [
-    'Descrição do produto ou serviço' => $texto($os->descricaoProduto),
-    'Defeito' => $texto($os->defeito),
+    'Serviço solicitado' => $texto($os->descricaoProduto),
+    'Motivo do atendimento' => $texto($os->defeito),
     'Observações' => $texto($os->observacoes),
-    'Laudo técnico' => $texto($os->laudoTecnico),
+    'Registro do atendimento' => $texto($os->laudoTecnico),
 ];
 
 ?>
@@ -51,10 +52,10 @@ $textos = [
     <header class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-3">
-                <h1 class="font-display text-heading-xl text-text"><?= e('OS #' . $idOs) ?></h1>
+                <h1 class="font-display text-heading-xl text-text"><?= e('Atendimento #' . $idOs) ?></h1>
                 <?= component('pill-status', osStatusPill($os->status)) ?>
             </div>
-            <p class="text-caption [overflow-wrap:anywhere] text-muted"><?= e($os->nomeCliente . ' · Técnico: ' . $os->nome) ?></p>
+            <p class="text-caption [overflow-wrap:anywhere] text-muted"><?= e($os->nomeCliente . ' · Profissional: ' . $os->nome) ?></p>
         </div>
         <div class="flex flex-wrap gap-2">
             <?php if ($pode['faturar']) { ?>
@@ -90,7 +91,7 @@ $textos = [
     </header>
 
     <?php if ($fechada && ! $pode['editar']) { ?>
-        <?= component('alert', ['variant' => 'info', 'message' => 'Esta OS está ' . ($os->status === 'Cancelado' ? 'cancelada' : 'faturada') . ': produtos, serviços, anexos, anotações e desconto não podem mais ser alterados.']) ?>
+        <?= component('alert', ['variant' => 'info', 'message' => 'Esto atendimento está ' . ($os->status === 'Cancelado' ? 'cancelada' : 'faturada') . ': produtos, serviços, anexos, anotações e desconto não podem mais ser alterados.']) ?>
     <?php } ?>
 
     <div data-os-parte="abas"><?php $this->load->view('os/partes/abas'); ?></div>
@@ -100,7 +101,7 @@ $textos = [
 
         <div class="grid gap-4 lg:grid-cols-3">
             <section class="<?= e($caixa) ?>" aria-labelledby="secao-dados">
-                <h2 id="secao-dados" class="text-heading-sm text-text">Dados da OS</h2>
+                <h2 id="secao-dados" class="text-heading-sm text-text">Dados do atendimento</h2>
                 <dl class="mt-3 flex flex-col gap-3">
                     <?php foreach ($dados as $rotulo => $valor) { ?>
                         <div>
@@ -112,7 +113,7 @@ $textos = [
             </section>
             <section class="<?= e($caixa) ?> lg:col-span-2" aria-labelledby="secao-equipamento">
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <h2 id="secao-equipamento" class="text-heading-sm text-text">Equipamento e serviço</h2>
+                    <h2 id="secao-equipamento" class="text-heading-sm text-text">Serviço e informações do atendimento</h2>
                     <?php if ($pode['editar']) { ?>
                         <?= component('button', ['label' => 'Editar', 'icon' => 'pencil', 'variant' => 'outline', 'href' => site_url('os/editar/' . $idOs)]) ?>
                     <?php } ?>
@@ -257,10 +258,10 @@ $textos = [
 $exclusoes = [];
 if ($pode['editar']) {
     $exclusoes = [
-        'produto' => ['os/excluirProduto', 'Excluir produto?', ' sai da OS.' . ($controle_estoque ? ' A quantidade volta ao estoque.' : '') . ' O desconto da OS, se houver, é removido.'],
-        'servico' => ['os/excluirServico', 'Excluir serviço?', ' sai da OS. O desconto da OS, se houver, é removido.'],
+        'produto' => ['os/excluirProduto', 'Excluir produto?', ' sai do atendimento.' . ($controle_estoque ? ' A quantidade volta ao estoque.' : '') . ' O desconto do atendimento, se houver, é removido.'],
+        'servico' => ['os/excluirServico', 'Excluir serviço?', ' sai do atendimento. O desconto do atendimento, se houver, é removido.'],
         'anexo' => ['os/excluirAnexo', 'Excluir anexo?', ' será apagado do servidor. Essa ação não pode ser desfeita.'],
-        'anotacao' => ['os/excluirAnotacao', 'Excluir anotação?', ' será removida da OS. Essa ação não pode ser desfeita.'],
+        'anotacao' => ['os/excluirAnotacao', 'Excluir anotação?', ' será removida do atendimento. Essa ação não pode ser desfeita.'],
     ];
 }
 foreach ($exclusoes as $tipo => [$rota, $titulo, $consequencia]) { ?>
@@ -295,8 +296,8 @@ foreach ($exclusoes as $tipo => [$rota, $titulo, $consequencia]) { ?>
     </form>
     <?= component('modal-confirm', [
         'id' => 'excluir-os',
-        'title' => 'Excluir OS #' . $idOs . '?',
-        'message' => 'Produtos, serviços, anexos (inclusive os arquivos), anotações e o histórico da OS serão removidos.' . ((int) $os->faturado === 1 ? ' O lançamento da fatura também sai do financeiro.' : '') . ' Essa ação não pode ser desfeita.',
+        'title' => 'Excluir Atendimento #' . $idOs . '?',
+        'message' => 'Produtos, serviços, anexos (inclusive os arquivos), anotações e o histórico do atendimento serão removidos.' . ((int) $os->faturado === 1 ? ' O lançamento da fatura também sai do financeiro.' : '') . ' Essa ação não pode ser desfeita.',
         'confirm_label' => 'Excluir OS',
         'confirm_attrs' => ['form' => 'form-excluir-os'],
     ]) ?>
@@ -308,7 +309,7 @@ foreach ($exclusoes as $tipo => [$rota, $titulo, $consequencia]) { ?>
     </form>
     <?= component('modal', [
         'id' => 'faturar-os',
-        'title' => 'Faturar OS #' . $idOs,
+        'title' => 'Faturar Atendimento #' . $idOs,
         'body' => [
             component('alert', [
                 'variant' => $totais['total'] > 0 ? 'info' : 'warning',
@@ -344,7 +345,7 @@ foreach ($exclusoes as $tipo => [$rota, $titulo, $consequencia]) { ?>
     </form>
     <?= component('modal', [
         'id' => 'gerar-cobranca',
-        'title' => 'Gerar cobrança da OS #' . $idOs,
+        'title' => 'Gerar cobrança do atendimento #' . $idOs,
         'size' => 'sm',
         'body' => [
             component('select', [

@@ -18,6 +18,8 @@ class Clientes extends MY_Controller
 
         $this->load->model('clientes_model');
         $this->load->helper('clientes');
+        $this->load->model('dependentes_model');
+        $this->load->helper('dependentes');
         $this->data['menuClientes'] = 'clientes';
     }
 
@@ -232,6 +234,7 @@ class Clientes extends MY_Controller
 
         $this->data['cliente'] = $cliente;
         $this->data['aba'] = $aba;
+        $this->data['dependentes'] = $this->dependentes_model->doCliente($id);
         $this->data['total_os'] = $this->clientes_model->contarOsDoCliente($id);
         $this->data['total_vendas'] = $this->clientes_model->contarVendasDoCliente($id);
         // O segmento 3 da URL é o id do cliente: o início da página vai na query string.
@@ -257,6 +260,42 @@ class Clientes extends MY_Controller
 
         $this->data['view'] = 'clientes/visualizar';
 
+        return $this->layout();
+    }
+
+    /** O responsável e o dependente são definidos pela URL e conferidos juntos. */
+    public function dependente($clienteId = null, $dependenteId = null)
+    {
+        if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'eCliente')) {
+            show_error('Você não tem permissão para editar clientes.', 403);
+            return;
+        }
+        $cliente = ctype_digit((string) $clienteId) ? $this->clientes_model->getById((int) $clienteId) : null;
+        if (! $cliente || $cliente->fornecedor) {
+            show_404();
+            return;
+        }
+        $dependente = $dependenteId === null ? null : $this->dependentes_model->doResponsavel((int) $dependenteId, (int) $clienteId);
+        if ($dependenteId !== null && ! $dependente) {
+            show_404();
+            return;
+        }
+        $valores = $dependente ? (array) $dependente : ['nome' => '', 'nascimento' => '', 'parentesco' => ''];
+        $erros = [];
+        if ($this->input->method() === 'post') {
+            [$valores, $erros] = dependenteDados($this->input->post(), date('Y-m-d'));
+            if ($erros === []) {
+                if ($this->dependentes_model->salvar((int) $clienteId, $dependente ? (int) $dependente->id : null, $valores)) {
+                    $this->session->set_flashdata('success', 'Dependente salvo.');
+                    return redirect('clientes/visualizar/' . (int) $clienteId);
+                }
+                $erros['_geral'] = 'Não foi possível salvar. Tente de novo.';
+            }
+        }
+        $this->data['cliente'] = $cliente;
+        $this->data['valores'] = $valores;
+        $this->data['erros'] = $erros;
+        $this->data['view'] = 'clientes/dependente';
         return $this->layout();
     }
 

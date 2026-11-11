@@ -81,7 +81,7 @@ final class BuscaGlobalTest extends MaposTestCase
             ['label' => 'Início', 'url' => ''],
             ['label' => 'Clientes', 'url' => 'clientes'],
             ['label' => 'Serviços', 'url' => 'servicos'],
-            ['label' => 'Ordens de Serviço', 'url' => 'os'],
+            ['label' => 'Atendimentos', 'url' => 'os'],
             ['label' => 'Vendas', 'url' => 'vendas'],
             ['label' => 'Config', 'itens' => [['label' => 'Usuários', 'url' => 'usuarios']]],
         ];

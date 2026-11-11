@@ -2,7 +2,7 @@
 
 /**
  * Regras da área do cliente (#2848), fora do controller Mine para serem
- * testadas: menu, garantias, o link da OS enviado por e-mail e os dados que
+ * testadas: menu, garantias, o link do atendimento enviado por e-mail e os dados que
  * o cliente pode gravar no próprio cadastro.
  */
 if (! function_exists('conecteMenu')) {
@@ -18,7 +18,7 @@ if (! function_exists('conecteMenu')) {
     {
         $itens = [
             ['painel', 'Início', 'Início', 'house', 'mine/painel', true],
-            ['os', 'Ordens de serviço', 'Minhas OS', 'wrench', 'mine/os', true],
+            ['os', 'Atendimentos', 'Minhas OS', 'wrench', 'mine/os', true],
             ['compras', 'Compras', 'Compras', 'shopping-cart', 'mine/compras', true],
             ['cobrancas', 'Cobranças', 'Cobranças', 'receipt', 'mine/cobrancas', false],
             ['conta', 'Minha conta', 'Conta', 'circle-user', 'mine/conta', true],
@@ -38,7 +38,7 @@ if (! function_exists('conecteMenu')) {
 
 if (! function_exists('conecteGarantiaOsPill')) {
     /**
-     * Pill da garantia de uma OS: só existe depois de finalizada ou faturada
+     * Pill da garantia de umo atendimento: só existe depois de finalizada ou faturada
      * (osVencimentoGarantia()); vigente em success, vencida em neutral.
      *
      * @return array{label: string, variant: string}|null
@@ -51,9 +51,9 @@ if (! function_exists('conecteGarantiaOsPill')) {
 
 if (! function_exists('conecteIdDoLinkDoEmail')) {
     /**
-     * Id da OS a partir do número do link do e-mail (y = 7653 × id + 44023).
+     * Id do atendimento a partir do número do link do e-mail (y = 7653 × id + 44023).
      * É só uma ofuscação reversível, não um segredo: quem abre o link ainda
-     * precisa estar logado e ser o dono da OS. Valor fora da conta, null.
+     * precisa estar logado e ser o dono do atendimento. Valor fora da conta, null.
      */
     function conecteIdDoLinkDoEmail($y): ?int
     {
@@ -156,7 +156,7 @@ if (! function_exists('conecteColunasOs')) {
     function conecteColunasOs(bool $completa): array
     {
         $colunas = [
-            ['label' => 'OS', 'nowrap' => true, 'render' => fn ($o) => component('link', ['label' => 'OS #' . (int) $o->idOs, 'href' => site_url('mine/visualizarOs/' . (int) $o->idOs), 'class' => 'font-medium'])],
+            ['label' => 'OS', 'nowrap' => true, 'render' => fn ($o) => component('link', ['label' => 'Atendimento #' . (int) $o->idOs, 'href' => site_url('mine/visualizarOs/' . (int) $o->idOs), 'class' => 'font-medium'])],
             ['label' => 'Equipamento', 'class' => 'min-w-40 [overflow-wrap:anywhere]', 'render' => fn ($o) => osTextoCurto($o->descricaoProduto) ?: '—'],
             ['label' => 'Entrada', 'align' => 'right', 'nowrap' => true, 'render' => fn ($o) => dataBr($o->dataInicial)],
         ];
@@ -172,9 +172,9 @@ if (! function_exists('conecteColunasOs')) {
 
         $colunas[] = ['label' => 'Status', 'nowrap' => true, 'render' => fn ($o) => component('pill-status', osStatusPill($o->status))];
         $colunas[] = ['label' => 'Ações', 'align' => 'right', 'nowrap' => true, 'render' => function ($o) use ($completa) {
-            $acoes = [component('button', ['label' => 'Ver OS #' . (int) $o->idOs, 'icon' => 'eye', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('mine/visualizarOs/' . (int) $o->idOs)])];
+            $acoes = [component('button', ['label' => 'Ver atendimento #' . (int) $o->idOs, 'icon' => 'eye', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('mine/visualizarOs/' . (int) $o->idOs)])];
             if ($completa) {
-                $acoes[] = component('button', ['label' => 'Imprimir OS #' . (int) $o->idOs, 'icon' => 'printer', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('mine/imprimirOs/' . (int) $o->idOs), 'attrs' => ['target' => '_blank', 'rel' => 'noopener']]);
+                $acoes[] = component('button', ['label' => 'Imprimir Atendimento #' . (int) $o->idOs, 'icon' => 'printer', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('mine/imprimirOs/' . (int) $o->idOs), 'attrs' => ['target' => '_blank', 'rel' => 'noopener']]);
             }
 
             return $acoes;
@@ -226,7 +226,7 @@ if (! function_exists('conecteReferenciaDaCobranca')) {
     function conecteReferenciaDaCobranca(object $cobranca): array
     {
         if (! empty($cobranca->os_id)) {
-            return ['label' => 'OS #' . (int) $cobranca->os_id, 'href' => site_url('mine/visualizarOs/' . (int) $cobranca->os_id)];
+            return ['label' => 'Atendimento #' . (int) $cobranca->os_id, 'href' => site_url('mine/visualizarOs/' . (int) $cobranca->os_id)];
         }
 
         if (! empty($cobranca->vendas_id)) {

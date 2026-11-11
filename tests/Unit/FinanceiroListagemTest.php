@@ -256,8 +256,8 @@ final class FinanceiroListagemTest extends MaposTestCase
     }
 
     /**
-     * A fatura excluída desfaz o faturamento: a venda e a OS ligadas a ela
-     * voltam a não faturadas, e a mudança da OS entra no histórico dela.
+     * A fatura excluída desfaz o faturamento: a venda e o atendimento ligadas a ela
+     * voltam a não faturadas, e a mudança do atendimento entra no histórico dela.
      */
     public function testExcluirFaturaDesfazOFaturamentoDaVendaEDaOs(): void
     {
@@ -284,7 +284,7 @@ final class FinanceiroListagemTest extends MaposTestCase
         $this->assertSame('Finalizado', $historico[0]->status_novo);
         $this->assertSame(9, (int) $historico[0]->usuarios_id);
 
-        // A venda e a OS ligadas a outro lançamento não mudam.
+        // A venda e o atendimento ligadas a outro lançamento não mudam.
         $this->assertSame(4, (int) $this->db->query('SELECT lancamentos_id FROM vendas WHERE idVendas = 2')->row()->lancamentos_id);
         $this->assertSame('Faturado', $this->db->query('SELECT status FROM os WHERE idOs = 2')->row()->status);
     }

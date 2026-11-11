@@ -21,7 +21,7 @@ final class EscapeHelperTest extends MaposTestCase
             'aspas simples' => ["' onmouseover='x", '&#039; onmouseover=&#039;x'],
             'e comercial' => ['Silva & Filhos', 'Silva &amp; Filhos'],
             'texto comum' => ['Cliente Teste', 'Cliente Teste'],
-            'acentos' => ['Ordem de Serviço nº 1', 'Ordem de Serviço nº 1'],
+            'acentos' => ['Atendimento nº 1', 'Atendimento nº 1'],
         ];
     }
 

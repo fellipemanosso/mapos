@@ -6,7 +6,7 @@ $this->load->view('relatorios/imprimir/partes/inicio', ['tituloDoc' => ucfirst($
         <thead>
             <tr>
                 <?php if ($porCliente) : ?>
-                    <th class="rel-th">N. da OS</th>
+                    <th class="rel-th">N. do atendimento</th>
                     <th class="rel-th">Cliente</th>
                 <?php endif; ?>
                 <th class="rel-th">Nome</th>

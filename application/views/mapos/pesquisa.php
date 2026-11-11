@@ -31,18 +31,18 @@ $grupos = [
         ],
     ],
     'os' => [
-        'titulo' => 'Ordens de serviço',
+        'titulo' => 'Atendimentos',
         'icone' => 'file-text',
-        'vazio' => 'Nenhuma OS encontrada.',
+        'vazio' => 'Nenhum atendimento encontrada.',
         'linhas' => $os,
         'colunas' => [
-            ['label' => 'OS', 'nowrap' => true, 'render' => fn ($o) => component('link', ['label' => 'OS #' . (int) $o->idOs, 'href' => site_url('os/visualizar/' . (int) $o->idOs), 'class' => 'font-medium'])],
+            ['label' => 'OS', 'nowrap' => true, 'render' => fn ($o) => component('link', ['label' => 'Atendimento #' . (int) $o->idOs, 'href' => site_url('os/visualizar/' . (int) $o->idOs), 'class' => 'font-medium'])],
             ['label' => 'Equipamento', 'class' => 'min-w-32 [overflow-wrap:anywhere]', 'render' => fn ($o) => osTextoCurto($o->descricaoProduto, 60) ?: '—'],
             ['label' => 'Entrada', 'align' => 'right', 'nowrap' => true, 'hide_until' => 'md', 'render' => fn ($o) => dataBr($o->dataInicial)],
             ['label' => 'Status', 'nowrap' => true, 'render' => fn ($o) => component('pill-status', osStatusPill($o->status))],
             ['label' => 'Ações', 'align' => 'right', 'nowrap' => true, 'render' => fn ($o) => array_filter([
-                $acao('Ver OS #' . (int) $o->idOs, 'eye', 'os/visualizar/' . (int) $o->idOs),
-                $pode['editar_os'] ? $acao('Editar OS #' . (int) $o->idOs, 'pencil', 'os/editar/' . (int) $o->idOs) : null,
+                $acao('Ver atendimento #' . (int) $o->idOs, 'eye', 'os/visualizar/' . (int) $o->idOs),
+                $pode['editar_os'] ? $acao('Editar atendimento #' . (int) $o->idOs, 'pencil', 'os/editar/' . (int) $o->idOs) : null,
             ])],
         ],
     ],

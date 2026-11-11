@@ -29,7 +29,7 @@ $colunas = [
     ['label' => 'Cliente', 'class' => 'min-w-36 [overflow-wrap:anywhere]', 'render' => fn ($c) => (string) ($c->nomeCliente ?? '')],
     ['label' => 'Referência', 'nowrap' => true, 'render' => function ($c) {
         if (! empty($c->os_id)) {
-            return component('link', ['label' => 'OS #' . (int) $c->os_id, 'href' => site_url('os/visualizar/' . (int) $c->os_id)]);
+            return component('link', ['label' => 'Atendimento #' . (int) $c->os_id, 'href' => site_url('os/visualizar/' . (int) $c->os_id)]);
         }
         if (! empty($c->vendas_id)) {
             return component('link', ['label' => 'Venda #' . (int) $c->vendas_id, 'href' => site_url('vendas/visualizar/' . (int) $c->vendas_id)]);
@@ -95,7 +95,7 @@ $vazio = $temFiltro
     ])
     : component('empty-state', [
         'title' => 'Nenhuma cobrança gerada',
-        'message' => 'As cobranças são geradas na tela de uma OS ou de uma venda e aparecem aqui.',
+        'message' => 'As cobranças são geradas na tela de um atendimento ou de uma venda e aparecem aqui.',
         'icon' => 'banknote',
         'class' => 'border-0',
     ]);
@@ -129,7 +129,7 @@ $resumo = ($total === 1 ? '1 cobrança' : number_format($total, 0, ',', '.') . '
             'name' => 'tipo',
             'label' => 'Origem',
             'placeholder' => 'Todas',
-            'options' => ['os' => 'Ordem de serviço', 'venda' => 'Venda'],
+            'options' => ['os' => 'Atendimento', 'venda' => 'Venda'],
             'selected' => $filtros['tipo'] ?? null,
         ]) ?>
         <div class="flex gap-2">

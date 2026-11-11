@@ -7,7 +7,7 @@
  * - Cards de resumo (kpi-card): OS em andamento, orçamentos, vendas em aberto
  *   e saldo do mês. Cada um só com a permissão de ver o módulo.
  * - Agenda das entregas de OS (FullCalendar 6), com filtro de status; o
- *   evento abre um modal com os dados da OS.
+ *   evento abre um modal com os dados do atendimento.
  * - Balanço do ano (receitas, despesas e saldo por mês) e OS por status,
  *   em Chart.js 4. Os números vão para o módulo em page_data e também numa
  *   tabela para leitores de tela.
@@ -143,7 +143,7 @@ if ($pode['os']) {
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <h2 id="titulo-agenda" class="text-heading-sm text-text">Agenda de entregas</h2>
-                        <p class="text-caption text-muted">OS pela data final. Clique numa OS para ver os detalhes.</p>
+                        <p class="text-caption text-muted">OS pela data final. Clique num atendimento para ver os detalhes.</p>
                     </div>
                     <div class="sm:w-56">
                         <?= component('select', [
@@ -179,7 +179,7 @@ if ($pode['os']) {
                 </div>
                 <div class="relative mx-auto mt-4 aspect-square max-w-72" data-grafico-os-area>
                     <canvas data-grafico="os" role="img" aria-label="Gráfico de OS por status"></canvas>
-                    <p data-grafico-os-vazio hidden class="absolute inset-0 flex items-center justify-center text-center text-caption text-muted">Nenhuma OS neste mês.</p>
+                    <p data-grafico-os-vazio hidden class="absolute inset-0 flex items-center justify-center text-center text-caption text-muted">Nenhum atendimento neste mês.</p>
                 </div>
                 <details class="mt-4">
                     <summary class="cursor-pointer text-caption text-muted hover:text-text">Ver como tabela</summary>
@@ -235,17 +235,17 @@ if ($pode['os']) {
         <?php if ($pode['os']) { ?>
             <section class="<?= e($caixa) ?> min-w-0" aria-labelledby="titulo-lista-os">
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <h2 id="titulo-lista-os" class="text-heading-sm text-text">Ordens de serviço</h2>
+                    <h2 id="titulo-lista-os" class="text-heading-sm text-text">Atendimentos</h2>
                     <?= component('button', ['label' => 'Ver todas', 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('os')]) ?>
                 </div>
-                <div role="tablist" aria-label="Status das ordens de serviço" data-painel-abas="os" data-painel-url="<?= e(site_url('mapos/painelOs')) ?>" class="mt-3 flex gap-1 overflow-x-auto shadow-[inset_0_-1px_0_var(--color-border)] [scrollbar-width:none]">
+                <div role="tablist" aria-label="Status das atendimentos" data-painel-abas="os" data-painel-url="<?= e(site_url('mapos/painelOs')) ?>" class="mt-3 flex gap-1 overflow-x-auto shadow-[inset_0_-1px_0_var(--color-border)] [scrollbar-width:none]">
                     <?php foreach (painelStatusAbas(painelAbasStatus(PAINEL_OS_ABAS), $os_abas_contagem, $os_status_ativo) as $aba) { ?>
                         <button type="button" role="tab" id="aba-os-<?= e(md5($aba['status'])) ?>" aria-selected="<?= $aba['active'] ? 'true' : 'false' ?>" aria-controls="painel-lista-os" tabindex="<?= $aba['active'] ? '0' : '-1' ?>" data-painel-aba data-status="<?= e($aba['status']) ?>" class="relative inline-flex items-center gap-2 whitespace-nowrap rounded-t-md px-3.5 py-3 text-[0.9375rem] leading-tight font-medium text-muted hover:text-text aria-selected:font-semibold aria-selected:text-text after:absolute after:inset-x-2.5 after:bottom-0 after:h-0.5 after:rounded-full after:bg-transparent aria-selected:after:bg-primary focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-ring">
                             <?= e($aba['status']) ?><span class="<?= e($contagemAbaClasse($aba['variante'])) ?>" data-painel-aba-contagem="<?= e($aba['status']) ?>"><?= e((string) $aba['count']) ?></span>
                         </button>
                     <?php } ?>
                 </div>
-                <div id="painel-lista-os" role="tabpanel" aria-label="Lista de ordens de serviço" aria-live="polite" class="mt-3 min-h-40" data-painel-lista="os">
+                <div id="painel-lista-os" role="tabpanel" aria-label="Lista de atendimentos" aria-live="polite" class="mt-3 min-h-40" data-painel-lista="os">
                     <?php $this->load->view('mapos/partes/painel-os', ['os_lista' => $os_lista, 'hoje' => $hoje, 'acoes_os' => $acoes_os]); ?>
                 </div>
             </section>
@@ -335,7 +335,7 @@ if ($pode['os']) {
         'size' => 'md',
         // Marcação estática; os dados entram por textContent (módulo
         // painel/painel). Um pill-status por status, escondidos: o módulo
-        // mostra o da OS clicada.
+        // mostra o do atendimento clicada.
         'body' => [
             new HtmlSeguro('<div class="flex flex-col gap-3"><div>'),
             array_map(static fn ($status) => component('pill-status', osStatusPill($status) + ['attrs' => ['data-agenda-pill' => $status, 'hidden' => true]]), array_keys(OS_STATUS_VARIANTES)),
@@ -351,8 +351,8 @@ if ($pode['os']) {
         ],
         'footer' => [
             component('button', ['label' => 'Fechar', 'variant' => 'ghost', 'attrs' => ['data-modal-fechar' => true]]),
-            component('button', ['label' => 'Editar OS', 'icon' => 'pencil', 'variant' => 'outline', 'href' => site_url('os'), 'attrs' => ['data-agenda-link' => 'urlEditar', 'hidden' => true]]),
-            component('button', ['label' => 'Ver OS', 'icon' => 'eye', 'variant' => 'outline', 'href' => site_url('os'), 'attrs' => ['data-agenda-link' => 'url']]),
+            component('button', ['label' => 'Editar atendimento', 'icon' => 'pencil', 'variant' => 'outline', 'href' => site_url('os'), 'attrs' => ['data-agenda-link' => 'urlEditar', 'hidden' => true]]),
+            component('button', ['label' => 'Ver atendimento', 'icon' => 'eye', 'variant' => 'outline', 'href' => site_url('os'), 'attrs' => ['data-agenda-link' => 'url']]),
         ],
     ]) ?>
 <?php } ?>

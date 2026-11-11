@@ -12,7 +12,7 @@
  * - Os textos livres são texto simples; a formatação do editor antigo
  *   (Trumbowyg) sai ao salvar, e as quebras de linha ficam.
  * - Produtos, serviços, anexos, anotações, desconto e faturamento ficam na
- *   tela da OS (os/visualizar), linkada no topo ao editar.
+ *   tela do atendimento (os/visualizar), linkada no topo ao editar.
  *
  * @var object|null             $os         null ao cadastrar
  * @var array<string, string>   $valores    osValoresDoFormulario()
@@ -58,16 +58,16 @@ $statusOpcoes = array_combine(array_keys(OS_STATUS_VARIANTES), array_keys(OS_STA
     <header class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex flex-col gap-1">
             <div class="flex flex-wrap items-center gap-3">
-                <h1 class="font-display text-heading-xl text-text"><?= e($editando ? 'Editar OS #' . $os->idOs : 'Nova OS') ?></h1>
+                <h1 class="font-display text-heading-xl text-text"><?= e($editando ? 'Editar atendimento #' . $os->idOs : 'Novo atendimento') ?></h1>
                 <?php if ($editando) { ?>
                     <?= component('pill-status', osStatusPill($os->status)) ?>
                 <?php } ?>
             </div>
-            <p class="text-caption text-muted"><?= e($editando ? $os->nomeCliente : 'Os produtos e serviços são adicionados depois de criar a OS.') ?></p>
+            <p class="text-caption text-muted"><?= e($editando ? $os->nomeCliente : 'Os produtos e serviços são adicionados depois de criar o atendimento.') ?></p>
         </div>
         <?php if ($pode['ver_os']) { ?>
             <?= component('button', [
-                'label' => 'Ver OS, itens e faturamento',
+                'label' => 'Ver atendimento, itens e faturamento',
                 'icon' => 'eye',
                 'variant' => 'outline',
                 'href' => site_url('os/visualizar/' . (int) $os->idOs),
@@ -85,7 +85,7 @@ $statusOpcoes = array_combine(array_keys(OS_STATUS_VARIANTES), array_keys(OS_STA
         <input type="hidden" name="<?= e($this->security->get_csrf_token_name()) ?>" value="<?= e($this->security->get_csrf_hash()) ?>">
 
         <section class="<?= e($caixa) ?>" aria-labelledby="secao-responsaveis">
-            <h2 id="secao-responsaveis" class="text-heading-sm text-text">Cliente e responsável</h2>
+            <h2 id="secao-responsaveis" class="text-heading-sm text-text">Quem contrata e quem recebe o atendimento</h2>
             <div class="<?= e($grade) ?>">
                 <div<?= componenteAtributos($wrapper(site_url('os/autoCompleteCliente'), 'clientes_id', $pode['cadastrar_cliente'] ? [
                     'data-autocomplete-novo' => site_url('clientes/adicionar'),
@@ -93,25 +93,35 @@ $statusOpcoes = array_combine(array_keys(OS_STATUS_VARIANTES), array_keys(OS_STA
                     'data-autocomplete-novo-rotulo' => 'Cadastrar novo cliente',
                 ] : [])) ?>>
                     <?= component('input', $visivel('cliente', [
-                        'label' => 'Cliente',
+                        'label' => 'Cliente ou responsável pelo pagamento',
                         'required' => true,
                         'placeholder' => 'Nome, documento ou telefone',
                         'attrs' => [
                             'autofocus' => ! $editando,
-                            'data-msg-vazio' => 'Escolha o cliente da OS.',
+                            'data-msg-vazio' => 'Escolha o cliente do atendimento.',
                             'data-msg-invalido' => 'Escolha um cliente da lista.',
                         ],
                     ])) ?>
                     <input<?= componenteAtributos($oculto('clientes_id')) ?>>
                 </div>
+                <?= component('select', [
+                    'name' => 'dependente_id',
+                    'label' => 'Quem recebe o atendimento',
+                    'placeholder' => 'A própria cliente',
+                    'options' => array_column($dependentes, 'nome', 'id'),
+                    'selected' => $valores['dependente_id'] ?: null,
+                    'error' => $errosDeCampo['dependente_id'] ?? null,
+                    'help' => 'Para bebês, cadastre o dependente na ficha da responsável. Em branco, o atendimento é para a própria cliente.',
+                    'attrs' => ['data-dependentes-url' => site_url('os/dependentes')],
+                ]) ?>
                 <div<?= componenteAtributos($wrapper(site_url('os/autoCompleteUsuario'), 'usuarios_id')) ?>>
                     <?= component('input', $visivel('tecnico', [
-                        'label' => 'Técnico responsável',
+                        'label' => 'Profissional responsável',
                         'required' => true,
-                        'placeholder' => 'Nome do técnico',
+                        'placeholder' => 'Nome da profissional',
                         'attrs' => [
-                            'data-msg-vazio' => 'Escolha o técnico responsável.',
-                            'data-msg-invalido' => 'Escolha um técnico da lista.',
+                            'data-msg-vazio' => 'Escolha a profissional responsável.',
+                            'data-msg-invalido' => 'Escolha uma profissional da lista.',
                         ],
                     ])) ?>
                     <input<?= componenteAtributos($oculto('usuarios_id')) ?>>
@@ -129,7 +139,7 @@ $statusOpcoes = array_combine(array_keys(OS_STATUS_VARIANTES), array_keys(OS_STA
                     'options' => $statusOpcoes,
                     'selected' => $valores['status'] !== '' ? $valores['status'] : null,
                     'error' => $errosDeCampo['status'] ?? null,
-                    'help' => $editando ? 'Cancelar a OS devolve os produtos ao estoque.' : null,
+                    'help' => $editando ? 'Cancelar o atendimento devolve os produtos ao estoque.' : null,
                 ]) ?>
                 <div class="hidden sm:block" aria-hidden="true"></div>
                 <?= component('input', [
@@ -148,7 +158,7 @@ $statusOpcoes = array_combine(array_keys(OS_STATUS_VARIANTES), array_keys(OS_STA
                     'required' => true,
                     'value' => $valores['dataFinal'] !== '' ? $valores['dataFinal'] : null,
                     'error' => $errosDeCampo['dataFinal'] ?? null,
-                    'help' => 'Previsão de entrega ao cliente.',
+                    'help' => 'Data prevista para conclusão do atendimento.',
                     'attrs' => ['data-msg-vazio' => 'Informe a data final.'],
                 ]) ?>
                 <?= component('input', [
@@ -164,7 +174,7 @@ $statusOpcoes = array_combine(array_keys(OS_STATUS_VARIANTES), array_keys(OS_STA
                     <?= component('input', $visivel('termoGarantia', [
                         'label' => 'Termo de garantia',
                         'placeholder' => 'Opcional',
-                        'help' => 'Texto impresso no termo de garantia da OS.',
+                        'help' => 'Texto impresso no termo de garantia do atendimento.',
                         'attrs' => ['data-msg-invalido' => 'Escolha um termo da lista ou deixe o campo em branco.'],
                     ])) ?>
                     <input<?= componenteAtributos($oculto('garantias_id')) ?>>
@@ -173,18 +183,18 @@ $statusOpcoes = array_combine(array_keys(OS_STATUS_VARIANTES), array_keys(OS_STA
         </section>
 
         <section class="<?= e($caixa) ?>" aria-labelledby="secao-equipamento">
-            <h2 id="secao-equipamento" class="text-heading-sm text-text">Equipamento e serviço</h2>
+            <h2 id="secao-equipamento" class="text-heading-sm text-text">Serviço e informações do atendimento</h2>
             <div class="<?= e($grade) ?>">
-                <?= component('textarea', $texto('descricaoProduto', 'Descrição do produto ou serviço', 'Equipamento, modelo, número de série, acessórios.')) ?>
-                <?= component('textarea', $texto('defeito', 'Defeito', 'O que o cliente relatou.')) ?>
+                <?= component('textarea', $texto('descricaoProduto', 'Serviço solicitado', 'Ex.: perfuração de orelha, consultoria de amamentação ou doula.')) ?>
+                <?= component('textarea', $texto('defeito', 'Motivo do atendimento', 'O que o cliente relatou.')) ?>
                 <?= component('textarea', $texto('observacoes', 'Observações')) ?>
-                <?= component('textarea', $texto('laudoTecnico', 'Laudo técnico', 'Diagnóstico e o que foi feito.')) ?>
+                <?= component('textarea', $texto('laudoTecnico', 'Registro do atendimento', 'O que foi realizado e orientações fornecidas.')) ?>
             </div>
         </section>
 
         <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <?= component('button', ['label' => 'Cancelar', 'variant' => 'ghost', 'href' => site_url('os')]) ?>
-            <?= component('button', ['label' => $editando ? 'Salvar alterações' : 'Criar OS', 'icon' => 'save', 'type' => 'submit', 'attrs' => ['data-rotulo-carregando' => 'Salvando…']]) ?>
+            <?= component('button', ['label' => $editando ? 'Salvar alterações' : 'Criar atendimento', 'icon' => 'save', 'type' => 'submit', 'attrs' => ['data-rotulo-carregando' => 'Salvando…']]) ?>
         </div>
     </form>
 

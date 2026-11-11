@@ -77,7 +77,7 @@ if (! function_exists('layoutMenu')) {
             ['grupo' => 'Operação', 'label' => 'Produtos', 'icon' => 'shopping-basket', 'url' => 'produtos', 'rota' => ['Produtos', 'index'], 'ativo' => ['Produtos']],
             ['grupo' => 'Operação', 'label' => 'Serviços', 'icon' => 'wrench', 'url' => 'servicos', 'rota' => ['Servicos', 'index'], 'ativo' => ['Servicos']],
             ['grupo' => 'Operação', 'label' => 'Vendas', 'icon' => 'shopping-cart', 'url' => 'vendas', 'rota' => ['Vendas', 'index'], 'ativo' => ['Vendas']],
-            ['grupo' => 'Operação', 'label' => 'Ordens de Serviço', 'icon' => 'file-text', 'url' => 'os', 'rota' => ['Os', 'index'], 'ativo' => ['Os']],
+            ['grupo' => 'Operação', 'label' => 'Atendimentos', 'icon' => 'file-text', 'url' => 'os', 'rota' => ['Os', 'index'], 'ativo' => ['Os']],
             ['grupo' => 'Operação', 'label' => 'Termos de Garantias', 'icon' => 'receipt', 'url' => 'garantias', 'rota' => ['Garantias', 'index'], 'ativo' => ['Garantias']],
             ['grupo' => 'Financeiro', 'label' => 'Lançamentos', 'icon' => 'chart-column', 'url' => 'financeiro/lancamentos', 'rota' => ['Financeiro', 'lancamentos'], 'ativo' => ['Financeiro']],
             ['grupo' => 'Financeiro', 'label' => 'Cobranças', 'icon' => 'circle-dollar-sign', 'url' => 'cobrancas/cobrancas', 'rota' => ['Cobrancas', 'cobrancas'], 'ativo' => ['Cobrancas']],
@@ -89,7 +89,7 @@ if (! function_exists('layoutMenu')) {
                     ['label' => 'Clientes', 'url' => 'relatorios/clientes', 'rota' => ['Relatorios', 'clientes'], 'ativo' => ['Relatorios/clientes', 'Relatorios/clientesCustom', 'Relatorios/clientesRapid']],
                     ['label' => 'Produtos', 'url' => 'relatorios/produtos', 'rota' => ['Relatorios', 'produtos'], 'ativo' => ['Relatorios/produtos', 'Relatorios/produtosCustom', 'Relatorios/produtosRapid', 'Relatorios/produtosRapidMin', 'Relatorios/produtosEtiquetas']],
                     ['label' => 'Serviços', 'url' => 'relatorios/servicos', 'rota' => ['Relatorios', 'servicos'], 'ativo' => ['Relatorios/servicos', 'Relatorios/servicosCustom', 'Relatorios/servicosRapid']],
-                    ['label' => 'Ordens de Serviço', 'url' => 'relatorios/os', 'rota' => ['Relatorios', 'os'], 'ativo' => ['Relatorios/os', 'Relatorios/osCustom', 'Relatorios/osRapid']],
+                    ['label' => 'Atendimentos', 'url' => 'relatorios/os', 'rota' => ['Relatorios', 'os'], 'ativo' => ['Relatorios/os', 'Relatorios/osCustom', 'Relatorios/osRapid']],
                     ['label' => 'Vendas', 'url' => 'relatorios/vendas', 'rota' => ['Relatorios', 'vendas'], 'ativo' => ['Relatorios/vendas', 'Relatorios/vendasCustom', 'Relatorios/vendasRapid']],
                     ['label' => 'Financeiro', 'url' => 'relatorios/financeiro', 'rota' => ['Relatorios', 'financeiro'], 'ativo' => ['Relatorios/financeiro', 'Relatorios/financeiroCustom', 'Relatorios/financeiroRapid']],
                     ['label' => 'SKU', 'url' => 'relatorios/sku', 'rota' => ['Relatorios', 'sku'], 'ativo' => ['Relatorios/sku', 'Relatorios/skuCustom', 'Relatorios/skuRapid']],
@@ -230,7 +230,7 @@ if (! defined('LAYOUT_ROTULOS')) {
     // Nome dos módulos no breadcrumb, com acento (o segmento da URL não tem).
     define('LAYOUT_ROTULOS', [
         'servicos' => 'Serviços',
-        'os' => 'Ordens de serviço',
+        'os' => 'Atendimentos',
         'cobrancas' => 'Cobranças',
         'relatorios' => 'Relatórios',
         'sku' => 'SKU',

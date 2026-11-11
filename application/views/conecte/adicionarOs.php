@@ -1,6 +1,6 @@
 <?php
 /**
- * Abrir uma OS pela área do cliente (#2848), no padrão dos formulários
+ * Solicitar atendimento pela área do cliente (#2848), no padrão dos formulários
  * (#2851): POST comum, validação no navegador (formulario/padrao) e no
  * servidor, erro em cada campo. Só a descrição é obrigatória.
  *
@@ -19,12 +19,12 @@ $texto = static fn (string $nome, array $props) => [
 ?>
 <div class="flex max-w-3xl flex-col gap-4">
     <div>
-        <?= component('button', ['label' => 'Ordens de serviço', 'icon' => 'chevron-left', 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('mine/os'), 'class' => '-ml-3']) ?>
+        <?= component('button', ['label' => 'Atendimentos', 'icon' => 'chevron-left', 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('mine/os'), 'class' => '-ml-3']) ?>
     </div>
 
     <header>
-        <h1 class="font-display text-heading-xl text-text">Abrir ordem de serviço</h1>
-        <p class="text-caption text-muted">Conte o que precisa. A assistência recebe o pedido e entra em contato.</p>
+        <h1 class="font-display text-heading-xl text-text">Abrir atendimento</h1>
+        <p class="text-caption text-muted">Conte o que precisa. A profissional recebe o pedido e entra em contato.</p>
     </header>
 
     <?php if ($erroGeral !== null) { ?>
@@ -37,29 +37,38 @@ $texto = static fn (string $nome, array $props) => [
         <input type="hidden" name="<?= e($this->security->get_csrf_token_name()) ?>" value="<?= e($this->security->get_csrf_hash()) ?>">
 
         <section class="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 sm:p-6" aria-label="Pedido">
+            <?= component('select', [
+                'name' => 'dependente_id',
+                'label' => 'Quem recebe o atendimento',
+                'placeholder' => 'Eu mesma',
+                'options' => array_column($dependentes ?? [], 'nome', 'id'),
+                'selected' => $dependente_id ?? null,
+                'error' => $errosDeCampo['dependente_id'] ?? null,
+                'help' => 'Se o bebê não aparecer, solicite o cadastro à profissional.',
+            ]) ?>
             <?= component('textarea', $texto('descricaoProduto', [
-                'label' => 'Equipamento ou serviço',
+                'label' => 'Serviço solicitado',
                 'rows' => 3,
                 'required' => true,
-                'placeholder' => 'Ex.: notebook Dell Inspiron 15, cinza',
-                'help' => 'Marca, modelo e o que mais ajudar a identificar.',
-                'attrs' => ['autofocus' => true, 'data-msg-vazio' => 'Descreva o equipamento ou o serviço.'],
+                'placeholder' => 'Ex.: consultoria de amamentação ou perfuração de orelha',
+                'help' => 'Informe o serviço que deseja contratar.',
+                'attrs' => ['autofocus' => true, 'data-msg-vazio' => 'Informe o serviço desejado.'],
             ])) ?>
             <?= component('textarea', $texto('defeito', [
-                'label' => 'Defeito ou problema',
+                'label' => 'Motivo do atendimento',
                 'rows' => 4,
-                'placeholder' => 'Ex.: não liga depois que caiu café no teclado',
+                'placeholder' => 'Conte o que precisa e suas dúvidas.',
             ])) ?>
             <?= component('textarea', $texto('observacoes', [
                 'label' => 'Observações',
                 'rows' => 3,
-                'help' => 'Acessórios que vão junto, melhor horário para contato…',
+                'help' => 'Melhor horário para contato e outras informações…',
             ])) ?>
         </section>
 
         <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <?= component('button', ['label' => 'Cancelar', 'variant' => 'ghost', 'href' => site_url('mine/os')]) ?>
-            <?= component('button', ['label' => 'Abrir OS', 'icon' => 'plus', 'type' => 'submit', 'attrs' => ['data-rotulo-carregando' => 'Enviando…']]) ?>
+            <?= component('button', ['label' => 'Solicitar atendimento', 'icon' => 'plus', 'type' => 'submit', 'attrs' => ['data-rotulo-carregando' => 'Enviando…']]) ?>
         </div>
     </form>
 </div>

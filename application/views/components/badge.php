@@ -2,7 +2,7 @@
 /**
  * Contador ou categoria pequena (ex. "18" ao lado de um item do menu).
  *
- * Para o estado de uma OS, venda ou cobrança use pill-status: badge não tem
+ * Para o estado de um atendimento, venda ou cobrança use pill-status: badge não tem
  * cor de status (DESIGN.md).
  *
  * @var string      $label

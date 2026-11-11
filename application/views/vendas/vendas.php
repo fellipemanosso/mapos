@@ -32,7 +32,7 @@ $colunas = [
     ['label' => 'Total', 'align' => 'right', 'nowrap' => true, 'render' => fn ($v) => dinheiro($v->total)],
     ['label' => 'Ações', 'align' => 'right', 'nowrap' => true, 'render' => function ($v) use ($pode, $controle_edicao) {
         $numero = 'venda ' . $v->idVendas;
-        // Mesma regra da OS: faturada ou cancelada só edita com a configuração ligada.
+        // Mesma regra do atendimento: faturada ou cancelada só edita com a configuração ligada.
         $editavel = osEditavel($v, $pode['editar'], $controle_edicao);
         $acoes = [
             component('button', ['label' => 'Ver ' . $numero, 'icon' => 'eye', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('vendas/visualizar/' . $v->idVendas)]),

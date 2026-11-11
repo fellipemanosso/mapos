@@ -191,14 +191,14 @@ final class ContaEBuscaTest extends MaposTestCase
 
         $this->semLegado($html);
         $this->assertStringNotContainsString('<img src=x', $html);
-        foreach (['Clientes e fornecedores', 'Ordens de serviço', 'Produtos', 'Serviços'] as $grupo) {
+        foreach (['Clientes e fornecedores', 'Atendimentos', 'Produtos', 'Serviços'] as $grupo) {
             $this->assertStringContainsString($grupo, $html);
         }
         $this->assertStringContainsString('4 resultados para “ana”', $html);
         $this->assertStringContainsString('href="http://mapos.test/index.php/os/visualizar/41"', $html);
         $this->assertStringContainsString('href="http://mapos.test/index.php/servicos/editar/7"', $html);
         $this->assertStringContainsString('R$ 99,90', $html);
-        $this->assertStringContainsString('Notebook Dell', $html, 'Texto curto da OS, sem tags.');
+        $this->assertStringContainsString('Notebook Dell', $html, 'Texto curto do atendimento, sem tags.');
         $this->assertStringContainsString('Em Andamento', $html);
     }
 
@@ -207,7 +207,7 @@ final class ContaEBuscaTest extends MaposTestCase
         $html = $this->busca(['pode' => ['clientes' => true, 'os' => false, 'produtos' => false, 'servicos' => false, 'editar_cliente' => false, 'editar_os' => false, 'editar_produto' => false, 'editar_servico' => false], 'os' => [], 'produtos' => [], 'servicos' => []]);
 
         $this->assertStringContainsString('Clientes e fornecedores', $html);
-        $this->assertStringNotContainsString('Ordens de serviço', $html);
+        $this->assertStringNotContainsString('Atendimentos', $html);
         $this->assertStringNotContainsString('clientes/editar/3', $html, 'Sem eCliente, sem o botão de editar.');
         $this->assertStringContainsString('clientes/visualizar/3', $html);
 

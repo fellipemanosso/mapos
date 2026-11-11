@@ -46,7 +46,7 @@ $vazio = $temFiltro
     ])
     : component('empty-state', [
         'title' => 'Nenhum serviço cadastrado',
-        'message' => 'Os serviços cadastrados aparecem aqui e podem ser usados nas ordens de serviço.',
+        'message' => 'Os serviços cadastrados aparecem aqui e podem ser usados nas atendimentos.',
         'icon' => 'wrench',
         'action' => $pode['adicionar'] ? component('button', ['label' => 'Cadastrar serviço', 'icon' => 'plus', 'variant' => 'outline', 'href' => site_url('servicos/adicionar')]) : null,
         'class' => 'border-0',
@@ -98,7 +98,7 @@ $vazio = $temFiltro
         // O nome entra pelo modal.js (textContent); aqui só o marcador vazio.
         'message' => [
             new HtmlSeguro('<strong class="font-semibold text-text" data-modal-valor="nome"></strong>'),
-            ' será removido do catálogo e também das ordens de serviço em que foi usado. Essa ação não pode ser desfeita.',
+            ' será removido do catálogo e também das atendimentos em que foi usado. Essa ação não pode ser desfeita.',
         ],
         'confirm_label' => 'Excluir',
         'confirm_attrs' => ['form' => 'form-excluir-servico'],

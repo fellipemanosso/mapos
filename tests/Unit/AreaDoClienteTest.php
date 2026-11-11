@@ -89,7 +89,7 @@ final class AreaDoClienteTest extends MaposTestCase
 
     public function testCobrancaApontaParaAsTelasDoCliente(): void
     {
-        $this->assertSame(['label' => 'OS #5', 'href' => 'http://mapos.test/index.php/mine/visualizarOs/5'], conecteReferenciaDaCobranca((object) ['os_id' => '5', 'vendas_id' => null]));
+        $this->assertSame(['label' => 'Atendimento #5', 'href' => 'http://mapos.test/index.php/mine/visualizarOs/5'], conecteReferenciaDaCobranca((object) ['os_id' => '5', 'vendas_id' => null]));
         $this->assertSame(['label' => 'Venda #8', 'href' => 'http://mapos.test/index.php/mine/visualizarCompra/8'], conecteReferenciaDaCobranca((object) ['os_id' => null, 'vendas_id' => '8']));
         $this->assertNull(conecteReferenciaDaCobranca((object) ['os_id' => null, 'vendas_id' => null, 'charge_id' => 'ch_1', 'idCobranca' => 3])['href']);
     }
@@ -235,12 +235,12 @@ final class AreaDoClienteTest extends MaposTestCase
         $this->assertSame(2, substr_count($html, 'aria-current="page"'), 'O item ativo nos dois menus.');
         $this->assertMatchesRegularExpression('#<nav class="ml-2 hidden lg:block"#', $html, 'Top Nav a partir de lg; abaixo, a tabbar.');
         $this->assertDoesNotMatchRegularExpression('#rounded-md px-3(?! whitespace-nowrap)[^"]*text-on-dark-muted#', $html, 'Rótulos da Top Nav numa linha só.');
-        $this->assertStringNotContainsString('>Ordens de serviço</a>', $html, 'Top Nav com os rótulos curtos.');
+        $this->assertStringNotContainsString('>Atendimentos</a>', $html, 'Top Nav com os rótulos curtos.');
         $this->assertStringContainsString('href="http://mapos.test/index.php/mine/sair"', $html);
         $this->assertStringNotContainsString('login/sair', $html, 'Sair da área do cliente, não do painel.');
         $this->assertSame(2, substr_count($html, 'bg-primary text-on-primary text-button-cap'), 'Só "Abrir OS" é button-primary (texto e só ícone).');
         $this->assertStringContainsString('Olá, Ana', $html);
-        $this->assertStringContainsString('Nenhuma ordem de serviço ainda', $html);
+        $this->assertStringContainsString('Nenhum atendimento ainda', $html);
     }
 
     public function testListaDeOsComStatusEAcoes(): void
@@ -327,7 +327,7 @@ final class AreaDoClienteTest extends MaposTestCase
 
         $this->semScriptInline($html);
         $this->assertStringNotContainsString($xss, $html);
-        $this->assertStringContainsString('OS #7', $html);
+        $this->assertStringContainsString('Atendimento #7', $html);
         $this->assertStringContainsString('Em Andamento', $html);
         $this->assertStringContainsString('R$ 150,00', $html);
         $this->assertStringNotContainsString('trash-2', $html, 'Sem as ações de edição do painel.');
@@ -386,13 +386,13 @@ final class AreaDoClienteTest extends MaposTestCase
     {
         $html = $this->tela('conecte/adicionarOs', 'os', [
             'valores' => ['descricaoProduto' => '', 'defeito' => 'Não liga </textarea><script>x</script>', 'observacoes' => ''],
-            'erros' => ['descricaoProduto' => 'O campo Equipamento ou serviço é obrigatório.'],
+            'erros' => ['descricaoProduto' => 'O campo Serviço solicitado é obrigatório.'],
         ]);
 
         $this->semScriptInline($html);
         $this->assertStringContainsString('action="http://mapos.test/index.php/mine/adicionarOs"', $html);
         $this->assertStringContainsString('Não liga &lt;/textarea&gt;&lt;script&gt;x&lt;/script&gt;</textarea>', $html);
-        $this->assertStringContainsString('O campo Equipamento ou serviço é obrigatório.', $html);
+        $this->assertStringContainsString('O campo Serviço solicitado é obrigatório.', $html);
         $this->assertMatchesRegularExpression('/<textarea[^>]*name="descricaoProduto"[^>]*required/', $html);
         $this->assertMatchesRegularExpression('/<textarea[^>]*name="defeito"[^>]*maxlength="2000"/', $html);
     }

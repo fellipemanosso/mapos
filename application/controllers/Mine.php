@@ -453,7 +453,9 @@ class Mine extends CI_Controller
     public function adicionarOs()
     {
         $idCliente = $this->clienteLogado();
+        $this->load->model('dependentes_model');
         $erros = [];
+        $dependenteId = null;
 
         if ($this->input->method() === 'post') {
             $erros = $this->validarRegras([
@@ -462,9 +464,17 @@ class Mine extends CI_Controller
                 ['field' => 'observacoes', 'label' => 'Observações', 'rules' => 'trim|max_length[2000]'],
             ]);
 
+            $dependente = $this->input->post('dependente_id');
+            if ($dependente !== null && $dependente !== '') {
+                if (! is_string($dependente) || ! ctype_digit($dependente) || ! $this->dependentes_model->doResponsavel((int) $dependente, $idCliente)) {
+                    $erros['dependente_id'] = 'Escolha um dependente do seu cadastro.';
+                } else {
+                    $dependenteId = (int) $dependente;
+                }
+            }
             $tecnico = $erros === [] ? $this->tecnicoParaNovaOs() : null;
             if ($erros === [] && $tecnico === null) {
-                $erros['_geral'] = 'Não foi possível abrir a OS agora. Fale com a assistência.';
+                $erros['_geral'] = 'Não foi possível abrir a OS agora. Fale com a profissional.';
             }
 
             if ($erros === []) {
@@ -472,6 +482,7 @@ class Mine extends CI_Controller
                 $dados = [
                     'dataInicial' => date('Y-m-d'),
                     'clientes_id' => $idCliente,
+                    'dependente_id' => $dependenteId,
                     'usuarios_id' => $tecnico,
                     'dataFinal' => date('Y-m-d'),
                     'descricaoProduto' => $texto('descricaoProduto'),
@@ -494,7 +505,7 @@ class Mine extends CI_Controller
                     $remetentes[] = (string) $this->session->userdata('email');
 
                     $this->enviarOsPorEmail($idOs, $remetentes, 'Nova Ordem de Serviço #' . $idOs . ' - Criada pelo Cliente');
-                    $this->session->set_flashdata('success', 'OS #' . $idOs . ' aberta. A assistência vai entrar em contato.');
+                    $this->session->set_flashdata('success', 'OS #' . $idOs . ' aberta. A profissional vai entrar em contato.');
 
                     return redirect('mine/visualizarOs/' . $idOs);
                 }
@@ -504,6 +515,8 @@ class Mine extends CI_Controller
         }
 
         return $this->tela('conecte/adicionarOs', 'os', [
+            'dependentes' => $this->dependentes_model->doCliente($idCliente),
+            'dependente_id' => $dependenteId,
             'valores' => array_map(fn ($campo) => is_string($this->input->post($campo)) ? $this->input->post($campo) : '', ['descricaoProduto' => 'descricaoProduto', 'defeito' => 'defeito', 'observacoes' => 'observacoes']),
             'erros' => $erros,
         ]);
@@ -757,7 +770,7 @@ class Mine extends CI_Controller
     /** Ação principal das telas de OS: abrir uma nova (topo da moldura). */
     private function acaoAbrirOs(): array
     {
-        return ['label' => 'Abrir OS', 'icon' => 'plus', 'href' => site_url('mine/adicionarOs')];
+        return ['label' => 'Solicitar atendimento', 'icon' => 'plus', 'href' => site_url('mine/adicionarOs')];
     }
 
     /**

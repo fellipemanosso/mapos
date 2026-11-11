@@ -5,7 +5,7 @@
  * levam o item em data-valor-id, data-valor-nome, data-valor-tipo e
  * data-valor-desconto; o formulário oculto é enviado sem recarregar pelo
  * módulo os/tela. O servidor revalida e calcula o subtotal. Usado pelas
- * telas da OS e da venda.
+ * telas do atendimento e da venda.
  *
  * @var string     $tipo            produto ou servico
  * @var string     $rota            rota do endpoint (ex. os/descontoProduto)

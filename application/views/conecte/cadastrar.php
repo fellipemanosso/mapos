@@ -21,7 +21,7 @@ include APPPATH . 'views/entrada/inicio.php';
     <main class="mx-auto w-full max-w-3xl flex-1 px-4 py-6 lg:py-10" <?= js_module('clientes/formulario') ?>>
         <header class="mb-6">
             <h1 class="font-display text-display-hero-sm font-bold text-on-dark sm:text-display-large">Crie sua <span class="rounded-xs bg-accent-lime px-3 text-ink">conta</span>.</h1>
-            <p class="mt-2 max-w-xl text-body-lg text-on-dark-muted">Acompanhe as ordens de serviço, as compras e as cobranças pela área do cliente.</p>
+            <p class="mt-2 max-w-xl text-body-lg text-on-dark-muted">Acompanhe as atendimentos, as compras e as cobranças pela área do cliente.</p>
         </header>
 
         <div class="superficie-entrada flex flex-col gap-4 rounded-xxl border border-hairline-violet bg-night p-4 text-text sm:p-8">

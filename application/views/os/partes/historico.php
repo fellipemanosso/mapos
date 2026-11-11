@@ -1,6 +1,6 @@
 <?php
 /**
- * Linha do tempo dos status da OS (#2842), da mudança mais recente à mais
+ * Linha do tempo dos status do atendimento (#2842), da mudança mais recente à mais
  * antiga (tabela os_historico). OS anteriores a esta versão não têm
  * histórico.
  *
@@ -19,7 +19,7 @@ if (! $historico_disponivel) { ?>
 if ($historico === []) { ?>
     <?= component('empty-state', [
         'title' => 'Histórico disponível a partir desta versão',
-        'message' => 'As próximas mudanças de status desta OS aparecem aqui, com quem mudou e quando.',
+        'message' => 'As próximas mudanças de status desto atendimento aparecem aqui, com quem mudou e quando.',
         'icon' => 'history',
     ]) ?>
 <?php return;

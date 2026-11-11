@@ -105,7 +105,7 @@ $secoes = [
             new HtmlSeguro('<strong class="font-semibold text-text">'),
             $produto->descricao,
             new HtmlSeguro('</strong>'),
-            ' será removido do catálogo e também das ordens de serviço e das vendas em que foi usado. Essa ação não pode ser desfeita.',
+            ' será removido do catálogo e também das atendimentos e das vendas em que foi usado. Essa ação não pode ser desfeita.',
         ],
         'confirm_label' => 'Excluir',
         'confirm_attrs' => ['form' => 'form-excluir-produto'],

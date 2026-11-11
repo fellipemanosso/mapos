@@ -233,7 +233,7 @@ $config = [
         ],
         [
             'field' => 'usuarios_id',
-            'label' => 'Técnico responsável',
+            'label' => 'Profissional responsável',
             'rules' => 'trim|required',
         ],
         [

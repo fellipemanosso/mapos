@@ -163,9 +163,9 @@
                 <td colspan="4" style="text-align: left">
                     Por favor leia as instruções abaixo para enviar seu aparelho para o nosso time técnico: <br><br>
                     1 - Entre em contato pelo nosso WhatsApp <?= e($emitente->telefone) ?> e nos informe que vai nos enviar seu aparelho; <br>
-                    2 - Entre no nosso sistema e crie sua própria Ordem de Serviço, descrevendo o defeito ou serviço a realizar no aparelho, fazendo suas observações; <br>
-                    3 - Para criar uma nova Ordem de Serviço, entre no nosso sistema com seu email (usuário) e CPF (senha). Uma vez no sistema, clique em "Ordens de Serviço" e "+Adicionar OS"; <br>
-                    4 - Depois da Ordem de Serviço criada, você receberá um e-mail de confirmação e poderá enviar seu aparelho para o endereço que está no cabeçalho deste e-mail. <br>
+                    2 - Entre no nosso sistema e crie sua própria Atendimento, descrevendo o defeito ou serviço a realizar no aparelho, fazendo suas observações; <br>
+                    3 - Para criar uma nova Atendimento, entre no nosso sistema com seu email (usuário) e CPF (senha). Uma vez no sistema, clique em "Atendimentos" e "+Adicionar OS"; <br>
+                    4 - Depois da Atendimento criada, você receberá um e-mail de confirmação e poderá enviar seu aparelho para o endereço que está no cabeçalho deste e-mail. <br>
                 </td>
             </tr>
             <tr class="details">

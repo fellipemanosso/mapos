@@ -9,7 +9,7 @@
  *     <?= component('button', ['label' => 'Excluir', 'variant' => 'danger', 'attrs' => ['data-modal-abrir' => 'excluir-os']]) ?>
  *     <?= component('modal-confirm', [
  *         'id' => 'excluir-os',
- *         'title' => 'Excluir OS #1042?',
+ *         'title' => 'Excluir Atendimento #1042?',
  *         'message' => 'Produtos, serviços e anexos também serão removidos.',
  *         'confirm_attrs' => ['form' => 'form-excluir-os'],
  *     ]) ?>

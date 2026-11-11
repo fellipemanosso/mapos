@@ -27,7 +27,7 @@ include APPPATH . 'views/entrada/inicio.php';
             <h1 class="font-display text-display-hero-sm font-bold text-on-dark sm:text-display-large xl:text-display-hero">
                 Acompanhe suas <span class="rounded-xs bg-accent-lime px-3 text-ink">ordens</span>.
             </h1>
-            <p class="max-w-xl text-body-lg text-on-dark-muted max-sm:hidden">Consulte o andamento das ordens de serviço, suas compras e cobranças, e abra novos pedidos.</p>
+            <p class="max-w-xl text-body-lg text-on-dark-muted max-sm:hidden">Consulte o andamento das atendimentos, suas compras e cobranças, e abra novos pedidos.</p>
         </section>
 
         <section class="superficie-entrada w-full rounded-xxl border border-hairline-violet bg-night p-6 text-text sm:p-8" aria-labelledby="titulo-login">

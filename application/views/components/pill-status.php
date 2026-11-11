@@ -1,6 +1,6 @@
 <?php
 /**
- * Estado de uma OS, venda ou cobrança (DESIGN.md pill-status).
+ * Estado de um atendimento, venda ou cobrança (DESIGN.md pill-status).
  *
  * Sempre com a palavra, nunca só a cor; texto -ink sobre -soft, com contraste
  * conferido nos dois modos. O laranja nunca indica status.

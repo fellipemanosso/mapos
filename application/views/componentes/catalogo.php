@@ -104,11 +104,11 @@ $statusOs = [
         <?= componenteConteudo($secao('Campos de formulário', 'Label associado, ajuda e erro ligados por aria-describedby, aria-invalid no erro.')) ?>
         <form class="grid gap-4 md:grid-cols-2" action="#" method="post">
             <?= component('input', ['name' => 'nome', 'label' => 'Nome', 'required' => true, 'placeholder' => 'Nome completo']) ?>
-            <?= component('input', ['name' => 'email', 'type' => 'email', 'label' => 'E-mail', 'help' => 'Usado para enviar a OS ao cliente.']) ?>
+            <?= component('input', ['name' => 'email', 'type' => 'email', 'label' => 'E-mail', 'help' => 'Usado para enviar o atendimento ao cliente.']) ?>
             <?= component('input', ['name' => 'documento', 'label' => 'CPF/CNPJ', 'value' => '111.111.111-11', 'error' => 'O campo CPF/CNPJ não é um CPF ou CNPJ válido.']) ?>
             <?= component('input', ['name' => 'codigo', 'label' => 'Código', 'value' => 'CLI-0001', 'readonly' => true]) ?>
             <?= component('input', ['name' => 'total', 'label' => 'Valor total', 'value' => 'R$ 480,00', 'disabled' => true, 'help' => 'Calculado pelos produtos e serviços.']) ?>
-            <?= component('input', ['name' => 'busca', 'type' => 'search', 'label' => 'Buscar', 'placeholder' => 'Nº da OS, cliente ou equipamento']) ?>
+            <?= component('input', ['name' => 'busca', 'type' => 'search', 'label' => 'Buscar', 'placeholder' => 'Nº do atendimento, cliente ou equipamento']) ?>
             <?= component('select', [
                 'name' => 'tipo',
                 'label' => 'Tipo de cliente',
@@ -128,7 +128,7 @@ $statusOs = [
                 <?= component('textarea', ['name' => 'observacoes', 'label' => 'Observações', 'value' => 'Texto com <b>tags</b> aparece escapado.', 'help' => 'Até 500 caracteres.']) ?>
             </div>
             <div class="flex flex-wrap items-start gap-x-8 gap-y-4 md:col-span-2">
-                <?= component('checkbox', ['name' => 'enviar_email', 'label' => 'Enviar e-mail ao cliente', 'checked' => true, 'help' => 'O cliente recebe o link da OS.']) ?>
+                <?= component('checkbox', ['name' => 'enviar_email', 'label' => 'Enviar e-mail ao cliente', 'checked' => true, 'help' => 'O cliente recebe o link do atendimento.']) ?>
                 <?= component('checkbox', ['name' => 'termos', 'label' => 'Aceito os termos', 'required' => true, 'error' => 'Marque para continuar.']) ?>
                 <?= component('checkbox', ['name' => 'bloqueado', 'label' => 'Desabilitado', 'disabled' => true]) ?>
                 <fieldset class="flex flex-col gap-2">
@@ -177,7 +177,7 @@ $statusOs = [
         </div>
 
         <?= componenteConteudo($secao('Abas (tabs)', 'Aba ativa com texto ink 600 e sublinhado laranja: o laranja fino nunca marca o estado sozinho.')) ?>
-        <?= component('tabs', ['label' => 'Seções da OS', 'items' => [
+        <?= component('tabs', ['label' => 'Seções do atendimento', 'items' => [
             ['label' => 'Detalhes', 'url' => site_url('componentes'), 'active' => true],
             ['label' => 'Produtos', 'url' => site_url('componentes'), 'count' => 2],
             ['label' => 'Serviços', 'url' => site_url('componentes'), 'count' => 1],
@@ -187,7 +187,7 @@ $statusOs = [
         <div class="max-w-md">
             <?= component('tabs', ['label' => 'Seções das configurações', 'items' => [
                 ['label' => 'Geral', 'url' => site_url('componentes'), 'icon' => 'settings'],
-                ['label' => 'Ordens de serviço', 'url' => site_url('componentes'), 'icon' => 'wrench'],
+                ['label' => 'Atendimentos', 'url' => site_url('componentes'), 'icon' => 'wrench'],
                 ['label' => 'Vendas e estoque', 'url' => site_url('componentes'), 'icon' => 'shopping-cart'],
                 ['label' => 'Financeiro', 'url' => site_url('componentes'), 'icon' => 'circle-dollar-sign'],
                 ['label' => 'E-mail', 'url' => site_url('componentes'), 'icon' => 'mail'],
@@ -294,10 +294,10 @@ $statusOs = [
 
         <?= componenteConteudo($secao('Estado vazio')) ?>
         <?= component('empty-state', [
-            'title' => 'Nenhuma ordem de serviço ainda',
-            'message' => 'Cadastre a primeira OS para acompanhar os serviços do cliente.',
+            'title' => 'Nenhum atendimento ainda',
+            'message' => 'Cadastre a primeiro atendimento para acompanhar os serviços do cliente.',
             'icon' => 'wrench',
-            'action' => component('button', ['label' => 'Nova OS', 'icon' => 'plus']),
+            'action' => component('button', ['label' => 'Novo atendimento', 'icon' => 'plus']),
         ]) ?>
     </main>
 

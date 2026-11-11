@@ -1,6 +1,6 @@
 <?php
 /**
- * Abas da tela da OS (#2842), por link (?aba=), com o total de cada lista.
+ * Abas da tela do atendimento (#2842), por link (?aba=), com o total de cada lista.
  * Volta renderizada pelos endpoints de itens para os contadores mudarem.
  *
  * @var object       $os
@@ -14,7 +14,7 @@ $idOs = (int) $os->idOs;
 $url = static fn (string $nome) => site_url('os/visualizar/' . $idOs) . ($nome === 'resumo' ? '' : listagemQuery(['aba' => $nome]));
 ?>
 <?= component('tabs', [
-    'label' => 'Seções da OS',
+    'label' => 'Seções do atendimento',
     'items' => [
         ['label' => 'Resumo', 'url' => $url('resumo'), 'active' => $aba === 'resumo', 'icon' => 'file-text'],
         ['label' => 'Produtos', 'url' => $url('produtos'), 'active' => $aba === 'produtos', 'icon' => 'package', 'count' => count($produtos)],

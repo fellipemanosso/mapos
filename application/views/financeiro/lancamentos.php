@@ -228,7 +228,7 @@ $resumo = ($total === 1 ? '1 lançamento' : number_format($total, 0, ',', '.') .
             new HtmlSeguro('<strong class="font-semibold text-text" data-modal-valor="descricao"></strong>'),
             ' (',
             new HtmlSeguro('<span data-modal-valor="valor"></span>'),
-            ') será removido do financeiro. Se for a fatura de uma venda ou de uma OS, ela volta a não faturada. Essa ação não pode ser desfeita.',
+            ') será removido do financeiro. Se for a fatura de uma venda ou de um atendimento, ela volta a não faturada. Essa ação não pode ser desfeita.',
         ],
         'confirm_label' => 'Excluir',
         'confirm_attrs' => ['form' => 'form-excluir-lancamento'],

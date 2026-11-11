@@ -230,7 +230,7 @@ if (! function_exists('osDadosDoFormulario')) {
 
         $tecnicoId = $id('usuarios_id');
         if ($tecnicoId === null) {
-            $erros['tecnico'] = 'Escolha um técnico da lista.';
+            $erros['tecnico'] = 'Escolha uma profissional da lista.';
         }
 
         $garantiaId = $id('garantias_id');
@@ -271,7 +271,7 @@ if (! function_exists('osValoresDoFormulario')) {
      */
     function osValoresDoFormulario(?array $post, ?object $os, array $padrao = []): array
     {
-        $campos = ['cliente', 'clientes_id', 'tecnico', 'usuarios_id', 'status', 'dataInicial', 'dataFinal', 'garantia', 'termoGarantia', 'garantias_id', ...OS_CAMPOS_TEXTO];
+        $campos = ['cliente', 'clientes_id', 'dependente_id', 'tecnico', 'usuarios_id', 'status', 'dataInicial', 'dataFinal', 'garantia', 'termoGarantia', 'garantias_id', ...OS_CAMPOS_TEXTO];
 
         if ($post !== null) {
             $valores = [];
@@ -286,6 +286,7 @@ if (! function_exists('osValoresDoFormulario')) {
             $valores = [
                 'cliente' => (string) ($os->nomeCliente ?? ''),
                 'clientes_id' => (string) ($os->clientes_id ?? ''),
+                'dependente_id' => (string) ($os->dependente_id ?? ''),
                 'tecnico' => (string) ($os->nome ?? ''),
                 'usuarios_id' => (string) ($os->usuarios_id ?? ''),
                 'status' => (string) ($os->status ?? ''),

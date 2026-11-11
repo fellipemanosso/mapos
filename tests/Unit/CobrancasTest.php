@@ -323,7 +323,7 @@ final class CobrancasTest extends MaposTestCase
         $this->assertStringNotContainsString('<script', $html);
         $this->assertStringContainsString('Aguardando', $html);
         $this->assertStringContainsString('R$ 150,90', $html, 'O total do gateway vem em centavos.');
-        $this->assertStringContainsString('OS #9', $html);
+        $this->assertStringContainsString('Atendimento #9', $html);
         $this->assertStringContainsString('formaction="http://mapos.test/index.php/cobrancas/atualizar/3?status=waiting"', $html);
         $this->assertStringContainsString('formaction="http://mapos.test/index.php/cobrancas/enviarEmail/3?status=waiting"', $html);
         $this->assertStringContainsString('data-modal-abrir="cancelar-cobranca"', $html);

@@ -5,7 +5,7 @@
  * - Cada aba é um formulário que grava só os campos dela (POST com o token
  *   CSRF para mapos/configurar?aba=...). Os campos vêm de
  *   configuracaoCampos(): sim/não em switch, listas em select, textos em
- *   input/textarea e os status visíveis da OS em caixas.
+ *   input/textarea e os status visíveis do atendimento em caixas.
  * - Segredos do .env (senhas, tokens) nunca voltam para a tela: o campo vem
  *   vazio e, em branco, mantém o valor atual.
  * - A aba Atualizações atualiza o banco por POST confirmado em modal-confirm

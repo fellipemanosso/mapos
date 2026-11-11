@@ -238,7 +238,13 @@ class Os_model extends CI_Model
         $this->db->where('os.idOs', $id);
         $this->db->limit(1);
 
-        return $this->db->get()->row();
+        $os = $this->db->get()->row();
+        if ($os && ! empty($os->dependente_id)) {
+            $dependente = $this->db->where('id', $os->dependente_id)->where('clientes_id', $os->clientes_id)->get('dependentes')->row();
+            $os->beneficiario_nome = $dependente->nome ?? null;
+        }
+
+        return $os;
     }
 
     public function getByIdCobrancas($id)

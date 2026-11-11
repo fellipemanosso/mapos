@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Segunda leva da revisão de segurança (#2879): planilhas, relatório MEI,
- * e-mail da OS, release e Docker.
+ * e-mail do atendimento, release e Docker.
  */
 final class SegundaLevaSegurancaTest extends TestCase
 {

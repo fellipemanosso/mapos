@@ -29,7 +29,7 @@
       <?= component('button', ['label' => 'Buscar', 'icon' => 'search', 'icon_only' => true, 'variant' => 'ghost', 'class' => 'md:hidden', 'attrs' => ['data-busca-abrir' => true, 'aria-keyshortcuts' => 'Control+K Meta+K']]) ?>
 
       <form action="<?= e(site_url('mapos/pesquisar')) ?>" method="get" role="search" class="relative hidden w-full max-w-md md:block">
-        <?= component('input', ['name' => 'termo', 'id' => 'v5-pesquisa', 'label' => 'Pesquisar', 'hide_label' => true, 'type' => 'search', 'placeholder' => 'Buscar OS, cliente, produto…', 'class' => 'pr-16 pl-10', 'attrs' => ['aria-keyshortcuts' => 'Control+K Meta+K']]) ?>
+        <?= component('input', ['name' => 'termo', 'id' => 'v5-pesquisa', 'label' => 'Pesquisar', 'hide_label' => true, 'type' => 'search', 'placeholder' => 'Buscar atendimento, cliente, produto…', 'class' => 'pr-16 pl-10', 'attrs' => ['aria-keyshortcuts' => 'Control+K Meta+K']]) ?>
         <?= icon('search', ['class' => 'pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted']) ?>
         <kbd class="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 rounded-xs border border-border px-1.5 font-sans text-xs leading-5 font-medium text-muted" aria-hidden="true">Ctrl K</kbd>
       </form>

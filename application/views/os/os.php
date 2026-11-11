@@ -1,9 +1,9 @@
 <?php
 /**
- * Listagem de ordens de serviço (#2842), no padrão das listagens da v5 (#2852,
+ * Listagem de atendimentos (#2842), no padrão das listagens da v5 (#2852,
  * ver views/clientes/clientes.php): filtros em GET, data-table que vira
  * cartões abaixo de 640px, empty-state para "nada cadastrado" e "nada
- * encontrado", paginação que mantém os filtros, "Nova OS" na topbar e exclusão
+ * encontrado", paginação que mantém os filtros, "Novo atendimento" na topbar e exclusão
  * com um modal-confirm só, preenchido pelo gatilho da linha (data-valor-*).
  *
  * @var list<object>          $results
@@ -37,7 +37,7 @@ $colunas = [
         if ($editavel) {
             $acoes[] = component('button', ['label' => 'Editar ' . $numero, 'icon' => 'pencil', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('os/editar/' . $o->idOs)]);
         }
-        // Como na v4: excluir exige dOs e uma OS que ainda pode ser editada.
+        // Como na v4: excluir exige dOs e um atendimento que ainda pode ser editada.
         if ($pode['excluir'] && $editavel) {
             $acoes[] = component('button', ['label' => 'Excluir ' . $numero, 'icon' => 'trash-2', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'class' => 'hover:text-danger-ink', 'attrs' => [
                 'data-modal-abrir' => 'excluir-os',
@@ -53,33 +53,33 @@ $colunas = [
 
 $vazio = $temFiltro
     ? component('empty-state', [
-        'title' => 'Nenhuma OS encontrada',
+        'title' => 'Nenhum atendimento encontrada',
         'message' => 'Nada corresponde aos filtros. Confira a busca ou limpe os filtros.',
         'icon' => 'search-x',
         'action' => component('button', ['label' => 'Limpar filtros', 'variant' => 'outline', 'href' => site_url('os')]),
         'class' => 'border-0',
     ])
     : component('empty-state', [
-        'title' => $status_ocultos ? 'Nenhuma OS nos status exibidos' : 'Nenhuma OS cadastrada',
+        'title' => $status_ocultos ? 'Nenhum atendimento nos status exibidos' : 'Nenhum atendimento cadastrada',
         'message' => $status_ocultos
             ? 'A listagem mostra só os status marcados em Configurações. Filtre por outro status para ver as demais.'
-            : 'As ordens de serviço cadastradas aparecem aqui.',
+            : 'As atendimentos cadastradas aparecem aqui.',
         'icon' => 'file-text',
         'action' => $pode['adicionar'] ? component('button', ['label' => 'Cadastrar OS', 'icon' => 'plus', 'variant' => 'outline', 'href' => site_url('os/adicionar')]) : null,
         'class' => 'border-0',
     ]);
 
-$resumo = ($total === 1 ? '1 ordem de serviço' : number_format($total, 0, ',', '.') . ' ordens de serviço')
+$resumo = ($total === 1 ? '1 atendimento' : number_format($total, 0, ',', '.') . ' atendimentos')
     . ($temFiltro ? ($total === 1 ? ' encontrada' : ' encontradas') . ' com os filtros' : '')
     . ($status_ocultos ? ' nos status marcados em Configurações' : '');
 ?>
 <div class="flex flex-col gap-4 pt-2 pb-8">
     <header>
-        <h1 class="font-display text-heading-xl text-text">Ordens de serviço</h1>
+        <h1 class="font-display text-heading-xl text-text">Atendimentos</h1>
         <p class="text-caption text-muted" aria-live="polite"><?= e($resumo) ?></p>
     </header>
 
-    <form method="get" action="<?= e(site_url('os')) ?>" role="search" aria-label="Filtrar ordens de serviço" class="grid items-end gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_12rem_10rem_10rem_auto]">
+    <form method="get" action="<?= e(site_url('os')) ?>" role="search" aria-label="Filtrar atendimentos" class="grid items-end gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_12rem_10rem_10rem_auto]">
         <?= component('input', [
             'name' => 'pesquisa',
             'label' => 'Buscar',
@@ -119,7 +119,7 @@ $resumo = ($total === 1 ? '1 ordem de serviço' : number_format($total, 0, ',', 
         'columns' => $colunas,
         'rows' => $results,
         'empty' => $vazio,
-        'caption' => 'Ordens de serviço',
+        'caption' => 'Atendimentos',
     ]) ?>
 
     <?= component('pagination', $paginacao) ?>

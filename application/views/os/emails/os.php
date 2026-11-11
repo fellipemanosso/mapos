@@ -116,7 +116,7 @@ $totalProdutos = 0; ?>
                                 <img src="<?= e($emitente->url_logo) ?>" style="width:100%; max-width:120px;">
                             </td>
                             <td style="text-align: right">
-                                OS #: <?= e($result->idOs) ?><br>
+                                Atendimento #: <?= e($result->idOs) ?><br>
                                 Data Inicial: <?= date('d/m/Y', strtotime($result->dataInicial)); ?> <br>
                                 Data Final: <?= $result->dataFinal ? date('d/m/Y', strtotime($result->dataFinal)) : ''; ?>
                             </td>

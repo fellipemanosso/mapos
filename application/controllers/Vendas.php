@@ -165,7 +165,7 @@ class Vendas extends MY_Controller
                 if ($idVenda !== null) {
                     if ($venda === null) {
                         log_info('Adicionou uma venda. ID: ' . $idVenda);
-                        $this->session->set_flashdata('success', 'Venda #' . $idVenda . ' criada. Agora adicione os produtos.');
+                        $this->session->set_flashdata('success', 'Venda #' . $idVenda . ' criado. Agora adicione os produtos.');
 
                         return redirect('vendas/visualizar/' . $idVenda . ($this->permite('eVenda') ? '#secao-adicionar-produto' : ''));
                     }

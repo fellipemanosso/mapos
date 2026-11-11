@@ -16,7 +16,7 @@ $verTodas = static fn (string $rotulo, string $url) => component('link', ['label
 <div class="flex flex-col gap-6">
     <header>
         <h1 class="font-display text-heading-xl text-text"><?= e('Olá, ' . $primeiroNome) ?></h1>
-        <p class="text-caption text-muted">Acompanhe suas ordens de serviço, compras e cobranças.</p>
+        <p class="text-caption text-muted">Acompanhe suas atendimentos, compras e cobranças.</p>
     </header>
 
     <div class="grid grid-cols-2 gap-4 lg:grid-cols-3">
@@ -27,7 +27,7 @@ $verTodas = static fn (string $rotulo, string $url) => component('link', ['label
 
     <section class="flex flex-col gap-3" aria-labelledby="titulo-ultimas-os">
         <div class="flex items-baseline justify-between gap-3">
-            <h2 id="titulo-ultimas-os" class="text-heading-sm text-text">Últimas ordens de serviço</h2>
+            <h2 id="titulo-ultimas-os" class="text-heading-sm text-text">Últimas atendimentos</h2>
             <?php if ($os !== []) { ?>
                 <?= component('link', ['label' => 'Ver todas', 'href' => site_url('mine/os')]) ?>
             <?php } ?>
@@ -35,10 +35,10 @@ $verTodas = static fn (string $rotulo, string $url) => component('link', ['label
         <?= component('data-table', [
             'columns' => conecteColunasOs(false),
             'rows' => $os,
-            'caption' => 'Últimas ordens de serviço',
+            'caption' => 'Últimas atendimentos',
             'empty' => component('empty-state', [
-                'title' => 'Nenhuma ordem de serviço ainda',
-                'message' => 'Quando você deixar um equipamento na assistência ou abrir uma OS por aqui, ela aparece nesta lista.',
+                'title' => 'Nenhum atendimento ainda',
+                'message' => 'Quando você deixar um equipamento na assistência ou abrir um atendimento por aqui, ela aparece nesta lista.',
                 'icon' => 'wrench',
                 'class' => 'border-0',
             ]),

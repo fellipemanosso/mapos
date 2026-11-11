@@ -25,7 +25,7 @@ if (! function_exists('site_url')) {
 }
 
 /**
- * Cadastro rápido de cliente no modal da OS e da venda (#3003): o endpoint
+ * Cadastro rápido de cliente no modal do atendimento e da venda (#3003): o endpoint
  * JSON executado de verdade (controller, model, helper e SQLite), com as
  * dependências do CodeIgniter trocadas por fakes. A validação do
  * form_validation é trocada por uma que repete as regras sem banco

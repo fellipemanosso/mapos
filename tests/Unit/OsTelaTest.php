@@ -25,8 +25,8 @@ if (! function_exists('site_url')) {
 }
 
 /**
- * Tela da OS (#2842): regras puras (itens, totais, desconto, faturamento,
- * WhatsApp), o model (histórico, itens da OS, PIX) e os endpoints JSON que a
+ * Tela do atendimento (#2842): regras puras (itens, totais, desconto, faturamento,
+ * WhatsApp), o model (histórico, itens do atendimento, PIX) e os endpoints JSON que a
  * tela chama sem recarregar.
  */
 final class OsTelaTest extends MaposTestCase
@@ -223,7 +223,7 @@ final class OsTelaTest extends MaposTestCase
         $this->assertSame([], $erros);
         $this->assertSame(150.0, $dados['valor']);
         $this->assertSame(135.0, $dados['valor_desconto']);
-        $this->assertSame(3, $dados['clientes_id'], 'O cliente vem da OS, não do POST.');
+        $this->assertSame(3, $dados['clientes_id'], 'O cliente vem do atendimento, não do POST.');
         $this->assertSame('Ana', $dados['cliente_fornecedor']);
         $this->assertSame(0, $dados['baixado']);
         $this->assertNull($dados['data_pagamento']);
@@ -250,7 +250,7 @@ final class OsTelaTest extends MaposTestCase
         $this->assertNull(osTelefoneWhatsApp('123'));
         $this->assertNull(osTelefoneWhatsApp(null));
 
-        // Texto da OS gravado pelo formulário (escapado, com <br>): sai sem
+        // Texto do atendimento gravado pelo formulário (escapado, com <br>): sai sem
         // entidades e com as quebras de linha (na v4 vinha &amp;lt;).
         $texto = osTextoWhatsApp('Olá {CLIENTE_NOME}, OS {NUMERO_OS}: {DEFEITO_OS}', [
             '{CLIENTE_NOME}' => 'Ana & Cia',
@@ -330,7 +330,7 @@ final class OsTelaTest extends MaposTestCase
         $model = $this->model();
 
         $this->assertNotNull($model->getProdutoDaOs(1, 1));
-        $this->assertNull($model->getProdutoDaOs(1, 2), 'O item 2 é da OS 2.');
+        $this->assertNull($model->getProdutoDaOs(1, 2), 'O item 2 é do atendimento 2.');
         $this->assertNotNull($model->getServicoDaOs(1, 1));
         $this->assertNull($model->getServicoDaOs(2, 1));
     }
@@ -375,7 +375,7 @@ final class OsTelaTest extends MaposTestCase
 
     /**
      * O copia e cola sai do servidor (na v4 o navegador decodificava a imagem
-     * do QR com o jsQR): BR Code com o valor da OS e CRC16 válido.
+     * do QR com o jsQR): BR Code com o valor do atendimento e CRC16 válido.
      */
     public function testPixPayloadValido(): void
     {
@@ -387,7 +387,7 @@ final class OsTelaTest extends MaposTestCase
 
         $this->assertNotNull($payload);
         $this->assertStringStartsWith('000201', $payload);
-        $this->assertStringContainsString('5406350.00', $payload, 'Valor da OS (350,00) no campo 54.');
+        $this->assertStringContainsString('5406350.00', $payload, 'Valor do atendimento (350,00) no campo 54.');
         $this->assertMatchesRegularExpression('/6304[0-9A-F]{4}$/', $payload);
         $this->assertSame(substr($payload, -4), $this->crc16(substr($payload, 0, -4)));
 
@@ -518,7 +518,7 @@ final class OsTelaTest extends MaposTestCase
                 $this->assertStringNotContainsString('<script>alert(1)</script>', $html, $contexto);
                 $this->assertStringNotContainsString('<script', $html, 'Nenhum script inline: ' . $contexto);
                 $this->assertStringNotContainsString(' onclick', $html, $contexto);
-                $this->assertSame($editavel, str_contains($html, 'data-os-acao="'), 'Formulários só com a OS editável: ' . $contexto);
+                $this->assertSame($editavel, str_contains($html, 'data-os-acao="'), 'Formulários só com o atendimento editável: ' . $contexto);
             }
         }
 
@@ -529,7 +529,7 @@ final class OsTelaTest extends MaposTestCase
         $this->assertStringContainsString('https://wa.me/5511999998888?text=Ol%C3%A1%20Ana%0AOS%209', $resumo);
         $this->assertStringContainsString('data-modal-abrir="faturar-os"', $resumo);
         $this->assertStringContainsString('id="form-faturar"', $resumo);
-        $this->assertStringContainsString('Laudo técnico', $resumo);
+        $this->assertStringContainsString('Registro do atendimento', $resumo);
         $this->assertStringContainsString('Não informado', $resumo);
         $this->assertStringContainsString('os/editar/', $resumo);
 
@@ -540,7 +540,7 @@ final class OsTelaTest extends MaposTestCase
 
         $faturada = $this->renderizar('os/visualizar', ['aba' => 'resumo'] + $this->dadosDaTela(false));
         $this->assertStringContainsString('não podem mais ser alterados', $faturada);
-        $this->assertStringContainsString('Equipamento e serviço', $faturada);
+        $this->assertStringContainsString('Serviço e informações do atendimento', $faturada);
         $this->assertStringNotContainsString('os/editar/', $faturada);
         $this->assertStringNotContainsString('data-modal-abrir="excluir-', $faturada);
     }
@@ -560,7 +560,7 @@ final class OsTelaTest extends MaposTestCase
         // Formulário de adicionar com o desconto do item (enviado e calculado no servidor).
         $this->assertStringContainsString('name="descontoItem"', $html);
         $this->assertStringContainsString('name="tipoDescontoItem"', $html);
-        // Coluna, valor e botão do modal que muda o desconto de um item já na OS.
+        // Coluna, valor e botão do modal que muda o desconto de um item já no atendimento.
         $this->assertStringContainsString('10% (R$ 16,00)', $html);
         $this->assertStringContainsString('data-modal-abrir="desconto-item-produto"', $html);
         $this->assertStringContainsString('data-valor-tipo="porcento"', $html);
@@ -596,7 +596,7 @@ final class OsTelaTest extends MaposTestCase
             $this->assertStringNotContainsString('$preco * ($s->quantidade ?: 1)', $fonte, $view . ' soma o serviço pelo valor com desconto.');
         }
 
-        // A cobrança nos gateways usa o total da OS: CobrancaValorTest (#3014).
+        // A cobrança nos gateways usa o total do atendimento: CobrancaValorTest (#3014).
     }
 
     public function testTrechosDosEndpointsRenderizamSozinhos(): void
@@ -607,7 +607,7 @@ final class OsTelaTest extends MaposTestCase
         }
 
         $vazio = ['produtos' => [], 'servicos' => [], 'anexos' => [], 'anotacoes' => [], 'historico' => []] + $dados;
-        $this->assertStringContainsString('Nenhum produto na OS', $this->renderizar('os/partes/produtos', $vazio));
+        $this->assertStringContainsString('Nenhum produto no atendimento', $this->renderizar('os/partes/produtos', $vazio));
         $this->assertStringContainsString('Histórico disponível a partir desta versão', $this->renderizar('os/partes/historico', $vazio));
         $this->assertStringContainsString('Atualizar banco', $this->renderizar('os/partes/historico', ['historico_disponivel' => false] + $vazio));
     }
@@ -960,7 +960,7 @@ final class OsTelaTest extends MaposTestCase
 
         [$status, $corpo] = $this->resposta($controller);
         $this->assertSame(200, $status, (string) json_encode($corpo));
-        $this->assertSame('Desconto do item aplicado. O desconto geral da OS foi removido porque o total mudou.', $corpo['message']);
+        $this->assertSame('Desconto do item aplicado. O desconto geral do atendimento foi removido porque o total mudou.', $corpo['message']);
         $this->assertSame(['abas', 'produtos', 'totais', 'desconto', 'pix'], array_keys($corpo['html']));
         $linha = $this->db->query('SELECT * FROM produtos_os WHERE idProdutos_os = 1')->row();
         $this->assertSame(270.0, (float) $linha->subTotal);
@@ -983,7 +983,7 @@ final class OsTelaTest extends MaposTestCase
     public function testDescontoDoServicoUsaOPrecoDoCadastroQuandoAOsNaoTem(): void
     {
         $this->criarBanco();
-        // Serviço antigo, sem preço nem quantidade na OS: vale 1 × 50 do cadastro.
+        // Serviço antigo, sem preço nem quantidade no atendimento: vale 1 × 50 do cadastro.
         $this->db->query('UPDATE servicos_os SET preco = 0, quantidade = 0, subTotal = 0 WHERE idServicos_os = 1');
 
         $controller = $this->controller($this->model(), ['idOs' => '1', 'idItem' => '1', 'tipoDescontoItem' => 'porcento', 'descontoItem' => '20']);
@@ -1015,7 +1015,7 @@ final class OsTelaTest extends MaposTestCase
         $controller->descontoProduto();
         $this->assertSame(422, $this->resposta($controller)[0]);
 
-        // Item de outra OS e item que não existe.
+        // Item de outro atendimento e item que não existe.
         $controller = $this->controller($this->model(), ['idOs' => '1', 'idItem' => '2', 'tipoDescontoItem' => 'real', 'descontoItem' => '5']);
         $controller->descontoProduto();
         $this->assertSame(404, $this->resposta($controller)[0]);
@@ -1078,7 +1078,7 @@ final class OsTelaTest extends MaposTestCase
 
         $controller = $this->controller($this->model(), ['idOs' => '2', 'idItem' => (string) $anotacao->idAnotacoes]);
         $controller->excluirAnotacao();
-        $this->assertSame(404, $this->resposta($controller)[0], 'A anotação é da OS 1.');
+        $this->assertSame(404, $this->resposta($controller)[0], 'A anotação é do atendimento 1.');
     }
 
     public function testFaturarGravaLancamentoVinculoEHistorico(): void

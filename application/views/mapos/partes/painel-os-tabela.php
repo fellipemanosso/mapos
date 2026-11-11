@@ -25,7 +25,7 @@
             </tr>
         <?php } ?>
         <?php if ($os_grafico === []) { ?>
-            <tr class="border-t border-border"><td colspan="3" class="py-2 text-center text-muted">Nenhuma OS neste mês.</td></tr>
+            <tr class="border-t border-border"><td colspan="3" class="py-2 text-center text-muted">Nenhum atendimento neste mês.</td></tr>
         <?php } ?>
     </tbody>
 </table>

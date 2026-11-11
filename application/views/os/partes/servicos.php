@@ -1,6 +1,6 @@
 <?php
 /**
- * Serviços da OS (#2842). Serviço sem preço usa o do cadastro, e sem
+ * Serviços do atendimento (#2842). Serviço sem preço usa o do cadastro, e sem
  * quantidade conta 1, como em Os_model::valorTotalOS().
  *
  * @var list<object> $servicos
@@ -38,12 +38,12 @@ if ($pode['editar']) {
 ?>
 <div class="flex flex-col gap-2">
     <?= component('data-table', [
-        'caption' => 'Serviços da OS',
+        'caption' => 'Serviços do atendimento',
         'rows' => $servicos,
         'columns' => $colunas,
         'empty' => component('empty-state', [
-            'title' => 'Nenhum serviço na OS',
-            'message' => $pode['editar'] ? 'Adicione a mão de obra e os serviços pelo formulário acima.' : 'Esta OS não tem serviços.',
+            'title' => 'Nenhum serviço no atendimento',
+            'message' => $pode['editar'] ? 'Adicione a mão de obra e os serviços pelo formulário acima.' : 'Esto atendimento não tem serviços.',
             'icon' => 'wrench',
             'class' => 'border-0',
         ]),

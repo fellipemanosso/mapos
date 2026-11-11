@@ -1,8 +1,8 @@
 <?php
 /**
- * Anexos da OS na área do cliente (#2848): miniatura das imagens ou o ícone
+ * Anexos do atendimento na área do cliente (#2848): miniatura das imagens ou o ícone
  * de arquivo, e o botão de baixar (mine/downloadanexo, que confere se o anexo
- * é de uma OS do cliente).
+ * é de um atendimento do cliente).
  *
  * @var list<object> $anexos
  */
@@ -12,7 +12,7 @@ if ($anexos === []) {
 ?>
 <section class="flex flex-col gap-3" aria-labelledby="secao-anexos">
     <h2 id="secao-anexos" class="text-heading-sm text-text">Anexos</h2>
-    <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4" aria-label="Anexos da OS">
+    <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4" aria-label="Anexos do atendimento">
         <?php foreach ($anexos as $indice => $anexo) { ?>
             <?php
             $extensao = strtoupper((string) pathinfo((string) $anexo->anexo, PATHINFO_EXTENSION));

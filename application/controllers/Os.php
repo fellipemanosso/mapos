@@ -58,7 +58,7 @@ class Os extends MY_Controller
         $this->data['controle_editos'] = ($this->data['configuration']['control_editos'] ?? '0') == '1';
 
         if ($this->data['pode']['adicionar']) {
-            $this->data['topbar_acao'] = ['label' => 'Nova OS', 'icon' => 'plus', 'href' => site_url('os/adicionar')];
+            $this->data['topbar_acao'] = ['label' => 'Novo atendimento', 'icon' => 'plus', 'href' => site_url('os/adicionar')];
         }
 
         $this->data['view'] = 'os/os';
@@ -114,10 +114,10 @@ class Os extends MY_Controller
             redirect(base_url());
         }
 
-        // Pelo id da URL: na v4 a checagem usava o POST, e o GET de uma OS
+        // Pelo id da URL: na v4 a checagem usava o POST, e o GET de um atendimento
         // faturada ou cancelada abria a tela de edição.
         if (! $this->os_model->isEditable((int) $os->idOs)) {
-            $this->session->set_flashdata('error', 'Esta OS está faturada ou cancelada e não pode mais ser alterada. Se precisar, abra uma nova OS.');
+            $this->session->set_flashdata('error', 'Esto atendimento está faturada ou cancelada e não pode mais ser alterada. Se precisar, abra uma novo atendimento.');
             redirect(site_url('os'));
         }
 
@@ -130,10 +130,11 @@ class Os extends MY_Controller
      * erros em cada campo e redirecionamento com toast.
      *
      * Produtos, serviços, anexos, anotações, desconto e faturamento ficam na
-     * tela da OS (os/visualizar).
+     * tela do atendimento (os/visualizar).
      */
     private function formulario(?object $os)
     {
+        $this->load->model('dependentes_model');
         $erros = [];
         $dados = [];
 
@@ -165,20 +166,32 @@ class Os extends MY_Controller
             }
 
             if ($erros === []) {
+                $valor = $this->input->post('dependente_id');
+                $dados['dependente_id'] = null;
+                if ($valor !== null && $valor !== '') {
+                    if (! is_string($valor) || ! ctype_digit($valor) || ! $this->dependentes_model->doResponsavel((int) $valor, (int) $dados['clientes_id'])) {
+                        $erros['dependente_id'] = 'Escolha um dependente vinculado à pessoa responsável selecionada.';
+                    } else {
+                        $dados['dependente_id'] = (int) $valor;
+                    }
+                }
+            }
+
+            if ($erros === []) {
                 $idOs = $os === null ? $this->criarOs($dados) : $this->salvarOs($os, $dados);
 
                 if ($idOs !== null) {
-                    $this->notificarOs($idOs, $os === null ? 'Ordem de Serviço - Criada' : 'Ordem de Serviço - Editada');
+                    $this->notificarOs($idOs, $os === null ? 'Atendimento - Criado' : 'Atendimento - Editado');
 
                     if ($os === null) {
-                        log_info('Adicionou uma OS. ID: ' . $idOs);
-                        $this->session->set_flashdata('success', 'OS #' . $idOs . ' criada. Agora adicione os produtos e serviços.');
+                        log_info('Adicionou um atendimento. ID: ' . $idOs);
+                        $this->session->set_flashdata('success', 'Atendimento #' . $idOs . ' criado. Agora adicione os produtos e serviços.');
 
                         return redirect('os/visualizar/' . $idOs . ($this->permite('eOs') ? '?aba=produtos' : ''));
                     }
 
-                    log_info('Alterou uma OS. ID: ' . $idOs);
-                    $this->session->set_flashdata('success', 'Alterações da OS #' . $idOs . ' salvas.');
+                    log_info('Alterou um atendimento. ID: ' . $idOs);
+                    $this->session->set_flashdata('success', 'Alterações do atendimento #' . $idOs . ' salvas.');
 
                     return redirect('os/editar/' . $idOs);
                 }
@@ -199,6 +212,7 @@ class Os extends MY_Controller
             ]
         );
         $this->data['erros'] = $erros;
+        $this->data['dependentes'] = $this->dependentes_model->doCliente((int) $this->data['valores']['clientes_id']);
         // Campos com formatação do editor antigo (Trumbowyg), que sai ao salvar.
         $this->data['formatados'] = $os === null ? [] : array_values(array_filter(OS_CAMPOS_TEXTO, static fn ($campo) => osTemFormatacao($os->{$campo} ?? null)));
         $this->data['pode'] = [
@@ -210,7 +224,19 @@ class Os extends MY_Controller
         return $this->layout();
     }
 
-    /** Cria a OS e devolve o id, ou null se não gravou. */
+    /** Cria o atendimento e devolve o id, ou null se não gravou. */
+    public function dependentes()
+    {
+        if (! $this->hasAnyPermission(['aOs', 'eOs'])) {
+            $this->responderJson(403, ['message' => 'Você não tem permissão para editar atendimentos.']);
+            return;
+        }
+        $this->load->model('dependentes_model');
+        $cliente = $this->input->get('cliente');
+        $itens = is_string($cliente) && ctype_digit($cliente) ? $this->dependentes_model->doCliente((int) $cliente) : [];
+        $this->responderJson(200, ['dependentes' => array_map(static fn ($item) => ['id' => (int) $item->id, 'nome' => $item->nome], $itens)]);
+    }
+
     private function criarOs(array $dados): ?int
     {
         $id = $this->os_model->add('os', $dados + ['faturado' => 0], true);
@@ -231,7 +257,7 @@ class Os extends MY_Controller
     }
 
     /**
-     * Grava os dados da OS. Cancelar devolve os produtos ao estoque, e sair de
+     * Grava os dados do atendimento. Cancelar devolve os produtos ao estoque, e sair de
      * Cancelado volta a debitá-los, como na v4.
      */
     private function salvarOs(object $os, array $dados): ?int
@@ -257,7 +283,7 @@ class Os extends MY_Controller
     }
 
     /**
-     * E-mail automático da OS, conforme as configurações os_notification e
+     * E-mail automático do atendimento, conforme as configurações os_notification e
      * email_automatico.
      */
     private function notificarOs(int $idOs, string $assunto): void
@@ -285,7 +311,7 @@ class Os extends MY_Controller
     }
 
     /**
-     * Tela da OS (#2842): resumo, produtos, serviços, anexos, anotações e
+     * Tela do atendimento (#2842): resumo, produtos, serviços, anexos, anotações e
      * histórico em abas (?aba=). Itens, anexos, anotações e desconto mudam
      * sem recarregar a página: os endpoints devolvem os trechos da tela
      * (views/os/partes/*) renderizados de novo.
@@ -315,7 +341,7 @@ class Os extends MY_Controller
         $this->data = array_merge($this->data, $this->dadosDaTela($this->data['result'], $aba));
 
         if ($this->data['pode']['editar']) {
-            $this->data['topbar_acao'] = ['label' => 'Editar OS', 'icon' => 'pencil', 'href' => site_url('os/editar/' . (int) $this->data['result']->idOs)];
+            $this->data['topbar_acao'] = ['label' => 'Editar atendimento', 'icon' => 'pencil', 'href' => site_url('os/editar/' . (int) $this->data['result']->idOs)];
         }
 
         $this->data['gateways'] = [];
@@ -330,7 +356,7 @@ class Os extends MY_Controller
     }
 
     /**
-     * Tudo o que a tela da OS e os trechos (views/os/partes/*) usam. Os
+     * Tudo o que a tela do atendimento e os trechos (views/os/partes/*) usam. Os
      * endpoints de itens chamam de novo depois de gravar, para devolver os
      * trechos já com os dados novos.
      */
@@ -404,7 +430,7 @@ class Os extends MY_Controller
     }
 
     /**
-     * Trechos da tela da OS renderizados de novo, para os endpoints de itens
+     * Trechos da tela do atendimento renderizados de novo, para os endpoints de itens
      * devolverem ao JavaScript (que troca o conteúdo de [data-os-parte]).
      *
      * @param  list<string>  $partes  Arquivos de views/os/partes/
@@ -424,7 +450,7 @@ class Os extends MY_Controller
         return $html;
     }
 
-    /** Resposta JSON dos endpoints da tela da OS. */
+    /** Resposta JSON dos endpoints da tela do atendimento. */
     private function responderJson(int $status, array $corpo): void
     {
         $this->output
@@ -436,7 +462,7 @@ class Os extends MY_Controller
     /**
      * OS do POST (idOs) que pode ser alterada, ou null com a resposta de erro
      * (404 ou 403) já montada. Vale para todos os endpoints de itens: na v4
-     * só o desconto e o faturamento conferiam se a OS era editável.
+     * só o desconto e o faturamento conferiam se o atendimento era editável.
      */
     private function osParaAlterar(): ?object
     {
@@ -450,7 +476,7 @@ class Os extends MY_Controller
         }
 
         if (! $this->os_model->isEditable($id)) {
-            $this->responderJson(403, ['result' => false, 'message' => 'Esta OS está faturada ou cancelada e não pode mais ser alterada.']);
+            $this->responderJson(403, ['result' => false, 'message' => 'Esto atendimento está faturada ou cancelada e não pode mais ser alterada.']);
 
             return null;
         }
@@ -655,7 +681,7 @@ class Os extends MY_Controller
                 }
             }
 
-            $enviouEmail = $this->enviarOsPorEmail($idOs, $remetentes, 'Ordem de Serviço');
+            $enviouEmail = $this->enviarOsPorEmail($idOs, $remetentes, 'Atendimento');
 
             if ($enviouEmail) {
                 $this->session->set_flashdata('success', 'O email está sendo processado e será enviado em breve.');
@@ -721,7 +747,7 @@ class Os extends MY_Controller
             if ($os->status == 'canceled') {
                 $this->os_model->delete('cobrancas', 'os_id', $id);
             } else {
-                $this->session->set_flashdata('error', 'Existe uma cobrança associada a esta OS, deve cancelar e/ou excluir a cobrança primeiro!');
+                $this->session->set_flashdata('error', 'Existe uma cobrança associada a esto atendimento, deve cancelar e/ou excluir a cobrança primeiro!');
                 redirect($listagem);
             }
         }
@@ -729,7 +755,7 @@ class Os extends MY_Controller
         $osStockRefund = $this->os_model->getById($id);
         if ((int) $osStockRefund->faturado === 1
             && $this->os_model->faturaBaixada($id, isset($osStockRefund->lancamento) ? (int) $osStockRefund->lancamento : null)) {
-            $this->session->set_flashdata('error', 'A fatura desta OS já tem pagamento baixado: estorne o recebimento antes de excluir a OS.');
+            $this->session->set_flashdata('error', 'A fatura desto atendimento já tem pagamento baixado: estorne o recebimento antes de excluir o atendimento.');
             redirect($listagem);
         }
 
@@ -756,7 +782,7 @@ class Os extends MY_Controller
             $this->os_model->excluirFatura($id, isset($osStockRefund->lancamento) ? (int) $osStockRefund->lancamento : null);
         }
 
-        log_info('Removeu uma OS. ID: ' . $id);
+        log_info('Removeu um atendimento. ID: ' . $id);
         $this->session->set_flashdata('success', 'OS excluída com sucesso!');
         redirect($listagem);
     }
@@ -811,13 +837,13 @@ class Os extends MY_Controller
     }
 
     /*
-     * Endpoints da tela da OS (#2842). Todos recebem o idOs no POST, conferem
-     * se a OS existe e pode ser alterada (osParaAlterar()) e respondem JSON:
+     * Endpoints da tela do atendimento (#2842). Todos recebem o idOs no POST, conferem
+     * se o atendimento existe e pode ser alterada (osParaAlterar()) e respondem JSON:
      *
      *     {result, message, erros?: {campo: mensagem}, html?: {parte: html}, totais?}
      *
      * 200 com os trechos da tela renderizados de novo; 403 sem permissão ou
-     * com a OS faturada/cancelada; 404 OS ou item inexistente; 422 com os
+     * com o atendimento faturada/cancelada; 404 OS ou item inexistente; 422 com os
      * erros por campo; 500 quando o banco não gravou.
      */
 
@@ -866,7 +892,7 @@ class Os extends MY_Controller
     }
 
     /**
-     * Produto ou serviço novo na OS. O id do cadastro vem do autocomplete e é
+     * Produto ou serviço novo no atendimento. O id do cadastro vem do autocomplete e é
      * conferido no banco; com o controle de estoque ligado, o produto sai do
      * estoque. Mudar os itens tira o desconto (o total mudou), como na v4.
      */
@@ -911,7 +937,7 @@ class Os extends MY_Controller
 
         $tinhaDesconto = (float) $os->valor_desconto > 0;
         $this->os_model->zerarDesconto($idOs);
-        log_info(($produto ? 'Adicionou produto' : 'Adicionou serviço') . ' a uma OS. ID (OS): ' . $idOs);
+        log_info(($produto ? 'Adicionou produto' : 'Adicionou serviço') . ' a um atendimento. ID (OS): ' . $idOs);
 
         $nome = $produto ? $cadastro->descricao : $cadastro->nome;
         $this->responderTrechos($idOs, $tipo, $nome . ' adicionado à OS.' . ($tinhaDesconto ? ' O desconto foi removido porque o total mudou.' : ''));
@@ -940,10 +966,10 @@ class Os extends MY_Controller
     }
 
     /**
-     * Desconto individual de um produto ou serviço já na OS (#2880), em R$ ou
-     * %. O item vem do banco e tem de ser da OS; o valor com desconto é
+     * Desconto individual de um produto ou serviço já no atendimento (#2880), em R$ ou
+     * %. O item vem do banco e tem de ser do atendimento; o valor com desconto é
      * calculado aqui sobre o preço x quantidade gravados (0 tira o desconto).
-     * Como o total muda, o desconto geral da OS é removido, como ao
+     * Como o total muda, o desconto geral do atendimento é removido, como ao
      * adicionar ou excluir itens.
      */
     private function descontoDoItem(string $tipo): void
@@ -961,7 +987,7 @@ class Os extends MY_Controller
             : null;
 
         if (! $item) {
-            $this->responderJson(404, ['result' => false, 'message' => 'Item não encontrado nesta OS. Recarregue a página.']);
+            $this->responderJson(404, ['result' => false, 'message' => 'Item não encontrado nesto atendimento. Recarregue a página.']);
 
             return;
         }
@@ -972,7 +998,7 @@ class Os extends MY_Controller
             return;
         }
 
-        // Serviço sem preço na OS usa o do cadastro (Os_model::valorTotalOS()).
+        // Serviço sem preço no atendimento usa o do cadastro (Os_model::valorTotalOS()).
         if (! $produto && (float) $item->preco <= 0) {
             $cadastro = $this->os_model->getServicoCadastro((int) $item->servicos_id);
             $item->precoVenda = $cadastro->preco ?? 0;
@@ -999,13 +1025,13 @@ class Os extends MY_Controller
 
         $tinhaDesconto = (float) $os->valor_desconto > 0;
         $this->os_model->zerarDesconto($idOs);
-        log_info('Alterou o desconto de ' . ($produto ? 'um produto' : 'um serviço') . ' de uma OS. ID (OS): ' . $idOs);
+        log_info('Alterou o desconto de ' . ($produto ? 'um produto' : 'um serviço') . ' de um atendimento. ID (OS): ' . $idOs);
 
-        $this->responderTrechos($idOs, $tipo, ($desconto['desconto'] > 0 ? 'Desconto do item aplicado.' : 'Desconto do item removido.') . ($tinhaDesconto ? ' O desconto geral da OS foi removido porque o total mudou.' : ''));
+        $this->responderTrechos($idOs, $tipo, ($desconto['desconto'] > 0 ? 'Desconto do item aplicado.' : 'Desconto do item removido.') . ($tinhaDesconto ? ' O desconto geral do atendimento foi removido porque o total mudou.' : ''));
     }
 
     /**
-     * Tira um produto ou serviço da OS. O item, a quantidade e o produto vêm
+     * Tira um produto ou serviço do atendimento. O item, a quantidade e o produto vêm
      * do banco (na v4 a quantidade a devolver ao estoque vinha do navegador).
      */
     private function excluirItem(string $tipo): void
@@ -1023,7 +1049,7 @@ class Os extends MY_Controller
             : null;
 
         if (! $item) {
-            $this->responderJson(404, ['result' => false, 'message' => 'Item não encontrado nesta OS. Recarregue a página.']);
+            $this->responderJson(404, ['result' => false, 'message' => 'Item não encontrado nesto atendimento. Recarregue a página.']);
 
             return;
         }
@@ -1041,9 +1067,9 @@ class Os extends MY_Controller
 
         $tinhaDesconto = (float) $os->valor_desconto > 0;
         $this->os_model->zerarDesconto($idOs);
-        log_info(($produto ? 'Removeu produto' : 'Removeu serviço') . ' de uma OS. ID (OS): ' . $idOs);
+        log_info(($produto ? 'Removeu produto' : 'Removeu serviço') . ' de um atendimento. ID (OS): ' . $idOs);
 
-        $this->responderTrechos($idOs, $tipo, ($produto ? 'Produto removido da OS.' : 'Serviço removido da OS.') . ($tinhaDesconto ? ' O desconto foi removido porque o total mudou.' : ''));
+        $this->responderTrechos($idOs, $tipo, ($produto ? 'Produto removido do atendimento.' : 'Serviço removido do atendimento.') . ($tinhaDesconto ? ' O desconto foi removido porque o total mudou.' : ''));
     }
 
     /** 422 de uma instalação que ainda não rodou a migration do desconto por item (#2880). */
@@ -1088,7 +1114,7 @@ class Os extends MY_Controller
             return;
         }
 
-        // O id compõe o caminho do diretório: vem da OS conferida no banco, e
+        // O id compõe o caminho do diretório: vem do atendimento conferida no banco, e
         // não do POST.
         $idOs = (int) $os->idOs;
 
@@ -1173,7 +1199,7 @@ class Os extends MY_Controller
         }
 
         if ($enviados > 0) {
-            log_info('Adicionou anexo(s) a uma OS. ID (OS): ' . $idOs);
+            log_info('Adicionou anexo(s) a um atendimento. ID (OS): ' . $idOs);
         }
 
         if ($falhas !== []) {
@@ -1189,7 +1215,7 @@ class Os extends MY_Controller
     }
 
     /**
-     * Exclui um anexo da OS (id no POST, ou no fim da URL como na v4). O anexo
+     * Exclui um anexo do atendimento (id no POST, ou no fim da URL como na v4). O anexo
      * precisa pertencer à OS, e só arquivos dentro de assets/anexos saem do
      * disco (osArquivosDosAnexos()).
      */
@@ -1211,7 +1237,7 @@ class Os extends MY_Controller
         $anexo = $idAnexo > 0 ? $this->os_model->getAnexoDaOs($idOs, $idAnexo) : null;
 
         if (! $anexo) {
-            $this->responderJson(404, ['result' => false, 'message' => 'Anexo não encontrado nesta OS. Recarregue a página.']);
+            $this->responderJson(404, ['result' => false, 'message' => 'Anexo não encontrado nesto atendimento. Recarregue a página.']);
 
             return;
         }
@@ -1226,7 +1252,7 @@ class Os extends MY_Controller
             return;
         }
 
-        log_info('Removeu anexo de uma OS. ID (OS): ' . $idOs);
+        log_info('Removeu anexo de um atendimento. ID (OS): ' . $idOs);
         $this->responderTrechos($idOs, 'anexo', 'Anexo excluído.');
     }
 
@@ -1272,7 +1298,7 @@ class Os extends MY_Controller
     }
 
     /**
-     * Desconto da OS em R$ ou %, calculado no servidor sobre o total dos
+     * Desconto do atendimento em R$ ou %, calculado no servidor sobre o total dos
      * itens (osCalcularDesconto()). 0 remove o desconto.
      */
     public function adicionarDesconto()
@@ -1304,13 +1330,13 @@ class Os extends MY_Controller
             return;
         }
 
-        log_info(($dados['valor_desconto'] > 0 ? 'Adicionou um desconto' : 'Removeu o desconto') . ' na OS. ID: ' . $idOs);
-        $this->responderTrechos($idOs, 'desconto', $dados['valor_desconto'] > 0 ? 'Desconto aplicado. Total da OS: ' . dinheiro($dados['valor_desconto']) . '.' : 'Desconto removido.');
+        log_info(($dados['valor_desconto'] > 0 ? 'Adicionou um desconto' : 'Removeu o desconto') . ' no atendimento. ID: ' . $idOs);
+        $this->responderTrechos($idOs, 'desconto', $dados['valor_desconto'] > 0 ? 'Desconto aplicado. Total do atendimento: ' . dinheiro($dados['valor_desconto']) . '.' : 'Desconto removido.');
     }
 
     /**
-     * Fatura a OS: grava a receita em lancamentos (com o vínculo em
-     * os.lancamento, que a v4 nunca preenchia), marca a OS como faturada e
+     * Fatura o atendimento: grava a receita em lancamentos (com o vínculo em
+     * os.lancamento, que a v4 nunca preenchia), marca o atendimento como faturada e
      * registra a mudança de status. Valor e desconto vêm dos totais
      * calculados no servidor.
      */
@@ -1329,7 +1355,7 @@ class Os extends MY_Controller
 
         $idOs = (int) $os->idOs;
         if ((int) $os->faturado === 1 || $os->status === 'Cancelado') {
-            $this->responderJson(422, ['result' => false, 'message' => 'Esta OS já foi faturada ou está cancelada.', 'erros' => ['_geral' => 'Esta OS já foi faturada ou está cancelada.']]);
+            $this->responderJson(422, ['result' => false, 'message' => 'Esto atendimento já foi faturada ou está cancelada.', 'erros' => ['_geral' => 'Esto atendimento já foi faturada ou está cancelada.']]);
 
             return;
         }
@@ -1367,13 +1393,13 @@ class Os extends MY_Controller
         $this->db->trans_complete();
 
         if ($this->db->trans_status() === false) {
-            $this->responderJson(500, ['result' => false, 'message' => 'Não foi possível faturar a OS. Tente de novo.']);
+            $this->responderJson(500, ['result' => false, 'message' => 'Não foi possível faturar o atendimento. Tente de novo.']);
 
             return;
         }
 
-        log_info('Faturou uma OS. ID: ' . $idOs);
-        $this->session->set_flashdata('success', 'OS #' . $idOs . ' faturada. Lançamento de ' . dinheiro($totais['total']) . ' criado no financeiro.');
+        log_info('Faturou um atendimento. ID: ' . $idOs);
+        $this->session->set_flashdata('success', 'Atendimento #' . $idOs . ' faturada. Lançamento de ' . dinheiro($totais['total']) . ' criado no financeiro.');
 
         $this->responderJson(200, [
             'result' => true,
@@ -1425,7 +1451,7 @@ class Os extends MY_Controller
     }
 
     /**
-     * Anotação interna da OS. O autor vai no próprio texto, entre colchetes,
+     * Anotação interna do atendimento. O autor vai no próprio texto, entre colchetes,
      * como na v4 (a tabela anotacoes_os não tem coluna de usuário).
      */
     public function adicionarAnotacao()
@@ -1464,7 +1490,7 @@ class Os extends MY_Controller
             return;
         }
 
-        log_info('Adicionou anotação a uma OS. ID (OS): ' . $idOs);
+        log_info('Adicionou anotação a um atendimento. ID (OS): ' . $idOs);
         $this->responderTrechos($idOs, 'anotacao', 'Anotação adicionada.');
     }
 
@@ -1484,7 +1510,7 @@ class Os extends MY_Controller
         $idOs = (int) $os->idOs;
         $idAnotacao = (int) $this->input->post('idItem');
         if ($idAnotacao <= 0 || ! $this->os_model->getAnotacaoDaOs($idOs, $idAnotacao)) {
-            $this->responderJson(404, ['result' => false, 'message' => 'Anotação não encontrada nesta OS. Recarregue a página.']);
+            $this->responderJson(404, ['result' => false, 'message' => 'Anotação não encontrada nesto atendimento. Recarregue a página.']);
 
             return;
         }
@@ -1495,7 +1521,7 @@ class Os extends MY_Controller
             return;
         }
 
-        log_info('Removeu anotação de uma OS. ID (OS): ' . $idOs);
+        log_info('Removeu anotação de um atendimento. ID (OS): ' . $idOs);
         $this->responderTrechos($idOs, 'anotacao', 'Anotação excluída.');
     }
 }

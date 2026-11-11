@@ -10,7 +10,7 @@
  */
 ?>
 <?= component('data-table', [
-    'caption' => 'Ordens de serviço do status selecionado, pela data de entrega',
+    'caption' => 'Atendimentos do status selecionado, pela data de entrega',
     'dense' => true,
     'rows' => $os_lista,
     'columns' => [
@@ -23,10 +23,10 @@
         ['label' => 'Ações', 'align' => 'right', 'nowrap' => true, 'render' => function ($o) use ($acoes_os) {
             $acoes = [];
             if ($acoes_os['ver']) {
-                $acoes[] = component('button', ['label' => 'Ver OS ' . $o->idOs, 'icon' => 'eye', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('os/visualizar/' . (int) $o->idOs)]);
+                $acoes[] = component('button', ['label' => 'Ver atendimento ' . $o->idOs, 'icon' => 'eye', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('os/visualizar/' . (int) $o->idOs)]);
             }
             if ($acoes_os['editar']) {
-                $acoes[] = component('button', ['label' => 'Editar OS ' . $o->idOs, 'icon' => 'pencil', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('os/editar/' . (int) $o->idOs)]);
+                $acoes[] = component('button', ['label' => 'Editar atendimento ' . $o->idOs, 'icon' => 'pencil', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('os/editar/' . (int) $o->idOs)]);
             }
             if ($acoes_os['imprimir']) {
                 $acoes[] = component('button', ['label' => 'Imprimir OS ' . $o->idOs, 'icon' => 'printer', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('os/imprimir/' . (int) $o->idOs), 'attrs' => ['target' => '_blank', 'rel' => 'noopener']]);
@@ -35,5 +35,5 @@
             return $acoes;
         }],
     ],
-    'empty' => component('empty-state', ['title' => 'Nenhuma OS neste status', 'message' => 'Escolha outro status na faixa acima.', 'icon' => 'wrench', 'class' => 'border-0']),
+    'empty' => component('empty-state', ['title' => 'Nenhum atendimento neste status', 'message' => 'Escolha outro status na faixa acima.', 'icon' => 'wrench', 'class' => 'border-0']),
 ]) ?>

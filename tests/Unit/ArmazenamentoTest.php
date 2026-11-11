@@ -245,7 +245,7 @@ final class ArmazenamentoTest extends MaposTestCase
         $this->assertStringContainsString('armazenamentoPasta(', $os);
 
         $mine = (string) file_get_contents(APPPATH . 'controllers/Mine.php');
-        $this->assertStringContainsString('$os->idClientes == $idCliente', $mine, 'Anexo só da OS do cliente logado.');
+        $this->assertStringContainsString('$os->idClientes == $idCliente', $mine, 'Anexo só do atendimento do cliente logado.');
 
         $arquivos = (string) file_get_contents(APPPATH . 'controllers/Arquivos.php');
         $this->assertStringNotContainsString("'./assets/arquivos/", $arquivos);

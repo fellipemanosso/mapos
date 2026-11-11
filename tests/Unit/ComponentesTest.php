@@ -862,7 +862,7 @@ final class ComponentesTest extends MaposTestCase
     {
         $html = $this->html('modal-confirm', [
             'id' => 'excluir-os',
-            'title' => 'Excluir OS #1042?',
+            'title' => 'Excluir Atendimento #1042?',
             'message' => 'Anexos também serão removidos.',
             'confirm_attrs' => ['form' => 'form-excluir'],
         ]);
@@ -920,10 +920,10 @@ final class ComponentesTest extends MaposTestCase
 
     public function testEmptyStateComAcao(): void
     {
-        $html = $this->html('empty-state', ['title' => 'Vazio', 'icon' => 'wrench', 'action' => component('button', ['label' => 'Nova OS'])]);
+        $html = $this->html('empty-state', ['title' => 'Vazio', 'icon' => 'wrench', 'action' => component('button', ['label' => 'Novo atendimento'])]);
 
         $this->assertStringContainsString('sprite.svg#wrench"', $html);
-        $this->assertStringContainsString('Nova OS</span>', $html);
+        $this->assertStringContainsString('Novo atendimento</span>', $html);
         $this->assertStringNotContainsString('<svg', $this->html('empty-state', ['title' => 'Vazio', 'icon' => null]));
     }
 
@@ -1069,11 +1069,11 @@ final class ComponentesTest extends MaposTestCase
     public function testAbaComRotuloCurtoNoCelular(): void
     {
         $html = $this->html('tabs', ['items' => [
-            ['label' => 'Ordens de serviço', 'short' => 'OS', 'url' => '/os', 'icon' => 'file-text'],
+            ['label' => 'Atendimentos', 'short' => 'OS', 'url' => '/os', 'icon' => 'file-text'],
             ['label' => 'Dados', 'url' => '/dados', 'active' => true],
         ]]);
 
-        $this->assertStringContainsString('<span class="sm:hidden" aria-hidden="true">OS</span><span class="max-sm:sr-only">Ordens de serviço</span>', $html);
+        $this->assertStringContainsString('<span class="sm:hidden" aria-hidden="true">OS</span><span class="max-sm:sr-only">Atendimentos</span>', $html);
         $this->assertStringContainsString('size-4 max-sm:hidden', $html);
         $this->assertMatchesRegularExpression('#aria-current="page"[^>]*>\s*Dados#', $html);
     }

@@ -60,7 +60,7 @@ $vazio = $temFiltro
     ])
     : component('empty-state', [
         'title' => 'Nenhum produto cadastrado',
-        'message' => 'Os produtos cadastrados aparecem aqui e podem ser usados nas ordens de serviço e nas vendas.',
+        'message' => 'Os produtos cadastrados aparecem aqui e podem ser usados nas atendimentos e nas vendas.',
         'icon' => 'shopping-basket',
         'action' => $pode['adicionar'] ? component('button', ['label' => 'Cadastrar produto', 'icon' => 'plus', 'variant' => 'outline', 'href' => site_url('produtos/adicionar')]) : null,
         'class' => 'border-0',
@@ -149,7 +149,7 @@ $vazio = $temFiltro
         'title' => 'Excluir produto?',
         'message' => [
             new HtmlSeguro('<strong class="font-semibold text-text" data-modal-valor="nome"></strong>'),
-            ' será removido do catálogo e também das ordens de serviço e das vendas em que foi usado. Essa ação não pode ser desfeita.',
+            ' será removido do catálogo e também das atendimentos e das vendas em que foi usado. Essa ação não pode ser desfeita.',
         ],
         'confirm_label' => 'Excluir',
         'confirm_attrs' => ['form' => 'form-excluir-produto'],

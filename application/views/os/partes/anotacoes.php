@@ -1,6 +1,6 @@
 <?php
 /**
- * Anotações internas da OS (#2842), da mais recente à mais antiga. O autor
+ * Anotações internas do atendimento (#2842), da mais recente à mais antiga. O autor
  * vem no começo do texto, entre colchetes, como a v4 grava.
  *
  * @var list<object> $anotacoes
@@ -15,7 +15,7 @@ if ($anotacoes === []) { ?>
 <?php return;
 }
 ?>
-<ol class="flex flex-col divide-y divide-border rounded-xl border border-border bg-surface" aria-label="Anotações da OS">
+<ol class="flex flex-col divide-y divide-border rounded-xl border border-border bg-surface" aria-label="Anotações do atendimento">
     <?php foreach ($anotacoes as $anotacao) { ?>
         <?php
         preg_match('/^\[([^\]]*)\]\s*(.*)$/s', (string) $anotacao->anotacao, $partes);

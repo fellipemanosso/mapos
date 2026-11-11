@@ -41,7 +41,7 @@ final class ApiOsSegurancaTest extends MaposTestCase
             "INSERT INTO os (clientes_id, usuarios_id, status, faturado) VALUES (1, 1, 'Aberto', 0), (1, 1, 'Aberto', 0), (1, 1, 'Faturado', 1)",
             'INSERT INTO produtos_os (os_id, produtos_id, quantidade, preco, subTotal) VALUES (1, 1, 1, 100, 100), (2, 1, 1, 100, 100), (3, 1, 1, 100, 100)',
             'INSERT INTO servicos_os (os_id, servicos_id, quantidade, preco, subTotal) VALUES (1, 1, 1, 50, 50), (2, 1, 1, 50, 50), (3, 1, 1, 50, 50)',
-            "INSERT INTO anotacoes_os (anotacao, data_hora, os_id) VALUES ('da OS 1', '2026-10-14', 1), ('da OS 2', '2026-10-14', 2), ('da OS 3', '2026-10-14', 3)",
+            "INSERT INTO anotacoes_os (anotacao, data_hora, os_id) VALUES ('do atendimento 1', '2026-10-14', 1), ('do atendimento 2', '2026-10-14', 2), ('do atendimento 3', '2026-10-14', 3)",
         ] as $sql) {
             $this->db->query($sql);
         }
@@ -158,7 +158,7 @@ final class ApiOsSegurancaTest extends MaposTestCase
 
     public function testItemDeOutraOsNaoEAlteradoNemExcluido(): void
     {
-        // O item 2 de produtos_os pertence à OS 2, e a URL é da OS 1.
+        // O item 2 de produtos_os pertence à OS 2, e a URL é do atendimento 1.
         $resposta = $this->chamar('produtos_put', [1, 2], ['preco' => '1', 'quantidade' => '1']);
         $this->assertSame(404, $resposta['code']);
         $this->assertEquals(100, $this->db->get_where('produtos_os', ['idProdutos_os' => 2])->row()->preco);
