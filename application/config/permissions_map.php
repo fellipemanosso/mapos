@@ -131,6 +131,8 @@ $config['permissions_map'] = [
         'atualizarMapos' => 'cSistema',
     ],
 
+    'Resumo' => ['index' => 'vLancamento'],
+
     'Despesas' => [
         'index' => 'vLancamento',
         'formulario' => 'aLancamento',

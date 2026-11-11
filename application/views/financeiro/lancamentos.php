@@ -125,6 +125,7 @@ $resumo = ($total === 1 ? '1 lançamento' : number_format($total, 0, ',', '.') .
         ]) ?>
     </div>
 
+    <div><?= component('button', ['label' => 'Resumo financeiro mensal', 'variant' => 'outline', 'href' => site_url('resumo')]) ?></div>
     <form method="get" action="<?= e(site_url('financeiro/lancamentos')) ?>" role="search" aria-label="Filtrar lançamentos" <?= js_module('financeiro/filtros') ?>
           class="grid items-end gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-[repeat(5,minmax(0,1fr))]">
         <?= component('select', [
