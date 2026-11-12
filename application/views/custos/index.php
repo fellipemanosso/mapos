@@ -29,7 +29,7 @@ foreach ($lotes as $lote) {
                 <form method="post" action="<?= e(site_url('custos/salvar/' . $id)) ?>" class="mt-4 flex flex-col gap-4" novalidate <?= js_module('formulario/padrao') ?>>
                     <input type="hidden" name="<?= e($csrf) ?>" value="<?= e($token) ?>"><input type="hidden" name="acao" value="padroes"><input type="hidden" name="assinatura" value="<?= e($previa['assinatura']) ?>">
                     <?php foreach ($previa['materiais'] as $material) {
-                        $total = max($material['previsto'], $material['registrado']);
+                        $total = $previa['conferido'] ? $material['registrado'] : max($material['previsto'], $material['registrado']);
                         $falta = max(0, $total - $material['registrado'] - $material['saldo']); ?>
                         <div class="grid gap-3 border-t border-border pt-3 sm:grid-cols-2">
                             <div><p class="text-label-md text-text"><?= e($material['nome'] . ' · ' . $material['unidade']) ?></p><p class="mt-1 text-caption text-muted"><?= e('Padrão: ' . str_replace('.', ',', insumoDecimal($material['previsto'])) . ' · Já registrado: ' . str_replace('.', ',', insumoDecimal($material['registrado'])) . ' · Disponível: ' . str_replace('.', ',', insumoDecimal($material['saldo']))) ?></p>
@@ -39,7 +39,7 @@ foreach ($lotes as $lote) {
                         </div>
                     <?php } ?>
                     <p class="text-caption text-muted">Se faltar estoque, a confirmação inteira será cancelada, sem baixas parciais. Serviços sem composição precisam de conferência manual.</p>
-                    <div><?= component('button', ['label' => 'Confirmar materiais e baixar diferença', 'type' => 'submit']) ?></div>
+                    <div><?= component('button', ['label' => 'Confirmar e baixar diferença', 'type' => 'submit']) ?></div>
                 </form>
                 <?php } else { ?><p class="mt-3 text-body-md text-muted">Sem composição disponível. Configure os insumos nos serviços ou registre o consumo manualmente abaixo.</p><?php } ?>
             </details>
