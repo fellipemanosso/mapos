@@ -22,6 +22,9 @@ $colunas = [
     ['label' => 'Duração', 'align' => 'right', 'render' => fn ($s) => (int) ($s->duracao_min ?? 0) . ' min'],
     ['label' => 'Ações', 'align' => 'right', 'nowrap' => true, 'render' => function ($s) use ($pode) {
         $acoes = [];
+        if ($pode['editar'] && ! empty($pode['insumos'])) {
+            $acoes[] = component('button', ['label' => 'Insumos padrão de ' . $s->nome, 'variant' => 'outline', 'size' => 'sm', 'href' => site_url('custos/padrao/' . $s->idServicos)]);
+        }
         if ($pode['editar']) {
             $acoes[] = component('button', ['label' => 'Editar ' . $s->nome, 'icon' => 'pencil', 'icon_only' => true, 'variant' => 'ghost', 'size' => 'sm', 'href' => site_url('servicos/editar/' . $s->idServicos)]);
         }

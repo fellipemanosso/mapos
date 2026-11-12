@@ -314,6 +314,9 @@ final class AreaDoClienteTest extends MaposTestCase
     {
         $xss = '<img src=x onerror=alert(1)>';
         $html = $this->tela('conecte/visualizar_os', 'os', [
+            'custos' => [(object) ['descricao' => 'CUSTO_INTERNO_SIGILOSO', 'valor' => 999]],
+            'consumos' => [(object) ['nome' => 'INSUMO_INTERNO_SIGILOSO', 'custo' => 999]],
+            'resultado' => ['resultado' => 99999],
             'os' => (object) ['idOs' => 7, 'status' => 'Em Andamento', 'dataInicial' => '2026-10-01', 'dataFinal' => '2026-10-10', 'garantia' => '0', 'nome' => 'Técnico ' . $xss,
                 'descricaoProduto' => 'Celular<br>' . $xss, 'defeito' => '', 'observacoes' => '', 'laudoTecnico' => ''],
             'totais' => ['produtos' => 100.0, 'servicos' => 50.0, 'bruto' => 150.0, 'desconto' => 0.0, 'total' => 150.0, 'tipo' => null, 'informado' => 0.0, 'descontoItens' => 0.0],
@@ -328,6 +331,9 @@ final class AreaDoClienteTest extends MaposTestCase
         $this->semScriptInline($html);
         $this->assertStringNotContainsString($xss, $html);
         $this->assertStringContainsString('Atendimento #7', $html);
+        $this->assertStringNotContainsString('CUSTO_INTERNO_SIGILOSO', $html);
+        $this->assertStringNotContainsString('INSUMO_INTERNO_SIGILOSO', $html);
+        $this->assertStringNotContainsString('Custos e resultado', $html);
         $this->assertStringContainsString('Em Andamento', $html);
         $this->assertStringContainsString('R$ 150,00', $html);
         $this->assertStringNotContainsString('trash-2', $html, 'Sem as ações de edição do painel.');

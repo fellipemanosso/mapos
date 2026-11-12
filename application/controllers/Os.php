@@ -432,6 +432,7 @@ class Os extends MY_Controller
                 'agendar' => $this->permite('eOs'),
                 'fichas' => $this->permite('vFicha'),
                 'criar_pacote' => $this->permite('aOs') && $this->permite('eOs'),
+                'custos' => $this->permite('rFinanceiro'),
             ],
         ];
     }
@@ -760,6 +761,10 @@ class Os extends MY_Controller
         }
 
         $osStockRefund = $this->os_model->getById($id);
+        if ($this->db->table_exists('atendimento_custos') && $this->db->where('os_id', $id)->count_all_results('atendimento_custos') > 0) {
+            $this->session->set_flashdata('error', 'O histórico de custos internos impede excluir este atendimento.');
+            return redirect($listagem);
+        }
         if ($this->db->table_exists('insumo_movimentos') && $this->db->where('os_id', $id)->count_all_results('insumo_movimentos') > 0) {
             $this->session->set_flashdata('error', 'O histórico de consumo de insumos impede excluir este atendimento.');
             return redirect($listagem);

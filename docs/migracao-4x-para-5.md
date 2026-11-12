@@ -322,3 +322,10 @@ Consulte [Pacotes e sessões](pacotes.md).
 A migration `20261111040000_create_despesas` adiciona grupos de compras,
 parcelamentos, recorrências e comprovantes protegidos. Após atualizar o banco,
 use **Financeiro → Despesas**. Consulte [Despesas e compras parceladas](despesas.md).
+# Custos internos por atendimento
+
+A migration `20261112060000_add_custos_atendimento` cria as tabelas privadas
+de custos, composição padrão dos serviços e controle de aplicação do padrão.
+Execute **Configurações → Atualizar banco** após instalar esta versão. Consulte
+o [roteiro de uso e teste](custos-atendimento.md). Não há alteração dos preços
+nem inclusão de custos nos documentos do cliente.

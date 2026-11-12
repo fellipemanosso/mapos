@@ -70,6 +70,7 @@ $textos = [
             <?= component('button', ['label' => 'Nota fiscal', 'variant' => 'outline', 'href' => site_url('notasfiscais/index/' . $idOs)]) ?>
             <?php if (! empty($pode['fichas'])) { ?><?= component('button', ['label' => 'Ficha de atendimento', 'variant' => 'outline', 'href' => site_url('fichas/atendimento/' . $idOs)]) ?><?php } ?>
             <?= component('button', ['label' => 'Orçamento e recebimentos', 'variant' => 'outline', 'href' => site_url('recebimentos/index/' . $idOs)]) ?>
+            <?php if (! empty($pode['custos'])) { ?><?= component('button', ['label' => 'Custos e resultado', 'variant' => 'outline', 'href' => site_url('custos/index/' . $idOs)]) ?><?php } ?>
             <?= component('button', ['label' => 'Imprimir', 'icon' => 'printer', 'variant' => 'ghost', 'href' => site_url('os/imprimir/' . $idOs), 'attrs' => ['target' => '_blank', 'rel' => 'noopener']]) ?>
             <?= component('button', ['label' => 'Cupom 80mm', 'icon' => 'receipt', 'variant' => 'ghost', 'href' => site_url('os/imprimirTermica/' . $idOs), 'attrs' => ['target' => '_blank', 'rel' => 'noopener']]) ?>
             <?php if ($os->garantias_id) { ?>

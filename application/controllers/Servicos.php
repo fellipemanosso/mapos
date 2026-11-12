@@ -44,6 +44,7 @@ class Servicos extends MY_Controller
         $this->data['pode'] = [
             'adicionar' => $this->permite('aServico'),
             'editar' => $this->permite('eServico'),
+            'insumos' => $this->permite('eInsumo'),
             'excluir' => $this->permite('dServico'),
         ];
 

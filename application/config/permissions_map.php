@@ -32,6 +32,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 */
 
 $config['permissions_map'] = [
+    'Custos' => [
+        'index' => ['todas' => ['vOs', 'rFinanceiro']],
+        'salvar' => ['todas' => ['vOs', 'rFinanceiro', 'eOs']],
+        'padrao' => ['todas' => ['eServico', 'eInsumo']],
+    ],
     'Automacoes' => ['index' => 'cSistema', 'salvar' => 'cSistema'],
     'Conversas' => ['index' => 'vWhatsapp', 'visualizar' => 'vWhatsapp', 'responder' => 'eWhatsapp', 'ajustar' => 'eWhatsapp', 'cancelar' => 'eWhatsapp'],
     'Indicadores' => ['index' => ['todas' => ['rOs', 'rFinanceiro']]],
