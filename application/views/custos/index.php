@@ -15,11 +15,21 @@ foreach ($lotes as $lote) {
     </header>
     <?php if ($erro) { ?><?= component('alert', ['variant' => 'danger', 'message' => $erro]) ?><?php } ?>
     <?= component('alert', ['variant' => $previa['conferido'] && ! $previa['sem_custo'] ? 'success' : 'warning', 'message' => $previa['conferido'] ? ($previa['sem_custo'] ? 'Materiais conferidos, mas há consumo com custo zero. Confira os valores das compras antes de considerar o resultado.' : 'Materiais conferidos. Confira também os outros custos diretos.') : 'Resultado parcial: os materiais ainda precisam ser conferidos.']) ?>
+    <section class="rounded-xl border border-border bg-surface p-4 sm:p-6"><h2 class="text-heading-sm text-text">Resultado com os custos registrados</h2>
+        <dl class="mt-3 grid grid-cols-2 gap-4"><div><dt class="text-caption text-muted">Custos diretos</dt><dd class="text-heading-sm text-text"><?= e(dinheiro($resultado['custo'] / 100)) ?></dd></div><div><dt class="text-caption text-muted">Resultado previsto · parcial até revisar todos os custos</dt><dd class="text-heading-sm text-text"><?= e(dinheiro($resultado['resultado'] / 100)) ?></dd></div></dl>
+        <details class="mt-4"><summary class="min-h-11 cursor-pointer py-2.5 text-label-md text-text">Ver cobrança e recebimentos</summary>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <?php foreach (['cobrado' => 'Total cobrado', 'recebido' => 'Total recebido', 'saldo' => 'Saldo a receber', 'recebido_menos_custos' => 'Recebido menos custos diretos'] as $campo => $rotulo) { ?>
+            <?= component('kpi-card', ['label' => $rotulo, 'value' => dinheiro($resultado[$campo] / 100)]) ?>
+        <?php } ?>
+    </div>
+    <p class="text-caption text-muted">Resultado previsto = total cobrado menos custos diretos registrados. Não inclui despesas gerais, impostos ou trabalho da profissional, salvo se lançados aqui. Não é lucro líquido nem saldo de caixa. Os custos não geram despesas financeiras automaticamente: registre o pagamento das compras em Despesas, sem descontá-lo novamente nesta tela.</p>
+        </details></section>
     <section class="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 class="text-heading-sm text-text">Insumos consumidos</h2>
         <p class="mt-2 text-caption text-muted"><?= e('Custo dos insumos: ' . dinheiro($resultado['insumos'] / 100)) ?>. O consumo baixa o estoque e usa o custo do lote comprado. Confira o consumo real, mesmo quando usar um padrão.</p>
         <?php if ($editar_insumos) { ?>
-            <details class="mt-4" <?= ! $previa['conferido'] ? 'open' : '' ?>>
+            <details id="conferencia" class="mt-4" <?= ! $previa['conferido'] ? 'open' : '' ?> <?= js_module('custos/retomar') ?> data-rascunho-chave="<?= e((int) $this->session->userdata('id_admin') . ':' . $id) ?>">
                 <summary class="min-h-11 cursor-pointer py-2.5 text-label-md text-text">Conferir materiais antes de baixar</summary>
                 <p class="mt-3 text-body-md text-muted">Informe o total realmente usado neste atendimento. O que já foi registrado é descontado: somente a diferença será baixada, usando primeiro os lotes que vencem antes. Quantidade zero significa que o material não foi usado.</p>
                 <ul class="mt-3 text-caption text-muted">
@@ -34,7 +44,7 @@ foreach ($lotes as $lote) {
                         <div class="grid gap-3 border-t border-border pt-3 sm:grid-cols-2">
                             <div><p class="text-label-md text-text"><?= e($material['nome'] . ' · ' . $material['unidade']) ?></p><p class="mt-1 text-caption text-muted"><?= e('Padrão: ' . str_replace('.', ',', insumoDecimal($material['previsto'])) . ' · Já registrado: ' . str_replace('.', ',', insumoDecimal($material['registrado'])) . ' · Disponível: ' . str_replace('.', ',', insumoDecimal($material['saldo']))) ?></p>
                             <?php if ($falta > 0) { ?><p class="mt-2 text-caption text-danger-ink"><?= e('Faltam ' . str_replace('.', ',', insumoDecimal($falta)) . ' ' . $material['unidade'] . ' para o total sugerido.') ?></p><?php } ?>
-                            <?= component('button', ['label' => 'Registrar compra ou saldo inicial', 'variant' => 'link', 'href' => site_url('insumos/visualizar/' . $material['id']) . '#movimentacao']) ?></div>
+                            <?= component('button', ['label' => 'Registrar compra ou saldo inicial', 'variant' => 'link', 'href' => site_url('insumos/visualizar/' . $material['id']) . '?atendimento_retorno=' . $id . '#movimentacao', 'attrs' => ['data-guardar-conferencia' => true]]) ?></div>
                             <?= component('input', ['name' => 'materiais[' . $material['id'] . ']', 'label' => 'Total realmente usado · ' . $material['nome'], 'value' => is_string($valores['materiais'][$material['id']] ?? null) ? $valores['materiais'][$material['id']] : str_replace('.', ',', insumoDecimal($total)), 'required' => true, 'attrs' => ['inputmode' => 'decimal'], 'help' => 'Inclua o consumo já registrado. Para reduzir esse consumo, estorne primeiro.']) ?>
                         </div>
                     <?php } ?>
@@ -58,7 +68,10 @@ foreach ($lotes as $lote) {
                 <div><p class="text-body-md text-text"><?= e($m->nome . ' · ' . number_format((float) $m->quantidade, 3, ',', '') . ' ' . $m->unidade . ' · lote ' . $m->lote . ' · ' . dinheiro($m->custo)) ?></p><p class="mt-1 text-caption text-muted"><?= e($m->nota . ' · ' . date('d/m/Y H:i', strtotime($m->criado_em))) ?></p></div>
                 <?php if ($m->estornado_em) { ?><?= component('pill-status', ['label' => 'Estornado', 'variant' => 'neutral']) ?>
                 <?php } elseif ($editar_insumos) { ?>
-                    <form method="post" action="<?= e(site_url('custos/salvar/' . $id)) ?>"><input type="hidden" name="<?= e($csrf) ?>" value="<?= e($token) ?>"><input type="hidden" name="acao" value="estornar_consumo"><input type="hidden" name="registro" value="<?= e($m->id) ?>"><?= component('button', ['label' => 'Estornar ' . $m->nome, 'variant' => 'ghost', 'type' => 'submit']) ?></form>
+                    <?php $modal = 'estornar-consumo-' . $m->id; ?>
+                    <?= component('button', ['label' => 'Estornar ' . $m->nome, 'variant' => 'ghost', 'attrs' => ['data-modal-abrir' => $modal]]) ?>
+                    <form id="<?= e($modal . '-form') ?>" method="post" action="<?= e(site_url('custos/salvar/' . $id)) ?>" hidden><input type="hidden" name="<?= e($csrf) ?>" value="<?= e($token) ?>"><input type="hidden" name="acao" value="estornar_consumo"><input type="hidden" name="registro" value="<?= e($m->id) ?>"></form>
+                    <?= component('modal-confirm', ['id' => $modal, 'title' => 'Estornar ' . $m->nome . '?', 'message' => $m->nome . ' · lote ' . $m->lote . ' · ' . dinheiro($m->custo) . '. A quantidade consumida voltará ao estoque e seu custo será retirado do resultado. O histórico será preservado.', 'confirm_label' => 'Estornar consumo', 'confirm_attrs' => ['form' => $modal . '-form']]) ?>
                 <?php } ?>
             </article>
         <?php } ?>
@@ -81,19 +94,13 @@ foreach ($lotes as $lote) {
                 <div><p class="text-body-md text-text"><?= e((CUSTOS_TIPOS[$custo->tipo] ?? 'Custo') . ' · ' . $custo->descricao . ' · ' . dinheiro($custo->valor)) ?></p><p class="mt-1 text-caption text-muted"><?= e(date('d/m/Y H:i', strtotime($custo->criado_em))) ?></p></div>
                 <?php if ($custo->estornado_em) { ?><?= component('pill-status', ['label' => 'Estornado', 'variant' => 'neutral']) ?>
                 <?php } elseif ($editar) { ?>
-                    <form method="post" action="<?= e(site_url('custos/salvar/' . $id)) ?>"><input type="hidden" name="<?= e($csrf) ?>" value="<?= e($token) ?>"><input type="hidden" name="acao" value="estornar_custo"><input type="hidden" name="registro" value="<?= e($custo->id) ?>"><?= component('button', ['label' => 'Estornar custo #' . $custo->id, 'variant' => 'ghost', 'type' => 'submit']) ?></form>
+                    <?php $modal = 'estornar-custo-' . $custo->id; ?>
+                    <?= component('button', ['label' => 'Estornar custo #' . $custo->id, 'variant' => 'ghost', 'attrs' => ['data-modal-abrir' => $modal]]) ?>
+                    <form id="<?= e($modal . '-form') ?>" method="post" action="<?= e(site_url('custos/salvar/' . $id)) ?>" hidden><input type="hidden" name="<?= e($csrf) ?>" value="<?= e($token) ?>"><input type="hidden" name="acao" value="estornar_custo"><input type="hidden" name="registro" value="<?= e($custo->id) ?>"></form>
+                    <?= component('modal-confirm', ['id' => $modal, 'title' => 'Estornar este custo?', 'message' => $custo->descricao . ' · ' . dinheiro($custo->valor) . '. Este custo será retirado do resultado. O histórico será preservado e os lançamentos financeiros não serão alterados.', 'confirm_label' => 'Estornar custo', 'confirm_attrs' => ['form' => $modal . '-form']]) ?>
                 <?php } ?>
             </article>
         <?php } ?>
     </section>
-    <section class="rounded-xl border border-border bg-surface p-4 sm:p-6"><h2 class="text-heading-sm text-text">Resultado com os custos registrados</h2>
-        <dl class="mt-3 grid grid-cols-2 gap-4"><div><dt class="text-caption text-muted">Custos diretos</dt><dd class="text-heading-sm text-text"><?= e(dinheiro($resultado['custo'] / 100)) ?></dd></div><div><dt class="text-caption text-muted">Resultado previsto · parcial até revisar todos os custos</dt><dd class="text-heading-sm text-text"><?= e(dinheiro($resultado['resultado'] / 100)) ?></dd></div></dl>
-        <details class="mt-4"><summary class="min-h-11 cursor-pointer py-2.5 text-label-md text-text">Ver cobrança e recebimentos</summary>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <?php foreach (['cobrado' => 'Total cobrado', 'recebido' => 'Total recebido', 'saldo' => 'Saldo a receber', 'recebido_menos_custos' => 'Recebido menos custos diretos'] as $campo => $rotulo) { ?>
-            <?= component('kpi-card', ['label' => $rotulo, 'value' => dinheiro($resultado[$campo] / 100)]) ?>
-        <?php } ?>
-    </div>
-    <p class="text-caption text-muted">Resultado previsto = total cobrado menos custos diretos registrados. Não inclui despesas gerais, impostos ou trabalho da profissional, salvo se lançados aqui. Não é lucro líquido nem saldo de caixa. Os custos não geram despesas financeiras automaticamente: registre o pagamento das compras em Despesas, sem descontá-lo novamente nesta tela.</p>
-        </details></section>
+
 </div>

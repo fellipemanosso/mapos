@@ -79,7 +79,7 @@ class Insumos_model extends CI_Model
                 $validade = $dados['validade'] ?? '';
                 $data = $validade === '' ? null : fichaData($validade);
                 $custo = insumoCustoEntrada($dados['custo'] ?? null);
-                if (! is_string($nome) || trim($nome) === '' || mb_strlen($nome) > 100 || ($validade !== '' && ! $data) || $custo === null) {
+                if (! is_string($nome) || trim($nome) === '' || mb_strlen($nome) > 100 || ($validade !== '' && ! $data)) {
                     throw new DomainException('Informe lote, validade válida (ou deixe vazia) e custo total da entrada.');
                 }
                 $unitario = (float) $custo * 1000 / $quantidade;

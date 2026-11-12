@@ -28,12 +28,13 @@ o material ou a descrição e o valor. **Cancelar** ou Esc fecha sem alterar dad
 somente a confirmação efetua o estorno e preserva o histórico.
 
 Em Serviços, use **Insumos padrão** para definir as quantidades por unidade do
-serviço. Na tela de custos do atendimento, **Aplicar insumos padrão dos serviços**
-baixa os lotes disponíveis, priorizando validade. A operação é atômica se faltar
-estoque e não repete um item já aplicado. Revise o consumo real; use estorno e
-novo consumo para corrigir. Alterar a composição ou quantidade do serviço depois
-de aplicar não altera o histórico. Se já registrou materiais manualmente, não
-aplique o padrão novamente para os mesmos materiais sem conferir duplicidades.
+serviço. Ajustes e remoções podem ser feitos em várias linhas e salvos juntos; a
+adição de um material é uma ação separada. Na tela de custos do atendimento,
+**Conferir materiais antes de baixar** compara composição, consumo já registrado
+e saldo elegível. Informe o total real; o sistema baixa apenas a diferença,
+priorizando lotes por validade. A confirmação é atômica se faltar estoque.
+Mudanças posteriores na composição não alteram o histórico. Para reduzir consumo
+já registrado, estorne-o primeiro.
 
 O custo de compra de um produto vendido é informado em Outros custos diretos,
 tipo Custo de produto vendido. Não há vínculo automático com o preço de compra
@@ -74,6 +75,6 @@ Em Custos e resultado, abra **Conferir materiais antes de baixar**. A prévia so
 
 A confirmação é transacional: faltar qualquer material cancela todas as baixas dessa confirmação. Reenvios de uma prévia antiga são recusados; confirmar novamente o mesmo total atualizado não gera consumo adicional. Mudanças nos serviços, composição ou consumo invalidam a conferência. Serviços sem composição continuam exigindo verificação e lançamento manual. Consumo com custo zero gera aviso para revisar as compras. Resultado previsto considera apenas custos registrados e não equivale a lucro líquido.
 
-Na composição do serviço, cada linha permite salvar uma quantidade ou remover o material explicitamente. Na movimentação de estoque, os campos acompanham o tipo escolhido e mantêm o rascunho ao alternar as opções. Links na prévia levam diretamente à entrada do insumo.
+Na composição do serviço, cada linha permite salvar uma quantidade ou remover o material explicitamente. Na movimentação de estoque, os campos acompanham o tipo escolhido e mantêm o rascunho ao alternar as opções. O custo da entrada deve ser informado; digite **0,00** se o custo conhecido for realmente zero. A conferência pode ser retomada após registrar uma entrada, e os campos digitados são restaurados quando a prévia continua válida. Links na prévia levam diretamente à entrada do insumo.
 
 Atualização: migration `20261113010000_add_conferencia_materiais` cria apenas o registro interno de conferência. Não altera os saldos ou consumos existentes.
