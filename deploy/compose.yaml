@@ -1,0 +1,83 @@
+name: mapos-producao
+services:
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      MAPOS_DOMAIN: ${MAPOS_DOMAIN:?Defina MAPOS_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    networks:
+      default:
+        ipv4_address: 172.28.50.2
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: mapos-personalizado:local
+    restart: unless-stopped
+    volumes: &app-volumes
+      - ../application/.env:/var/www/html/application/.env:ro
+      - storage:/var/lib/mapos/storage
+      - backups:/var/backups/mapos
+      - logos:/var/www/html/assets/uploads
+      - perfis:/var/www/html/assets/userImage
+      - logs:/var/www/html/application/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      default:
+        ipv4_address: 172.28.50.3
+  worker:
+    image: mapos-personalizado:local
+    user: www-data
+    restart: unless-stopped
+    volumes: *app-volumes
+    command: ["sh", "-c", "while true; do php index.php rotinas processar; php index.php email process; sleep 60; done"]
+    depends_on:
+      - app
+  backup:
+    image: mapos-personalizado:local
+    user: www-data
+    restart: unless-stopped
+    volumes: *app-volumes
+    command: ["sh", "-c", "while true; do php index.php rotinas backup; sleep 21600; done"]
+    depends_on:
+      - app
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${DB_DATABASE:?Defina DB_DATABASE}
+      MARIADB_USER: ${DB_USERNAME:?Defina DB_USERNAME}
+      MARIADB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Defina DB_ROOT_PASSWORD}
+    volumes:
+      - banco:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+volumes:
+  banco:
+  storage:
+  backups:
+  logos:
+  perfis:
+  logs:
+  caddy_data:
+  caddy_config:
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.28.50.0/24

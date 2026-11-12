@@ -43,9 +43,9 @@
     <section class="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="text-heading-sm text-text">Atendimento automático</h2>
-            <?= component('pill-status', ['label' => 'Desligado', 'variant' => 'neutral']) ?>
+            <?= component('button', ['label' => 'Configurar automações', 'href' => site_url('automacoes'), 'variant' => 'outline']) ?>
         </div>
-        <p class="mt-2 text-body-md text-muted">Esta etapa gerencia apenas a conexão. Respostas com IA, captura de leads e lembretes serão configurados na próxima etapa.</p>
+        <p class="mt-2 text-body-md text-muted">Configure o perfil comercial, respostas com IA e lembretes. As mensagens recebidas aparecem em Conversas WhatsApp depois de configurar o webhook.</p>
         <p class="mt-2 text-caption text-muted">Automações já configuradas diretamente na Evolution continuam sob o controle dela.</p>
     </section>
     <?php foreach (['reiniciar' => ['Reiniciar a conexão?', 'O WhatsApp pode ficar indisponível por alguns instantes.', 'Reiniciar'], 'desconectar' => ['Desconectar o WhatsApp?', 'A sessão desta instância será encerrada. Para conectar novamente, pode ser necessário ler outro QR Code.', 'Desconectar']] as $acao => [$titulo, $mensagem, $rotulo]) { ?>

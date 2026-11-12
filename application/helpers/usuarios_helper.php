@@ -61,6 +61,8 @@ if (! defined('PERMISSOES_SISTEMA')) {
         'cModeloFicha' => ['Modelos de fichas e termos', 'Definir perguntas e textos usados nas novas fichas.'],
         'vInsumo' => ['Consultar insumos', 'Ver lotes, validade, saldos e movimentações de insumos.'],
         'eInsumo' => ['Movimentar insumos', 'Cadastrar insumos, entradas e consumo por atendimento.'],
+        'vWhatsapp' => ['Consultar conversas', 'Ler mensagens comerciais recebidas e a fila de envios.'],
+        'eWhatsapp' => ['Atender pelo WhatsApp', 'Responder, assumir conversas e registrar autorização de lembretes.'],
         'cUsuario' => ['Usuários', 'Cadastrar, editar e excluir usuários do painel.'],
         'cPermissao' => ['Permissões', 'Criar e alterar grupos de permissão (inclusive o próprio).'],
         'cEmitente' => ['Emitente', 'Dados da empresa nas impressões e no PIX.'],
@@ -119,6 +121,9 @@ if (! function_exists('permissoesDoFormulario')) {
         }
         if ($mapa['eInsumo']) {
             $mapa['vInsumo'] = 1;
+        }
+        if ($mapa['eWhatsapp']) {
+            $mapa['vWhatsapp'] = 1;
         }
         return $mapa;
     }

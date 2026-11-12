@@ -16,7 +16,7 @@ RewriteRule (^|/)\.(?!well-known(/|$)) - [F,L]
 
 # Código-fonte, scripts de atualização e arquivos de projeto não são públicos
 # (docs/servidor-web.md). application/ tem o próprio .htaccess.
-RewriteRule ^(updates|scripts|tests|docker|docs)(/|$) - [F,L]
+RewriteRule ^(updates|scripts|tests|docker|docs|deploy)(/|$) - [F,L]
 RewriteRule ^[^/]+\.(sql|json|lock|md|xml|neon|bat|sh|dist)$ - [F,L,NC]
 
 RewriteCond %{HTTP:Authorization} ^(.+)$

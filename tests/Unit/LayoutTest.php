@@ -235,13 +235,13 @@ final class LayoutTest extends MaposTestCase
     public function testAdministradorVeTodosOsItens(): void
     {
         $todas = ['vCliente', 'vProduto', 'vServico', 'vVenda', 'vOs', 'vGarantia', 'vArquivo', 'vLancamento', 'vCobranca',
-            'vFicha', 'eFicha', 'cModeloFicha', 'rFicha', 'vInsumo', 'eInsumo',
+            'vFicha', 'eFicha', 'cModeloFicha', 'rFicha', 'vInsumo', 'eInsumo', 'vWhatsapp', 'eWhatsapp',
             'rCliente', 'rProduto', 'rServico', 'rOs', 'rVenda', 'rFinanceiro',
             'cSistema', 'cUsuario', 'cEmitente', 'cPermissao', 'cAuditoria', 'cEmail', 'cBackup'];
 
         $menu = layoutMenuVisivel(layoutMenu(), $this->permite($todas), 'Mapos', 'index');
 
-        $this->assertCount(15 + 11 + 9, self::rotulos($menu));
+        $this->assertCount(16 + 11 + 10, self::rotulos($menu));
         $this->assertContains('Configurações > WhatsApp', self::rotulos($menu));
     }
 

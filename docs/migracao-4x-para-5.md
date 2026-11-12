@@ -1,5 +1,7 @@
 # Migração do Map-OS 4.x para a v5
 
+**Conversas e automações:** aplique `20261112050000_add_automacoes`. As novas permissões `vWhatsapp` e `eWhatsapp` são habilitadas somente no grupo Administrador (ID 1). Configure `EVOLUTION_WEBHOOK_SECRET` e, se usar IA, `OPENAI_API_KEY`. O perfil e as automações começam desligados; há um novo webhook autenticado e rotinas somente CLI. Para backup automático, configure `BACKUP_PATH` fora da raiz pública e `BACKUP_RETENTION_DAYS`. As instruções de ativação, restauração e Docker/HTTPS estão em [WhatsApp, automações e produção](whatsapp-automacoes-producao.md).
+
 **Operação e permissões específicas:** aplique `20261112040000_add_operacao` para insumos e logística. O acesso clínico deixa de depender de `cSistema`: as novas permissões são habilitadas apenas no grupo Administrador (ID 1); revise os demais grupos. Consulte [Módulos de operação](operacao-completa.md).
 
 **Fichas e retornos:** aplique `20261112030000_create_fichas`. A atualização de operação acima separa as permissões clínicas das administrativas. Atendimentos com fichas impedem a troca da pessoa atendida e a exclusão. Inclua os arquivos privados no backup. Veja [Fichas de atendimento](fichas-atendimento.md).

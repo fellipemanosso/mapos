@@ -62,4 +62,4 @@ Textos e navegação foram adaptados para atendimentos e serviços, removendo re
 
 ## Dependências externas ainda pendentes
 
-A publicação em hospedagem, domínio/HTTPS, rotinas de backup automático, envio real de e-mails e conexão com a Evolution precisam dos dados e configurações da instalação. Captura automática de mensagens, caixa de atendimento do WhatsApp, lembretes e IA não fazem parte destes módulos de operação.
+A captura de mensagens, caixa de conversas, lembretes, assistente comercial e configuração de produção estão descritos em [WhatsApp, automações e produção](whatsapp-automacoes-producao.md). A publicação, domínio/HTTPS, entrega de e-mail e conexão real com a Evolution e OpenAI ainda precisam dos dados da instalação e validação com os provedores.

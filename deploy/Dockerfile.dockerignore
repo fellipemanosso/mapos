@@ -1,0 +1,14 @@
+.git
+.github
+node_modules
+application/vendor
+application/.env
+application/storage
+application/logs
+assets/userImage
+docker/data
+tests
+*.log
+**/.env
+**/.env.*
+install/instalado.lock
