@@ -1,0 +1,160 @@
+version: '3.8'
+
+# Instalação Rafaela: usar somente no Swarm com rede externa manosso e Traefik existente.
+# Os quatro secrets são criados separadamente; nenhum valor sensível entra no stack.
+services:
+  app:
+    image: rafaela-mapos:24cfe089
+    volumes: &app-volumes
+      - storage:/var/lib/mapos/storage
+      - backups:/var/backups/mapos
+      - logos:/var/www/html/assets/uploads
+      - perfis:/var/www/html/assets/userImage
+      - logs:/var/www/html/application/logs
+    secrets: &app-secrets
+      - source: app_env
+        target: /var/www/html/application/.env
+        uid: '33'
+        gid: '33'
+        mode: 0440
+    networks:
+      - interna
+      - manosso
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1/ >/dev/null"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.hostname == portainer]
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          memory: 128M
+      restart_policy:
+        condition: any
+        delay: 10s
+      labels:
+        - traefik.enable=true
+        - traefik.swarm.network=manosso
+        - traefik.http.routers.rafaela-mapos.rule=Host(`app.rafaelacarvalho.enf.br`)
+        - traefik.http.routers.rafaela-mapos.entrypoints=websecure
+        - traefik.http.routers.rafaela-mapos.tls=true
+        - traefik.http.routers.rafaela-mapos.tls.certresolver=letsencryptresolver
+        - traefik.http.routers.rafaela-mapos.service=rafaela-mapos
+        - traefik.http.services.rafaela-mapos.loadbalancer.server.port=80
+  worker:
+    image: rafaela-mapos:24cfe089
+    user: www-data
+    volumes: *app-volumes
+    secrets: *app-secrets
+    networks:
+      - interna
+      - manosso
+    command: ["sh", "-c", "while true; do php index.php rotinas processar; php index.php email process; sleep 60; done"]
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.hostname == portainer]
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+      restart_policy:
+        condition: any
+        delay: 15s
+      labels:
+        - traefik.enable=false
+  backup:
+    image: rafaela-mapos:24cfe089
+    user: www-data
+    volumes: *app-volumes
+    secrets: *app-secrets
+    networks:
+      - interna
+    command: ["sh", "-c", "while true; do if php index.php rotinas backup; then sleep 21600; else sleep 60; fi; done"]
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.hostname == portainer]
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: any
+        delay: 30s
+      labels:
+        - traefik.enable=false
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: rafaela
+      MARIADB_USER: rafaela
+      MARIADB_PASSWORD_FILE: /run/secrets/db_password
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      TZ: America/Sao_Paulo
+    volumes:
+      - banco:/var/lib/mysql
+    secrets:
+      - source: db_password
+        target: db_password
+      - source: db_root_password
+        target: db_root_password
+      - source: init_sql
+        target: /docker-entrypoint-initdb.d/10-mapos.sql
+        mode: 0444
+    networks:
+      - interna
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.hostname == portainer]
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 768M
+        reservations:
+          memory: 128M
+      restart_policy:
+        condition: any
+        delay: 10s
+      labels:
+        - traefik.enable=false
+volumes:
+  banco:
+  storage:
+  backups:
+  logos:
+  perfis:
+  logs:
+networks:
+  interna:
+    driver: overlay
+    internal: true
+  manosso:
+    external: true
+secrets:
+  app_env:
+    external: true
+    name: rafaela_mapos_env_v1
+  db_password:
+    external: true
+    name: rafaela_mapos_db_password_v1
+  db_root_password:
+    external: true
+    name: rafaela_mapos_db_root_v1
+  init_sql:
+    external: true
+    name: rafaela_mapos_init_v1
