@@ -1,0 +1,31 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import iniciar from '../../assets/js/modules/custos/retomar.js';
+
+test('rascunho restaura apenas quantidades da mesma conferência e é descartado após retornar', () => {
+    const mapa = new Map();
+    globalThis.sessionStorage = {getItem: (k) => mapa.get(k), setItem: (k, v) => mapa.set(k, v), removeItem: (k) => mapa.delete(k)};
+    globalThis.location = {href: 'http://localhost/custos/index/4'};
+    globalThis.document = {createElement: () => ({setAttribute() {}})};
+    const campo = {name: 'materiais[1]', value: '3,500'};
+    let assinatura = 'atual';
+    const eventos = {};
+    const formulario = {elements: {namedItem: () => ({value: assinatura})}, querySelectorAll: () => [campo], addEventListener() {}};
+    const mensagens = [];
+    const painel = {dataset: {rascunhoChave: '1:4'}, querySelector: (s) => s === 'form' ? formulario : {after: (m) => mensagens.push(m.textContent)}, addEventListener: (nome, fn) => { eventos[nome] = fn; }};
+    iniciar(painel);
+    eventos.click({target: {closest: () => true}});
+    campo.value = '2,000';
+    location.href += '?retomar=1';
+    iniciar(painel);
+    assert.equal(campo.value, '3,500');
+    assert.equal(mapa.size, 0);
+    assert.match(mensagens.pop(), /recuperadas/);
+    eventos.click({target: {closest: () => true}});
+    assinatura = 'mudou';
+    campo.value = '4,000';
+    iniciar(painel);
+    assert.equal(campo.value, '4,000');
+    assert.match(mensagens.pop(), /mudaram/);
+    assert.equal(mapa.size, 0);
+});

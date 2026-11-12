@@ -37,7 +37,9 @@ class Insumos extends MY_Controller
         $valores = $this->input->method() === 'post' ? $this->input->post() : ($item ? (array) $item : []);
         if ($item) {
             $valores['unidade'] = $item->unidade;
-            if ($this->input->method() !== 'post') { $valores['minimo'] = number_format((float) $item->minimo, 3, ',', ''); }
+            if ($this->input->method() !== 'post') {
+                $valores['minimo'] = number_format((float) $item->minimo, 3, ',', '');
+            }
         }
         $erros = [];
         if ($this->input->method() === 'post') {
@@ -80,10 +82,12 @@ class Insumos extends MY_Controller
     private function tela(object $item, ?string $erro = null, array $valores = [])
     {
         $offset = max(0, (int) $this->input->get('offset'));
+        $retorno = $this->input->method() === 'post' ? $this->input->post('atendimento_retorno') : $this->input->get('atendimento_retorno');
+        $retorno = is_string($retorno) && ctype_digit($retorno) && (int) $retorno > 0 ? (int) $retorno : null;
         $this->data += ['item' => $item, 'lotes' => $this->insumos_model->lotes((int) $item->id),
             'movimentos' => $this->insumos_model->movimentos((int) $item->id, $offset, 30), 'offset' => $offset,
             'tem_mais' => $this->insumos_model->contarMovimentos((int) $item->id) > $offset + 30,
-            'erro' => $erro, 'valores' => $valores, 'pode_editar' => $this->permite('eInsumo'), 'chave' => bin2hex(random_bytes(16))];
+            'erro' => $erro, 'valores' => $valores, 'atendimento_retorno' => $retorno, 'pode_editar' => $this->permite('eInsumo'), 'chave' => bin2hex(random_bytes(16))];
         $this->data['view'] = 'insumos/visualizar';
         return $this->layout();
     }
@@ -118,7 +122,9 @@ class Insumos extends MY_Controller
             $this->insumos_model->movimentar((int) $item->id, $post['tipo'], $qtd, $post, (int) $this->session->userdata('id_admin'), $post['chave']);
             log_info('Movimentou insumo #' . $item->id);
             $this->session->set_flashdata('success', 'Movimentação registrada. Compras devem ser lançadas também em Despesas.');
-            return redirect('insumos/visualizar/' . $item->id);
+            $retorno = $post['atendimento_retorno'] ?? null;
+            $query = is_string($retorno) && ctype_digit($retorno) && (int) $retorno > 0 ? '?atendimento_retorno=' . (int) $retorno : '';
+            return redirect('insumos/visualizar/' . $item->id . $query);
         } catch (DomainException $e) {
             $this->output->set_status_header(422);
             return $this->tela($item, $e->getMessage(), $post);
