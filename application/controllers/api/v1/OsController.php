@@ -393,6 +393,10 @@ class OsController extends REST_Controller
         }
 
         $osStockRefund = $this->os_model->getById($id);
+        if ($this->db->table_exists('insumo_movimentos') && $this->db->where('os_id', (int) $id)->count_all_results('insumo_movimentos') > 0) {
+            $this->response(['status' => false, 'message' => 'O histórico de consumo de insumos impede excluir este atendimento.'], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
         if ($this->db->table_exists('fichas') && $this->db->where('os_id', (int) $id)->count_all_results('fichas') > 0) {
             $this->response(['status' => false, 'message' => 'Atendimento com ficha não pode ser excluído.'], REST_Controller::HTTP_BAD_REQUEST);
             return;

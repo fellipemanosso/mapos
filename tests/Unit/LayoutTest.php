@@ -161,8 +161,17 @@ final class LayoutTest extends MaposTestCase
 
         foreach ($conjuntos as $conjunto) {
             $esperado = ['Início'];
-            if (in_array('cSistema', $conjunto, true)) {
+            if (in_array('vFicha', $conjunto, true)) {
                 $esperado[] = 'Fichas e retornos';
+            }
+            if (in_array('vInsumo', $conjunto, true)) {
+                $esperado[] = 'Insumos';
+            }
+            if (array_intersect(['rCliente', 'rFinanceiro', 'rFicha'], $conjunto)) {
+                $esperado[] = 'Exportação de dados';
+            }
+            if (in_array('rOs', $conjunto, true) && in_array('rFinanceiro', $conjunto, true)) {
+                $esperado[] = 'Indicadores';
             }
             if (in_array('vLancamento', $conjunto, true)) {
                 $esperado[] = 'Despesas';
@@ -198,7 +207,7 @@ final class LayoutTest extends MaposTestCase
         $menu = layoutMenuVisivel(layoutMenu(), $this->permite(['rCliente', 'cUsuario', 'cBackup']), 'Mapos', 'index');
 
         $this->assertSame(
-            ['Início', 'Relatórios > Clientes', 'Configurações > Usuários', 'Configurações > Backup'],
+            ['Início', 'Relatórios > Clientes', 'Exportação de dados', 'Configurações > Usuários', 'Configurações > Backup'],
             self::rotulos($menu)
         );
     }
@@ -226,12 +235,13 @@ final class LayoutTest extends MaposTestCase
     public function testAdministradorVeTodosOsItens(): void
     {
         $todas = ['vCliente', 'vProduto', 'vServico', 'vVenda', 'vOs', 'vGarantia', 'vArquivo', 'vLancamento', 'vCobranca',
+            'vFicha', 'eFicha', 'cModeloFicha', 'rFicha', 'vInsumo', 'eInsumo',
             'rCliente', 'rProduto', 'rServico', 'rOs', 'rVenda', 'rFinanceiro',
             'cSistema', 'cUsuario', 'cEmitente', 'cPermissao', 'cAuditoria', 'cEmail', 'cBackup'];
 
         $menu = layoutMenuVisivel(layoutMenu(), $this->permite($todas), 'Mapos', 'index');
 
-        $this->assertCount(14 + 10 + 8, self::rotulos($menu));
+        $this->assertCount(15 + 11 + 9, self::rotulos($menu));
         $this->assertContains('Configurações > WhatsApp', self::rotulos($menu));
     }
 

@@ -1,0 +1,7 @@
+<?php $valor = static fn ($c, $p = '') => is_string($valores[$c] ?? null) ? $valores[$c] : $p; ?>
+<div class="flex max-w-3xl flex-col gap-4 pt-2 pb-8"><h1 class="font-display text-heading-xl text-text"><?= e($item ? 'Editar insumo' : 'Novo insumo') ?></h1><form method="post" action="<?= e(site_url('insumos/formulario' . ($item ? '/' . $item->id : ''))) ?>" class="grid gap-4 rounded-xl border border-border bg-surface p-4" novalidate <?= js_module('formulario/padrao') ?>>
+<input type="hidden" name="<?= e($this->security->get_csrf_token_name()) ?>" value="<?= e($this->security->get_csrf_hash()) ?>">
+<?= component('input', ['name' => 'nome', 'label' => 'Nome do insumo', 'value' => $valor('nome'), 'required' => true, 'error' => $erros['nome'] ?? null, 'attrs' => ['maxlength' => 150]]) ?>
+<?= component('select', ['name' => 'unidade', 'label' => 'Unidade de controle', 'options' => INSUMOS_UNIDADES, 'disabled' => $item !== null, 'selected' => $valor('unidade', 'un'), 'error' => $erros['unidade'] ?? null]) ?>
+<?= component('input', ['name' => 'minimo', 'label' => 'Estoque mínimo', 'value' => $valor('minimo', '0'), 'error' => $erros['minimo'] ?? null, 'help' => 'Até três casas decimais, sem separador de milhar.']) ?>
+<div><?= component('button', ['label' => 'Salvar insumo', 'type' => 'submit']) ?><?= component('button', ['label' => 'Cancelar', 'variant' => 'ghost', 'href' => site_url('insumos')]) ?></div></form></div>

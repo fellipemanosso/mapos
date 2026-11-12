@@ -8,7 +8,7 @@
 if (! function_exists('conecteMenu')) {
     /**
      * Itens da navegação da área do cliente. Os marcados com tabbar formam a
-     * tabbar-mobile do DESIGN.md (Início, Minhas OS, Compras, Conta); a Top
+     * tabbar-mobile do DESIGN.md (Início, Atendimentos, Compras, Conta); a Top
      * Nav do desktop mostra também as cobranças, que no celular ficam no
      * início e na conta.
      *
@@ -18,7 +18,7 @@ if (! function_exists('conecteMenu')) {
     {
         $itens = [
             ['painel', 'Início', 'Início', 'house', 'mine/painel', true],
-            ['os', 'Atendimentos', 'Minhas OS', 'wrench', 'mine/os', true],
+            ['os', 'Atendimentos', 'Atendimentos', 'wrench', 'mine/os', true],
             ['compras', 'Compras', 'Compras', 'shopping-cart', 'mine/compras', true],
             ['cobrancas', 'Cobranças', 'Cobranças', 'receipt', 'mine/cobrancas', false],
             ['conta', 'Minha conta', 'Conta', 'circle-user', 'mine/conta', true],
@@ -107,7 +107,7 @@ if (! function_exists('conecteRegrasDoCliente')) {
             ['field' => 'nomeCliente', 'label' => 'Nome', 'rules' => 'required|trim|max_length[255]'],
             ['field' => 'documento', 'label' => 'CPF ou CNPJ', 'rules' => 'trim|verific_cpf_cnpj|unique[clientes.documento.' . $id . '.idClientes]', 'errors' => [
                 'verific_cpf_cnpj' => 'Informe um CPF ou CNPJ válido.',
-                'unique' => $idCliente === null ? 'Este CPF ou CNPJ já tem cadastro. Entre com o e-mail dele ou recupere a senha.' : 'Este CPF ou CNPJ não pode ser usado. Confira o número ou fale com a assistência.',
+                'unique' => $idCliente === null ? 'Este CPF ou CNPJ já tem cadastro. Entre com o e-mail dele ou recupere a senha.' : 'Este CPF ou CNPJ não pode ser usado. Confira o número ou fale com a profissional.',
             ]],
             ['field' => 'email', 'label' => 'E-mail', 'rules' => 'required|trim|valid_email|max_length[100]|unique[clientes.email.' . $id . '.idClientes]', 'errors' => [
                 'unique' => $idCliente === null ? 'Este e-mail já tem cadastro. Entre com ele ou recupere a senha.' : 'Este e-mail não pode ser usado. Informe outro.',
@@ -156,8 +156,8 @@ if (! function_exists('conecteColunasOs')) {
     function conecteColunasOs(bool $completa): array
     {
         $colunas = [
-            ['label' => 'OS', 'nowrap' => true, 'render' => fn ($o) => component('link', ['label' => 'Atendimento #' . (int) $o->idOs, 'href' => site_url('mine/visualizarOs/' . (int) $o->idOs), 'class' => 'font-medium'])],
-            ['label' => 'Equipamento', 'class' => 'min-w-40 [overflow-wrap:anywhere]', 'render' => fn ($o) => osTextoCurto($o->descricaoProduto) ?: '—'],
+            ['label' => 'Atendimento', 'nowrap' => true, 'render' => fn ($o) => component('link', ['label' => 'Atendimento #' . (int) $o->idOs, 'href' => site_url('mine/visualizarOs/' . (int) $o->idOs), 'class' => 'font-medium'])],
+            ['label' => 'Serviço solicitado', 'class' => 'min-w-40 [overflow-wrap:anywhere]', 'render' => fn ($o) => osTextoCurto($o->descricaoProduto) ?: '—'],
             ['label' => 'Entrada', 'align' => 'right', 'nowrap' => true, 'render' => fn ($o) => dataBr($o->dataInicial)],
         ];
 

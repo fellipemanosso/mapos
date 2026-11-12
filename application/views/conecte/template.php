@@ -8,7 +8,7 @@
  *   1024px (lg), com os rótulos curtos, para caberem numa linha só ao lado da
  *   ação e do nome do cliente (este só a partir de xl).
  * - Abaixo de lg, a navegação vai para a tabbar-mobile: quatro itens (Início,
- *   Minhas OS, Compras, Conta) com ícone de 24px sobre o rótulo de 12px; o
+ *   Atendimentos, Compras, Conta) com ícone de 24px sobre o rótulo de 12px; o
  *   item ativo fica em ink 600 com o traço laranja de 28×3px no topo. As
  *   cobranças ficam no início e na conta.
  * - O conteúdo usa os tokens do painel e segue o modo de cor das

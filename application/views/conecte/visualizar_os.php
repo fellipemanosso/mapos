@@ -21,6 +21,8 @@ $dados = $campos([
     'Entrada' => dataBr($os->dataInicial),
     'Conclusão prevista' => dataBr($os->dataFinal),
     'Profissional responsável' => (string) $os->nome,
+    'Local do atendimento' => $os->endereco_atendimento ?? '',
+    'Deslocamento combinado' => $os->regra_deslocamento ?? '',
     'Garantia' => (int) $os->garantia > 0
         ? (int) $os->garantia . ' dias' . ($garantia_ate ? ($garantia_ate >= date('Y-m-d') ? ', até ' : ', venceu em ') . dataBr($garantia_ate) : ', a partir da entrega')
         : null,
@@ -44,7 +46,7 @@ $textos = $campos([
                 <h1 class="font-display text-heading-xl text-text"><?= e('Atendimento #' . $idOs) ?></h1>
                 <?= component('pill-status', osStatusPill($os->status)) ?>
             </div>
-            <p class="text-caption text-muted"><?= e('Aberta em ' . dataBr($os->dataInicial)) ?></p>
+            <p class="text-caption text-muted"><?= e('Aberto em ' . dataBr($os->dataInicial)) ?></p>
         </div>
         <?= component('button', ['label' => 'Imprimir', 'icon' => 'printer', 'variant' => 'outline', 'href' => site_url('mine/imprimirOs/' . $idOs), 'attrs' => ['target' => '_blank', 'rel' => 'noopener']]) ?>
     </header>
@@ -96,7 +98,7 @@ $textos = $campos([
         <section class="<?= e($caixa) ?> lg:col-span-2" aria-labelledby="secao-equipamento">
             <h2 id="secao-equipamento" class="text-heading-sm text-text">Serviço e informações do atendimento</h2>
             <?php if ($textos === []) { ?>
-                <p class="mt-3 text-caption text-muted">A assistência ainda não preencheu os detalhes desto atendimento.</p>
+                <p class="mt-3 text-caption text-muted">Os detalhes deste atendimento ainda não foram preenchidos.</p>
             <?php } else { ?>
                 <dl class="mt-3 grid gap-4 sm:grid-cols-2">
                     <?php foreach ($textos as $rotulo => $valor) { ?>

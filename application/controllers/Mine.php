@@ -459,7 +459,7 @@ class Mine extends CI_Controller
 
         if ($this->input->method() === 'post') {
             $erros = $this->validarRegras([
-                ['field' => 'descricaoProduto', 'label' => 'Equipamento ou serviço', 'rules' => 'required|trim|max_length[2000]'],
+                ['field' => 'descricaoProduto', 'label' => 'Serviço desejado', 'rules' => 'required|trim|max_length[2000]'],
                 ['field' => 'defeito', 'label' => 'Defeito', 'rules' => 'trim|max_length[2000]'],
                 ['field' => 'observacoes', 'label' => 'Observações', 'rules' => 'trim|max_length[2000]'],
             ]);

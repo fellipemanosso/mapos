@@ -17,7 +17,7 @@ $errosDeCampo = array_diff_key($erros, ['_geral' => true]);
 
     <header>
         <h1 class="font-display text-heading-xl text-text">Meus dados</h1>
-        <p class="text-caption text-muted">Mantenha o contato em dia para a assistência falar com você.</p>
+        <p class="text-caption text-muted">Mantenha seus dados atualizados para receber informações do atendimento.</p>
     </header>
 
     <?php if ($erroGeral !== null) { ?>

@@ -21,7 +21,7 @@
         'caption' => 'Atendimentos',
         'empty' => component('empty-state', [
             'title' => 'Nenhum atendimento ainda',
-            'message' => 'Precisa de conserto ou manutenção? Abra um atendimento e a assistência entra em contato.',
+            'message' => 'Precisa de um atendimento? Envie sua solicitação para combinarmos o serviço e o horário.',
             'icon' => 'wrench',
             'action' => component('button', ['label' => 'Abrir OS', 'icon' => 'plus', 'variant' => 'outline', 'href' => site_url('mine/adicionarOs')]),
             'class' => 'border-0',

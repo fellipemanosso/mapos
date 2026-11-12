@@ -16,7 +16,7 @@ $totalProdutos = 0;
             <header class="doc-cabecalho">
                 <?php if ($emitente == null) : ?>
                     <div class="w-full bg-danger-soft p-2 text-danger-ink" role="alert">
-                        Você precisa configurar os dados do emitente. >>> <a href="<?=base_url()?>index.php/mapos/emitente">Configurar</a>
+                        Os dados da profissional ainda não foram informados.
                     </div>
                 <?php else : ?>
                     <div class="flex items-center">
@@ -42,7 +42,7 @@ $totalProdutos = 0;
             <section class="w-full py-2.5">
                 <div class="doc-titulo">
 
-                    ORDEM DE SERVIÇO #<?= e(str_pad($result->idOs, 4, 0, STR_PAD_LEFT)) ?>
+                    ATENDIMENTO #<?= e(str_pad($result->idOs, 4, 0, STR_PAD_LEFT)) ?>
                     <span class="absolute right-1 text-[13px]">Emissão: <?= date('d/m/Y') ?></span>
                 </div>
 
@@ -80,6 +80,7 @@ $totalProdutos = 0;
                 <?php endif; ?>
 
                 <div class="doc-subtitulo">DADOS DO CLIENTE</div>
+                <?php if (! empty($result->beneficiario_nome)) { ?><p><?= e('Pessoa atendida: ' . $result->beneficiario_nome . ' · Responsável: ' . $result->nomeCliente) ?></p><?php } ?>
                 <div class="doc-dados">
                     <div>
                         <span><b><?= e($result->nomeCliente) ?></b></span><br />
@@ -104,7 +105,7 @@ $totalProdutos = 0;
                 <?php endif; ?>
 
                 <?php if ($result->defeito) : ?>
-                    <div class="doc-subtitulo">DEFEITO APRESENTADO</div>
+                    <div class="doc-subtitulo">RELATO DA CLIENTE</div>
                     <div class="doc-dados">
                         <div>
                             <?= printSafeHtml($result->defeito) ?>
@@ -122,7 +123,7 @@ $totalProdutos = 0;
                 <?php endif; ?>
 
                 <?php if ($result->laudoTecnico) : ?>
-                    <div class="doc-subtitulo">PARECER TÉCNICO</div>
+                    <div class="doc-subtitulo">REGISTRO DO ATENDIMENTO</div>
                     <div class="doc-dados">
                         <div>
                             <?= printSafeHtml($result->laudoTecnico) ?>
@@ -246,7 +247,7 @@ $totalProdutos = 0;
             <footer class="doc-rodape">
                 <div class="flex justify-between">
                     <span>Data inicial: <b><?= date('d/m/Y', strtotime($result->dataInicial)) ?></b></span>
-                    <span>ORDEM DE SERVIÇO <b>#<?= e(str_pad($result->idOs, 4, 0, STR_PAD_LEFT)) ?></b></span>
+                    <span>ATENDIMENTO <b>#<?= e(str_pad($result->idOs, 4, 0, STR_PAD_LEFT)) ?></b></span>
                     <span>Data final: <b><?= $result->dataFinal ? date('d/m/Y', strtotime($result->dataFinal)) : '' ?></b></span>
                 </div>
                 <div class="flex justify-around">

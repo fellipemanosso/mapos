@@ -3,7 +3,7 @@
     <form method="get" action="<?= e(site_url('fichas/criar/' . $os->idOs)) ?>" class="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <?= component('select', ['name' => 'modelo', 'label' => 'Modelo de ficha', 'options' => array_column($modelos, 'nome', 'id'), 'selected' => $modelo ? (string) $modelo->id : '', 'placeholder' => 'Escolha o modelo', 'required' => true]) ?>
         <?= component('button', ['label' => 'Carregar modelo', 'type' => 'submit', 'variant' => 'outline']) ?>
-        <?= component('button', ['label' => 'Configurar modelos', 'variant' => 'ghost', 'href' => site_url('fichas/modelo')]) ?>
+        <?php if ($pode_modelo) { ?><?= component('button', ['label' => 'Configurar modelos', 'variant' => 'ghost', 'href' => site_url('fichas/modelo')]) ?><?php } ?>
     </form>
     <?php if (isset($erros['_geral'])) { ?><?= component('alert', ['variant' => 'danger', 'message' => $erros['_geral']]) ?><?php } ?>
     <?php if ($modelo) { ?>

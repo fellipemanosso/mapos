@@ -29,7 +29,7 @@ if (! defined('PERMISSOES_MODULOS')) {
         'Cliente' => 'Clientes e fornecedores',
         'Produto' => 'Produtos',
         'Servico' => 'Serviços',
-        'Os' => 'Ordens de serviço',
+        'Os' => 'Atendimentos',
         'Venda' => 'Vendas',
         'Garantia' => 'Termos de garantia',
         'Arquivo' => 'Arquivos',
@@ -47,7 +47,7 @@ if (! defined('PERMISSOES_RELATORIOS')) {
         'rCliente' => 'Clientes',
         'rProduto' => 'Produtos',
         'rServico' => 'Serviços',
-        'rOs' => 'Ordens de serviço',
+        'rOs' => 'Atendimentos',
         'rVenda' => 'Vendas',
         'rFinanceiro' => 'Financeiro',
     ]);
@@ -55,6 +55,12 @@ if (! defined('PERMISSOES_RELATORIOS')) {
 
 if (! defined('PERMISSOES_SISTEMA')) {
     define('PERMISSOES_SISTEMA', [
+        'vFicha' => ['Consultar fichas clínicas', 'Ver fichas, evoluções, termos e documentos protegidos.'],
+        'rFicha' => ['Exportar histórico clínico', 'Baixar os registros da mesma pessoa atendida, em arquivo estruturado.'],
+        'eFicha' => ['Registrar cuidados e retornos', 'Criar fichas e evoluções, anexar documentos e acompanhar retornos.'],
+        'cModeloFicha' => ['Modelos de fichas e termos', 'Definir perguntas e textos usados nas novas fichas.'],
+        'vInsumo' => ['Consultar insumos', 'Ver lotes, validade, saldos e movimentações de insumos.'],
+        'eInsumo' => ['Movimentar insumos', 'Cadastrar insumos, entradas e consumo por atendimento.'],
         'cUsuario' => ['Usuários', 'Cadastrar, editar e excluir usuários do painel.'],
         'cPermissao' => ['Permissões', 'Criar e alterar grupos de permissão (inclusive o próprio).'],
         'cEmitente' => ['Emitente', 'Dados da empresa nas impressões e no PIX.'],
@@ -108,6 +114,12 @@ if (! function_exists('permissoesDoFormulario')) {
             }
         }
 
+        if ($mapa['eFicha'] || $mapa['cModeloFicha'] || $mapa['rFicha']) {
+            $mapa['vFicha'] = 1;
+        }
+        if ($mapa['eInsumo']) {
+            $mapa['vInsumo'] = 1;
+        }
         return $mapa;
     }
 }

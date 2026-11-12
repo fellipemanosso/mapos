@@ -1,6 +1,8 @@
 # Migração do Map-OS 4.x para a v5
 
-**Fichas e retornos:** aplique `20261112030000_create_fichas`. O acesso é restrito a `cSistema`, inclusive arquivos e termos. Atendimentos com fichas passam a impedir a troca da pessoa atendida e a exclusão. Inclua os arquivos privados no backup. Veja [Fichas de atendimento](fichas-atendimento.md).
+**Operação e permissões específicas:** aplique `20261112040000_add_operacao` para insumos e logística. O acesso clínico deixa de depender de `cSistema`: as novas permissões são habilitadas apenas no grupo Administrador (ID 1); revise os demais grupos. Consulte [Módulos de operação](operacao-completa.md).
+
+**Fichas e retornos:** aplique `20261112030000_create_fichas`. A atualização de operação acima separa as permissões clínicas das administrativas. Atendimentos com fichas impedem a troca da pessoa atendida e a exclusão. Inclua os arquivos privados no backup. Veja [Fichas de atendimento](fichas-atendimento.md).
 
 O módulo opcional **Leads e orçamentos** usa a migration `20261112020000_create_leads`. Aplique a atualização do banco antes de abrir o módulo. A conversão preserva o orçamento e vincula o atendimento; consulte [Leads e orçamentos](leads-orcamentos.md) para permissões e operação.
 

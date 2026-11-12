@@ -76,6 +76,7 @@ if (! function_exists('layoutMenu')) {
             ['grupo' => 'Operação', 'label' => 'Agenda', 'icon' => 'file-text', 'url' => 'agenda', 'rota' => ['Agenda', 'index'], 'ativo' => ['Agenda']],
             ['grupo' => 'Operação', 'label' => 'Leads e orçamentos', 'icon' => 'file-text', 'url' => 'leads', 'rota' => ['Leads', 'index'], 'ativo' => ['Leads']],
             ['grupo' => 'Operação', 'label' => 'Fichas e retornos', 'icon' => 'file-text', 'url' => 'fichas', 'rota' => ['Fichas', 'index'], 'ativo' => ['Fichas']],
+            ['grupo' => 'Operação', 'label' => 'Insumos', 'icon' => 'package', 'url' => 'insumos', 'rota' => ['Insumos', 'index'], 'ativo' => ['Insumos']],
             ['grupo' => 'Operação', 'label' => 'Pacotes e sessões', 'icon' => 'package', 'url' => 'pacotes', 'rota' => ['Pacotes', 'index'], 'ativo' => ['Pacotes']],
             ['grupo' => 'Operação', 'label' => 'Cliente / Fornecedor', 'icon' => 'user', 'url' => 'clientes', 'rota' => ['Clientes', 'index'], 'ativo' => ['Clientes']],
             ['grupo' => 'Operação', 'label' => 'Produtos', 'icon' => 'shopping-basket', 'url' => 'produtos', 'rota' => ['Produtos', 'index'], 'ativo' => ['Produtos']],
@@ -84,6 +85,7 @@ if (! function_exists('layoutMenu')) {
             ['grupo' => 'Operação', 'label' => 'Atendimentos', 'icon' => 'file-text', 'url' => 'os', 'rota' => ['Os', 'index'], 'ativo' => ['Os']],
             ['grupo' => 'Operação', 'label' => 'Termos de Garantias', 'icon' => 'receipt', 'url' => 'garantias', 'rota' => ['Garantias', 'index'], 'ativo' => ['Garantias']],
             ['grupo' => 'Financeiro', 'label' => 'Resumo mensal', 'icon' => 'chart-column', 'url' => 'resumo', 'rota' => ['Resumo', 'index'], 'ativo' => ['Resumo']],
+            ['grupo' => 'Financeiro', 'label' => 'Indicadores', 'icon' => 'chart-column', 'url' => 'indicadores', 'rota' => ['Indicadores', 'index'], 'ativo' => ['Indicadores']],
             ['grupo' => 'Financeiro', 'label' => 'Lançamentos', 'icon' => 'chart-column', 'url' => 'financeiro/lancamentos', 'rota' => ['Financeiro', 'lancamentos'], 'ativo' => ['Financeiro']],
             ['grupo' => 'Financeiro', 'label' => 'Despesas', 'icon' => 'banknote', 'url' => 'despesas', 'rota' => ['Despesas', 'index'], 'ativo' => ['Despesas']],
             ['grupo' => 'Financeiro', 'label' => 'Cobranças', 'icon' => 'circle-dollar-sign', 'url' => 'cobrancas/cobrancas', 'rota' => ['Cobrancas', 'cobrancas'], 'ativo' => ['Cobrancas']],
@@ -103,6 +105,7 @@ if (! function_exists('layoutMenu')) {
                 ],
             ],
             ['grupo' => 'Sistema', 'label' => 'Arquivos', 'icon' => 'archive', 'url' => 'arquivos', 'rota' => ['Arquivos', 'index'], 'ativo' => ['Arquivos']],
+            ['grupo' => 'Sistema', 'label' => 'Exportação de dados', 'icon' => 'file-text', 'url' => 'exportacoes', 'rota' => ['Exportacoes', 'index'], 'ativo' => ['Exportacoes']],
             [
                 'grupo' => 'Sistema',
                 'label' => 'Configurações',
@@ -236,6 +239,8 @@ if (! function_exists('layoutIniciais')) {
 if (! defined('LAYOUT_ROTULOS')) {
     // Nome dos módulos no breadcrumb, com acento (o segmento da URL não tem).
     define('LAYOUT_ROTULOS', [
+        'indicadores' => 'Indicadores', 'exportacoes' => 'Exportação de dados', 'deslocamentos' => 'Endereço e deslocamento',
+        'insumos' => 'Estoque de insumos',
         'fichas' => 'Fichas e retornos',
         'leads' => 'Leads e orçamentos',
         'whatsapp' => 'WhatsApp',

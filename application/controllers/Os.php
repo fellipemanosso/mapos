@@ -430,7 +430,8 @@ class Os extends MY_Controller
                 'ver_cobranca' => $this->permite('vCobranca'),
                 'ver_cliente' => $this->permite('vCliente'),
                 'agendar' => $this->permite('eOs'),
-                'fichas' => $this->permite('cSistema'),
+                'fichas' => $this->permite('vFicha'),
+                'criar_pacote' => $this->permite('aOs') && $this->permite('eOs'),
             ],
         ];
     }
@@ -759,6 +760,10 @@ class Os extends MY_Controller
         }
 
         $osStockRefund = $this->os_model->getById($id);
+        if ($this->db->table_exists('insumo_movimentos') && $this->db->where('os_id', $id)->count_all_results('insumo_movimentos') > 0) {
+            $this->session->set_flashdata('error', 'O histórico de consumo de insumos impede excluir este atendimento.');
+            return redirect($listagem);
+        }
         if ($this->db->table_exists('fichas') && $this->db->where('os_id', $id)->count_all_results('fichas') > 0) {
             $this->session->set_flashdata('error', 'Este atendimento tem fichas de atendimento e não pode ser excluído.');
             return redirect($listagem);

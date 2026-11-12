@@ -32,10 +32,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
 */
 
 $config['permissions_map'] = [
+    'Indicadores' => ['index' => ['todas' => ['rOs', 'rFinanceiro']]],
+    'Exportacoes' => ['index' => ['rCliente', 'rFinanceiro', 'rFicha'], 'clientes' => 'rCliente', 'financeiro' => 'rFinanceiro', 'fichas' => 'rFicha'],
+    'Deslocamentos' => ['formulario' => 'eOs'],
+    'Insumos' => ['index' => 'vInsumo', 'visualizar' => 'vInsumo', 'formulario' => 'eInsumo', 'movimentar' => 'eInsumo', 'estornar' => 'eInsumo'],
     'Fichas' => [
-        'index' => 'cSistema', 'atendimento' => 'cSistema', 'modelo' => 'cSistema', 'criar' => 'cSistema',
-        'visualizar' => 'cSistema', 'evolucao' => 'cSistema', 'retorno' => 'cSistema', 'anexar' => 'cSistema',
-        'arquivo' => 'cSistema', 'termo' => 'cSistema',
+        'index' => 'vFicha', 'atendimento' => 'vFicha', 'modelo' => 'cModeloFicha', 'criar' => 'eFicha',
+        'visualizar' => 'vFicha', 'evolucao' => 'eFicha', 'retorno' => 'eFicha', 'anexar' => 'eFicha',
+        'arquivo' => 'vFicha', 'termo' => 'vFicha',
     ],
     'Leads' => [
         'index' => 'vOs',
@@ -168,6 +172,7 @@ $config['permissions_map'] = [
     ],
 
     'Pacotes' => [
+        'vincular' => ['todas' => ['aOs', 'eOs']],
         'index' => 'vOs',
         'formulario' => ['todas' => ['aOs', 'eOs']],
         'visualizar' => 'vOs',

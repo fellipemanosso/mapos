@@ -30,7 +30,7 @@ final class AreaDoClienteTest extends MaposTestCase
         $menu = conecteMenu('compras');
         $tabbar = array_values(array_filter($menu, static fn ($item) => $item['tabbar']));
 
-        $this->assertSame(['Início', 'Minhas OS', 'Compras', 'Conta'], array_column($tabbar, 'curto'), 'DESIGN.md tabbar-mobile: quatro itens.');
+        $this->assertSame(['Início', 'Atendimentos', 'Compras', 'Conta'], array_column($tabbar, 'curto'), 'Quatro itens de navegação da área da cliente.');
         $this->assertContains('mine/cobrancas', array_column($menu, 'url'), 'A Top Nav tem as cobranças.');
         $this->assertSame(['compras'], array_column(array_filter($menu, static fn ($item) => $item['atual']), 'chave'));
     }
@@ -235,7 +235,7 @@ final class AreaDoClienteTest extends MaposTestCase
         $this->assertSame(2, substr_count($html, 'aria-current="page"'), 'O item ativo nos dois menus.');
         $this->assertMatchesRegularExpression('#<nav class="ml-2 hidden lg:block"#', $html, 'Top Nav a partir de lg; abaixo, a tabbar.');
         $this->assertDoesNotMatchRegularExpression('#rounded-md px-3(?! whitespace-nowrap)[^"]*text-on-dark-muted#', $html, 'Rótulos da Top Nav numa linha só.');
-        $this->assertStringNotContainsString('>Atendimentos</a>', $html, 'Top Nav com os rótulos curtos.');
+        $this->assertStringContainsString('>Atendimentos</a>', $html, 'A navegação usa o vocabulário dos atendimentos.');
         $this->assertStringContainsString('href="http://mapos.test/index.php/mine/sair"', $html);
         $this->assertStringNotContainsString('login/sair', $html, 'Sair da área do cliente, não do painel.');
         $this->assertSame(2, substr_count($html, 'bg-primary text-on-primary text-button-cap'), 'Só "Abrir OS" é button-primary (texto e só ícone).');

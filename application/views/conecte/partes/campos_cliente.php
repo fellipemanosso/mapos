@@ -40,7 +40,7 @@ $grade = 'mt-4 grid gap-4 sm:grid-cols-2';
         ])) ?>
         <?= component('input', $campo('contato', [
             'label' => 'Pessoa de contato',
-            'help' => 'Em empresas, quem fala com a assistência.',
+            'help' => 'Em empresas, quem é responsável pelo contato.',
             'attrs' => ['maxlength' => 45],
         ])) ?>
     </div>

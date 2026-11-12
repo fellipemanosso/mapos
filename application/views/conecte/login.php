@@ -25,9 +25,9 @@ include APPPATH . 'views/entrada/inicio.php';
             <img src="<?= e(base_url('assets/img/stickers/caixa.svg')) ?>" alt="" aria-hidden="true" class="pointer-events-none absolute -bottom-40 right-16 w-36 select-none max-lg:hidden">
             <span class="rounded-xs bg-night px-2 py-1 text-caption text-on-dark max-sm:hidden">Área do cliente</span>
             <h1 class="font-display text-display-hero-sm font-bold text-on-dark sm:text-display-large xl:text-display-hero">
-                Acompanhe suas <span class="rounded-xs bg-accent-lime px-3 text-ink">ordens</span>.
+                Acompanhe seus <span class="rounded-xs bg-accent-lime px-3 text-ink">atendimentos</span>.
             </h1>
-            <p class="max-w-xl text-body-lg text-on-dark-muted max-sm:hidden">Consulte o andamento das atendimentos, suas compras e cobranças, e abra novos pedidos.</p>
+            <p class="max-w-xl text-body-lg text-on-dark-muted max-sm:hidden">Consulte o andamento dos atendimentos, suas compras e cobranças, e abra novos pedidos.</p>
         </section>
 
         <section class="superficie-entrada w-full rounded-xxl border border-hairline-violet bg-night p-6 text-text sm:p-8" aria-labelledby="titulo-login">

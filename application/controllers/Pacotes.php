@@ -30,6 +30,39 @@ class Pacotes extends MY_Controller
         return $this->layout();
     }
 
+    public function vincular($id = null)
+    {
+        if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'aOs')
+            || ! $this->permission->checkPermission($this->session->userdata('permissao'), 'eOs')) {
+            show_error('Sem permissão para criar sessões de pacote.', 403);
+            return;
+        }
+        $os = is_scalar($id) && ctype_digit((string) $id) ? $this->db->where('idOs', (int) $id)->get('os')->row() : null;
+        if (! $os) {
+            show_404();
+            return;
+        }
+        $erro = null;
+        if ($this->input->method() === 'post') {
+            $ids = $this->input->post('servicos');
+            $chave = $this->input->post('chave');
+            try {
+                if (! is_array($ids) || array_filter($ids, static fn ($v) => ! is_string($v) || ! ctype_digit($v)) || ! is_string($chave)) {
+                    throw new DomainException('Escolha os serviços que geram sessões.');
+                }
+                $pacote = $this->pacotes_model->vincular((int) $os->idOs, $ids, $chave);
+                log_info('Criou sessões do atendimento #' . $os->idOs);
+                return redirect('pacotes/visualizar/' . $pacote);
+            } catch (DomainException $e) {
+                $erro = $e->getMessage();
+                $this->output->set_status_header(422);
+            }
+        }
+        $this->data += ['os' => $os, 'itens' => $this->pacotes_model->itensDoAtendimento((int) $os->idOs), 'erro' => $erro, 'chave' => bin2hex(random_bytes(16))];
+        $this->data['view'] = 'pacotes/vincular';
+        return $this->layout();
+    }
+
     public function formulario()
     {
         if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'aOs')

@@ -83,6 +83,10 @@ class Agenda extends MY_Controller
             $valores['servicos'] = [(string) $sessao->servicos_id];
         }
         $erros = [];
+        if (! $evento && $this->input->method() !== 'post' && ctype_digit((string) $valores['os_id']) && $this->db->field_exists('deslocamento_min', 'os')) {
+            $logistica = $this->db->select('deslocamento_min')->where('idOs', (int) $valores['os_id'])->get('os')->row();
+            $valores['deslocamento_min'] = (string) ($logistica->deslocamento_min ?? 0);
+        }
         if ($this->input->method() === 'post') {
             $post = $this->input->post();
             $texto = static fn ($campo) => is_string($post[$campo] ?? null) ? trim($post[$campo]) : '';

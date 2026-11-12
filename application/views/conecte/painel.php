@@ -16,29 +16,29 @@ $verTodas = static fn (string $rotulo, string $url) => component('link', ['label
 <div class="flex flex-col gap-6">
     <header>
         <h1 class="font-display text-heading-xl text-text"><?= e('Olá, ' . $primeiroNome) ?></h1>
-        <p class="text-caption text-muted">Acompanhe suas atendimentos, compras e cobranças.</p>
+        <p class="text-caption text-muted">Acompanhe seus atendimentos, compras e cobranças.</p>
     </header>
 
     <div class="grid grid-cols-2 gap-4 lg:grid-cols-3">
-        <?= component('kpi-card', ['label' => 'OS em andamento', 'value' => $resumo['os_em_andamento'], 'icon' => 'wrench', 'caption' => $verTodas($quantos($resumo['os'], 'OS no total', 'OS no total'), 'mine/os')]) ?>
+        <?= component('kpi-card', ['label' => 'Atendimentos em andamento', 'value' => $resumo['os_em_andamento'], 'icon' => 'wrench', 'caption' => $verTodas($quantos($resumo['os'], 'atendimentos no total', 'atendimentos no total'), 'mine/os')]) ?>
         <?= component('kpi-card', ['label' => 'Compras', 'value' => $resumo['compras'], 'icon' => 'shopping-cart', 'caption' => $verTodas('Ver compras', 'mine/compras')]) ?>
         <?= component('kpi-card', ['label' => 'Cobranças', 'value' => $resumo['cobrancas'], 'icon' => 'receipt', 'caption' => $verTodas('Ver cobranças', 'mine/cobrancas'), 'class' => 'col-span-2 lg:col-span-1']) ?>
     </div>
 
     <section class="flex flex-col gap-3" aria-labelledby="titulo-ultimas-os">
         <div class="flex items-baseline justify-between gap-3">
-            <h2 id="titulo-ultimas-os" class="text-heading-sm text-text">Últimas atendimentos</h2>
+            <h2 id="titulo-ultimas-os" class="text-heading-sm text-text">Últimos atendimentos</h2>
             <?php if ($os !== []) { ?>
-                <?= component('link', ['label' => 'Ver todas', 'href' => site_url('mine/os')]) ?>
+                <?= component('link', ['label' => 'Ver lista', 'href' => site_url('mine/os')]) ?>
             <?php } ?>
         </div>
         <?= component('data-table', [
             'columns' => conecteColunasOs(false),
             'rows' => $os,
-            'caption' => 'Últimas atendimentos',
+            'caption' => 'Últimos atendimentos',
             'empty' => component('empty-state', [
                 'title' => 'Nenhum atendimento ainda',
-                'message' => 'Quando você deixar um equipamento na assistência ou abrir um atendimento por aqui, ela aparece nesta lista.',
+                'message' => 'Quando um atendimento for registrado, ele aparecerá nesta lista.',
                 'icon' => 'wrench',
                 'class' => 'border-0',
             ]),
@@ -49,7 +49,7 @@ $verTodas = static fn (string $rotulo, string $url) => component('link', ['label
         <div class="flex items-baseline justify-between gap-3">
             <h2 id="titulo-ultimas-compras" class="text-heading-sm text-text">Últimas compras</h2>
             <?php if ($compras !== []) { ?>
-                <?= component('link', ['label' => 'Ver todas', 'href' => site_url('mine/compras')]) ?>
+                <?= component('link', ['label' => 'Ver lista', 'href' => site_url('mine/compras')]) ?>
             <?php } ?>
         </div>
         <?= component('data-table', [
@@ -58,7 +58,7 @@ $verTodas = static fn (string $rotulo, string $url) => component('link', ['label
             'caption' => 'Últimas compras',
             'empty' => component('empty-state', [
                 'title' => 'Nenhuma compra ainda',
-                'message' => 'As compras feitas na loja aparecem aqui, com a garantia de cada uma.',
+                'message' => 'As compras registradas aparecem aqui, com seus detalhes.',
                 'icon' => 'shopping-cart',
                 'class' => 'border-0',
             ]),

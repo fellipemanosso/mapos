@@ -35,6 +35,8 @@ $dados = $campos([
     'Profissional responsável' => $os->nome,
     'Entrada' => dataBr($os->dataInicial),
     'Conclusão prevista' => dataBr($os->dataFinal),
+    'Endereço do atendimento' => $os->endereco_atendimento ?? '',
+    'Deslocamento combinado' => ! empty($os->regra_deslocamento) ? $os->regra_deslocamento : null,
     'Garantia' => (int) $os->garantia > 0 ? (int) $os->garantia . ' dias' . ($garantia_ate ? ', até ' . dataBr($garantia_ate) : '') : null,
     'Termo de garantia' => $os->refGarantia ?? null,
 ]);
@@ -63,6 +65,8 @@ $textos = [
             <?php } elseif (! empty($pode['agendar']) && $os->status !== 'Cancelado') { ?>
                 <?= component('button', ['label' => 'Agendar atendimento', 'variant' => 'outline', 'href' => site_url('agenda/formulario') . '?os=' . (int) $os->idOs]) ?>
             <?php } ?>
+            <?php if (empty($os->pacote_id) && ! empty($pode['criar_pacote']) && $os->status !== 'Cancelado') { ?><?= component('button', ['label' => 'Criar sessões de pacote', 'variant' => 'outline', 'href' => site_url('pacotes/vincular/' . $idOs)]) ?><?php } ?>
+            <?php if (! empty($pode['agendar'])) { ?><?= component('button', ['label' => 'Endereço e deslocamento', 'variant' => 'outline', 'href' => site_url('deslocamentos/formulario/' . $idOs)]) ?><?php } ?>
             <?= component('button', ['label' => 'Nota fiscal', 'variant' => 'outline', 'href' => site_url('notasfiscais/index/' . $idOs)]) ?>
             <?php if (! empty($pode['fichas'])) { ?><?= component('button', ['label' => 'Ficha de atendimento', 'variant' => 'outline', 'href' => site_url('fichas/atendimento/' . $idOs)]) ?><?php } ?>
             <?= component('button', ['label' => 'Orçamento e recebimentos', 'variant' => 'outline', 'href' => site_url('recebimentos/index/' . $idOs)]) ?>

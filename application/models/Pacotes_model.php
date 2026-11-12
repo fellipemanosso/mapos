@@ -88,6 +88,62 @@ class Pacotes_model extends CI_Model
     }
 
     /** Concluir sessão muda só seu consumo; não cria nova receita. */
+    public function itensDoAtendimento(int $os): array
+    {
+        return $this->db->select('s.idServicos, s.nome, s.duracao_min, SUM(i.quantidade) AS quantidade', false)->from('servicos_os i')
+            ->join('servicos s', 's.idServicos = i.servicos_id')->where('i.os_id', $os)->group_by(['s.idServicos', 's.nome', 's.duracao_min'])->get()->result();
+    }
+
+    /** Vincula sessões ao orçamento contratado, sem criar OS ou receitas adicionais. */
+    public function vincular(int $osId, array $selecionados, string $chave): int
+    {
+        $this->db->trans_begin();
+        try {
+            $os = $this->db->query('SELECT * FROM os WHERE idOs = ?' . ($this->db->dbdriver === 'mysqli' ? ' FOR UPDATE' : ''), [$osId])->row();
+            if (! $os || $os->status === 'Cancelado') {
+                throw new DomainException('Escolha um atendimento válido, não cancelado.');
+            }
+            $existente = $this->db->where('os_id', $osId)->get('pacotes')->row();
+            if ($existente) {
+                $this->db->trans_commit();
+                return (int) $existente->id;
+            }
+            if (! preg_match('/\A[a-f0-9]{32}\z/', $chave) || count($selecionados) > 100) {
+                throw new DomainException('Reabra o formulário.');
+            }
+            $itens = [];
+            $total = 0;
+            foreach ($this->itensDoAtendimento($osId) as $item) {
+                if (! in_array((string) $item->idServicos, $selecionados, true)) {
+                    continue;
+                }
+                $qtd = (float) $item->quantidade;
+                if ($qtd < 1 || $qtd > 100 || floor($qtd) !== $qtd || (int) $item->duracao_min < 1 || (int) $item->duracao_min > 1440) {
+                    throw new DomainException('Os serviços de sessão precisam de quantidade inteira de 1 a 100 e duração configurada.');
+                }
+                $itens[] = $item;
+                $total += (int) $qtd;
+            }
+            if (! $itens || $total > 200 || count($itens) !== count(array_unique($selecionados))) {
+                throw new DomainException('Escolha serviços deste atendimento, totalizando até 200 sessões.');
+            }
+            $nome = trim(strip_tags(html_entity_decode((string) $os->descricaoProduto, ENT_QUOTES, 'UTF-8')));
+            $this->db->insert('pacotes', ['os_id' => $osId, 'nome' => mb_substr($nome ?: ('Pacote do atendimento #' . $osId), 0, 150), 'chave' => $chave, 'criado_em' => date('Y-m-d H:i:s')]);
+            $pacote = (int) $this->db->insert_id();
+            $numero = 0;
+            foreach ($itens as $item) {
+                for ($i = 0; $i < (int) $item->quantidade; $i++) {
+                    $this->db->insert('pacote_sessoes', ['pacote_id' => $pacote, 'servicos_id' => (int) $item->idServicos, 'nome_servico' => $item->nome, 'duracao_min' => (int) $item->duracao_min, 'numero' => ++$numero]);
+                }
+            }
+            $this->concluir();
+            return $pacote;
+        } catch (Throwable $e) {
+            $this->db->trans_rollback();
+            throw $e;
+        }
+    }
+
     public function concluirSessao(int $pacote, int $id, bool $realizar): void
     {
         $this->db->trans_begin();

@@ -1,6 +1,6 @@
 # Fichas, evolução, documentos e retornos
 
-Abra um atendimento e clique em **Ficha de atendimento**. O módulo também aparece como **Fichas e retornos** no menu. Nesta versão, todas as telas, documentos e impressões exigem `cSistema`; ter acesso aos atendimentos ou à área da cliente não dá acesso às fichas.
+Abra um atendimento e clique em **Ficha de atendimento**. O módulo também aparece como **Fichas e retornos** no menu. Consultas, documentos e impressões exigem `vFicha`; registros exigem `eFicha`; modelos exigem `cModeloFicha`; exportar exige `rFicha`. Ter acesso aos atendimentos, ao financeiro ou à configuração geral não dá acesso às fichas. Veja [permissões específicas](operacao-completa.md).
 
 ## Modelos por serviço
 

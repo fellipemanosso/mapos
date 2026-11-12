@@ -12,7 +12,7 @@ class Fichas extends MY_Controller
 
     public function index()
     {
-        if (! $this->hasAnyPermission(['cSistema'])) {
+        if (! $this->hasAnyPermission(['vFicha'])) {
             show_error('Sem permissão para acessar fichas e retornos.', 403);
             return;
         }
@@ -22,7 +22,7 @@ class Fichas extends MY_Controller
         $filtros += ['ate' => $ate];
         $offset = max(0, (int) $this->uri->segment(3));
         $this->data += ['retornos' => $this->fichas_model->retornos($status, $ate, $offset, (int) $this->data['configuration']['per_page']),
-            'status' => $status, 'ate' => $ate,
+            'status' => $status, 'ate' => $ate, 'pode_modelo' => $this->permite('cModeloFicha'),
             'paginacao' => $this->paginacao(site_url('fichas/index'), $this->fichas_model->contarRetornos($status, $ate), $offset, null, $filtros)];
         $this->data['view'] = 'fichas/index';
         return $this->layout();
@@ -73,12 +73,12 @@ class Fichas extends MY_Controller
 
     public function atendimento($id = null)
     {
-        if (! $this->hasAnyPermission(['cSistema'])) {
+        if (! $this->hasAnyPermission(['vFicha'])) {
             show_error('Sem permissão para acessar fichas e retornos.', 403);
             return;
         }
         $os = $this->os($id);
-        $this->data += ['os' => $os, 'fichas' => $this->fichas_model->doAtendimento((int) $os->idOs),
+        $this->data += ['os' => $os, 'pode_editar' => $this->permite('eFicha'), 'fichas' => $this->fichas_model->doAtendimento((int) $os->idOs),
             'historico' => $this->fichas_model->historico((int) $os->clientes_id, $os->dependente_id ? (int) $os->dependente_id : null)];
         $this->data['view'] = 'fichas/atendimento';
         return $this->layout();
@@ -86,7 +86,7 @@ class Fichas extends MY_Controller
 
     public function modelo($id = null)
     {
-        if (! $this->hasAnyPermission(['cSistema'])) {
+        if (! $this->hasAnyPermission(['cModeloFicha'])) {
             show_error('Sem permissão para configurar modelos de fichas.', 403);
             return;
         }
@@ -122,7 +122,7 @@ class Fichas extends MY_Controller
 
     public function criar($id = null)
     {
-        if (! $this->hasAnyPermission(['cSistema'])) {
+        if (! $this->hasAnyPermission(['eFicha'])) {
             show_error('Sem permissão para criar fichas.', 403);
             return;
         }
@@ -158,7 +158,7 @@ class Fichas extends MY_Controller
             }
             $this->output->set_status_header(422);
         }
-        $this->data += ['os' => $os, 'modelo' => $modelo, 'modelos' => $this->fichas_model->modelos(), 'valores' => $post, 'erros' => $erros,
+        $this->data += ['os' => $os, 'pode_modelo' => $this->permite('cModeloFicha'), 'modelo' => $modelo, 'modelos' => $this->fichas_model->modelos(), 'valores' => $post, 'erros' => $erros,
             'servicos' => $this->db->select('servicos_id, servico')->distinct()->where('os_id', (int) $os->idOs)->get('servicos_os')->result(),
             'chave' => $this->chave($post['chave'] ?? null) ? $post['chave'] : bin2hex(random_bytes(16))];
         $this->data['view'] = 'fichas/criar';
@@ -167,7 +167,7 @@ class Fichas extends MY_Controller
 
     public function visualizar($id = null)
     {
-        if (! $this->hasAnyPermission(['cSistema'])) {
+        if (! $this->hasAnyPermission(['vFicha'])) {
             show_error('Sem permissão para acessar fichas.', 403);
             return;
         }
@@ -178,7 +178,7 @@ class Fichas extends MY_Controller
 
     private function tela(object $ficha, array $erros = [], array $valores = [])
     {
-        $this->data += ['ficha' => $ficha, 'erros' => $erros, 'valores' => $valores,
+        $this->data += ['ficha' => $ficha, 'pode_editar' => $this->permite('eFicha'), 'pode_exportar' => $this->permite('rFicha'), 'erros' => $erros, 'valores' => $valores,
             'evolucoes' => $this->fichas_model->evolucoes((int) $ficha->id), 'arquivos' => $this->fichas_model->arquivos((int) $ficha->id),
             'historico' => $this->fichas_model->historico((int) $ficha->clientes_id, $ficha->dependente_id ? (int) $ficha->dependente_id : null),
             'agendas' => $this->db->select('id, titulo, inicio')->where('os_id', (int) $ficha->os_id)->where('cancelado', 0)->where('fim <=', date('Y-m-d H:i:s'))->order_by('inicio', 'desc')->get('agenda')->result(),
@@ -189,7 +189,7 @@ class Fichas extends MY_Controller
 
     public function evolucao($id = null)
     {
-        if (! $this->hasAnyPermission(['cSistema'])) {
+        if (! $this->hasAnyPermission(['eFicha'])) {
             show_error('Sem permissão para registrar evolução.', 403);
             return;
         }
@@ -218,7 +218,7 @@ class Fichas extends MY_Controller
 
     public function retorno($id = null)
     {
-        if (! $this->hasAnyPermission(['cSistema'])) {
+        if (! $this->hasAnyPermission(['eFicha'])) {
             show_error('Sem permissão para acompanhar retornos.', 403);
             return;
         }
@@ -242,7 +242,7 @@ class Fichas extends MY_Controller
 
     public function anexar($id = null)
     {
-        if (! $this->hasAnyPermission(['cSistema'])) {
+        if (! $this->hasAnyPermission(['eFicha'])) {
             show_error('Sem permissão para anexar documentos da ficha.', 403);
             return;
         }
@@ -285,7 +285,7 @@ class Fichas extends MY_Controller
 
     public function arquivo($ficha = null, $id = null)
     {
-        if (! $this->hasAnyPermission(['cSistema'])) {
+        if (! $this->hasAnyPermission(['vFicha'])) {
             show_error('Sem permissão para acessar documentos da ficha.', 403);
             return;
         }
@@ -301,7 +301,7 @@ class Fichas extends MY_Controller
 
     public function termo($id = null)
     {
-        if (! $this->hasAnyPermission(['cSistema'])) {
+        if (! $this->hasAnyPermission(['vFicha'])) {
             show_error('Sem permissão para imprimir termos.', 403);
             return;
         }
