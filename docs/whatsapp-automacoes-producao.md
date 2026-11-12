@@ -5,7 +5,7 @@
 - Caixa de conversas individuais com busca, histórico paginado, lead vinculado, resposta manual e cancelamento de envios pendentes.
 - Webhook Evolution v2 com autenticação por cabeçalho, limite de corpo, validação da instância e deduplicação dos eventos. Grupos, status e identificadores LID são ignorados. Áudios, fotos e outros conteúdos sem texto aparecem como aviso para consultar o WhatsApp, sem baixar arquivos.
 - Pausa da IA quando a profissional responde pelo celular ou pelo sistema, quando a cliente pede HUMANO ou apresenta um assunto clínico detectado. O atendimento humano continua pelo próprio WhatsApp ou pela caixa de conversas.
-- IA comercial via OpenAI Responses API, sem ferramentas, sem acesso às fichas, documentos, finanças ou agenda. A disponibilidade e o preço final precisam ser confirmados pela profissional.
+- IA comercial com seleção entre OpenAI, Google Gemini, DeepSeek e Claude, sem ferramentas, sem acesso às fichas, documentos, finanças ou agenda. A disponibilidade e o preço final precisam ser confirmados pela profissional.
 - Confirmação 48h antes, lembrete 24h antes, aviso semanal de saldo vencido e retorno no dia previsto. Cada tipo é ativado separadamente e depende de uma cliente vinculada e autorização registrada na conversa.
 - Rotinas CLI para mensagens, diagnóstico e backup diário do banco e armazenamento privado.
 - Instalação Docker com Apache/PHP, MariaDB, Caddy com HTTPS, processamento de mensagens e e-mails e backup periódico.
@@ -55,9 +55,20 @@ Na conversa, a profissional pode registrar autorização obtida por outro meio e
 
 ## IA comercial
 
-Configure `OPENAI_API_KEY` exclusivamente no servidor e informe um identificador de modelo disponível na sua conta. A IA permanece desligada enquanto a chave e o modelo não forem configurados. A cliente precisa escrever AUTORIZO IA; o texto de boas-vindas explica a opção e o atendimento humano.
+Selecione o provedor em Perfil e automações e informe um modelo disponível na respectiva conta. Ao trocar de provedor, confira também o identificador do modelo. Configure a chave correspondente exclusivamente no servidor:
 
-A chamada usa [Responses API](https://developers.openai.com/api/reference/resources/responses/methods/create), `store: false` e limite de saída. Isso desativa o armazenamento da resposta pela API, sem equivaler a uma garantia de retenção zero em todos os serviços do provedor. São enviados o texto comercial da solicitação e a base comercial configurada, com e-mails e números longos substituídos. A versão inicial responde a cada solicitação sem enviar histórico clínico ou anexos; ela não executa ações no sistema.
+| Provedor | Variável de ambiente |
+| --- | --- |
+| OpenAI | `OPENAI_API_KEY` |
+| Google Gemini | `GEMINI_API_KEY` |
+| DeepSeek | `DEEPSEEK_API_KEY` |
+| Claude / Anthropic | `ANTHROPIC_API_KEY` |
+
+Somente o provedor selecionado recebe a solicitação; não existe fallback automático nem reaproveitamento da chave de outro provedor. Configurações antigas sem provedor explícito continuam usando OpenAI; não há nova migration para esta seleção. A IA permanece desligada enquanto a chave e o modelo não forem configurados. A cliente precisa escrever AUTORIZO IA; o texto de boas-vindas explica a opção e o atendimento humano.
+
+Quando OpenAI é selecionada, a chamada usa [Responses API](https://developers.openai.com/api/reference/resources/responses/methods/create), `store: false` e limite de saída. Isso desativa o armazenamento da resposta pela API, sem equivaler a uma garantia de retenção zero em todos os serviços do provedor. As outras opções usam as APIs oficiais [Gemini GenerateContent](https://ai.google.dev/api/generate-content), [DeepSeek Chat Completions](https://api-docs.deepseek.com/api/create-chat-completion/) e [Claude Messages](https://platform.claude.com/docs/en/api/messages/create). Claude usa a versão `2026-10-21`. As políticas de retenção dos demais provedores dependem da conta e do contrato de cada serviço; `store: false` é específico da chamada OpenAI implementada aqui. Respostas truncadas, bloqueadas ou vazias são recusadas e levam ao atendimento humano.
+
+São enviados o texto comercial da solicitação e a base comercial configurada, com e-mails e números longos substituídos. A versão inicial responde a cada solicitação sem enviar histórico clínico ou anexos; ela não executa ações no sistema.
 
 O filtro de encaminhamento clínico é uma barreira adicional, não uma classificação clínica. Informações privadas podem ser digitadas pela própria cliente em uma mensagem: revise as políticas de uso e mantenha a opção HUMANO acessível. Falha da IA ou resposta fora de escopo leva a conversa ao atendimento humano; não existe tentativa infinita ou execução de instruções recebidas nas mensagens.
 

@@ -17,3 +17,7 @@ Validado localmente em 12/11/2026, usando dados fictícios e sem credenciais de 
 A suíte completa foi executada em Linux sobre os arquivos do checkout Windows: 1.826 testes, com 2 erros, 24 falhas, 1 aviso, 5 depreciações e 1 teste ignorado. Os problemas ficaram fora dos módulos novos, principalmente testes antigos que procuram trechos de código com LF em arquivos CRLF. Também há um teste antigo de cancelamento de OS cujo objeto simulado não implementa `pessoaPermitida`. A suíte completa não está verde; isso precisa de uma frente separada antes de tomar essa execução como certificação de toda a base.
 
 Não foram testados envio real pelo WhatsApp, resposta real da OpenAI, entrega SMTP, DNS/certificado de um domínio real nem publicação em VPS. Esses testes exigem credenciais e infraestrutura do ambiente de destino. O perfil fica no banco de dados, não no código do Git.
+
+## Provedores adicionais de IA
+
+A seleção agora inclui OpenAI, Gemini, DeepSeek e Claude, cada um com sua variável de chave. Foram validados os quatro formatos de requisição e resposta por simulação, além da recusa de resposta vazia e chave ausente. A suíte do escopo passou com 555 testes e 2.942 assertions (dois avisos herdados); os 12 testes de automações passaram isoladamente sem avisos. PHPStan e build passaram. A interface exibiu as quatro opções mantendo as automações desligadas. Não houve chamada real ou cobrança em nenhum provedor; a ativação depende de chave e modelo disponíveis na conta escolhida.

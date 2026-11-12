@@ -50,7 +50,7 @@ class Rotinas extends CI_Controller
             'url_https' => str_starts_with((string) ($_ENV['APP_BASEURL'] ?? ''), 'https://'),
             'csrf' => (bool) $this->config->item('csrf_protection'),
             'segredo_webhook' => strlen((string) ($_ENV['EVOLUTION_WEBHOOK_SECRET'] ?? '')) >= 32,
-            'chave_ia' => ! empty($_ENV['OPENAI_API_KEY']), 'backup_configurado' => ! empty($_ENV['BACKUP_PATH']),
+            'chave_ia' => automacoesChaveIA($this->automacoes_model->configuracao()['provedor_ia']) !== '', 'backup_configurado' => ! empty($_ENV['BACKUP_PATH']),
             'storage_gravavel' => is_dir(armazenamentoRaiz()) && is_writable(armazenamentoRaiz()),
             'worker_recente' => $estado->ultimo_worker && strtotime($estado->ultimo_worker) > time() - 300,
             'smtp_configurado' => ! empty($_ENV['EMAIL_SMTP_PASS']) && $_ENV['EMAIL_SMTP_PASS'] !== 'senhadoemail'];

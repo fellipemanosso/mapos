@@ -34,6 +34,65 @@ final class AutomacoesTest extends MaposTestCase
             'pushName' => 'Contato fictício', 'messageTimestamp' => time(), 'message' => ['conversation' => $texto]]];
     }
 
+    public function testProvedoresEnviamFormatoCorretoENaoUsamOutraChave(): void
+    {
+        $respostas = [
+            'openai' => ['status' => 'completed', 'output' => [['content' => [['type' => 'output_text', 'text' => 'Olá!']]]]],
+            'gemini' => ['candidates' => [['finishReason' => 'STOP', 'content' => ['parts' => [['thought' => true, 'text' => 'não exibir'], ['text' => 'Olá!']]]]]],
+            'deepseek' => ['choices' => [['finish_reason' => 'stop', 'message' => ['content' => 'Olá!', 'reasoning_content' => 'não exibir']]]],
+            'claude' => ['stop_reason' => 'end_turn', 'content' => [['type' => 'thinking', 'thinking' => 'não exibir'], ['type' => 'text', 'text' => 'Olá!']]],
+        ];
+        $urls = ['openai' => 'https://api.openai.com/v1/responses', 'gemini' => 'https://generativelanguage.googleapis.com/v1beta/models/modelo-teste:generateContent',
+            'deepseek' => 'https://api.deepseek.com/chat/completions', 'claude' => 'https://api.anthropic.com/v1/messages'];
+        foreach (automacoesProvedores() as $provedor => $meta) {
+            $anterior = $_ENV[$meta['chave']] ?? null;
+            $_ENV[$meta['chave']] = 'chave-ficticia-' . $provedor;
+            try {
+                $http = new class extends Automacoes_http {
+                    public array $resposta = [];
+                    public array $pedido = [];
+                    public function json(string $url, array $headers, array $dados): array
+                    {
+                        $this->pedido = compact('url', 'headers', 'dados');
+                        return $this->resposta;
+                    }
+                };
+                $http->resposta = $respostas[$provedor];
+                $config = array_replace(automacoesPadrao(), ['provedor_ia' => $provedor, 'modelo_ia' => 'modelo-teste']);
+                $this->assertSame('Olá!', $http->responder($config, 'Meu email é ficticio@example.com', []));
+                $this->assertSame($urls[$provedor], $http->pedido['url']);
+                $this->assertStringContainsString('chave-ficticia-' . $provedor, implode(' ', $http->pedido['headers']));
+                $corpo = json_encode($http->pedido['dados']);
+                $this->assertStringNotContainsString('ficticio@example.com', $corpo);
+                $this->assertStringContainsString('[email]', $corpo);
+                $this->assertArrayNotHasKey('tools', $http->pedido['dados']);
+                $http->resposta = [];
+                try {
+                    $http->responder($config, 'Olá', []);
+                    $this->fail('Resposta vazia deve ser recusada.');
+                } catch (RuntimeException $e) {
+                    $this->assertStringContainsString('não concluiu', $e->getMessage());
+                }
+                unset($_ENV[$meta['chave']]);
+                try {
+                    $http->responder($config, 'Olá', []);
+                    $this->fail('Chave de outro provedor não deve ser usada.');
+                } catch (RuntimeException $e) {
+                    $this->assertStringContainsString('chave do provedor', $e->getMessage());
+                }
+            } finally {
+                if ($anterior === null) {
+                    unset($_ENV[$meta['chave']]);
+                } else {
+                    $_ENV[$meta['chave']] = $anterior;
+                }
+            }
+        }
+        [, $erros] = automacoesDados(['provedor_ia' => 'inexistente']);
+        $this->assertArrayHasKey('provedor_ia', $erros);
+        $this->assertSame('', automacoesChaveIA('inexistente'));
+    }
+
     public function testNormalizaBrasilRecusaGruposLidOutraInstancia(): void
     {
         $this->assertSame('5541999991234', whatsappTelefone('(41) 99999-1234'));

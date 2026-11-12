@@ -35,7 +35,8 @@
                 <?= component('checkbox', ['name' => $campo, 'label' => $rotulo, 'value' => '1', 'checked' => $valores[$campo]]) ?>
             <?php } ?>
             <p class="text-body-sm text-muted sm:col-span-2">Lembretes exigem cliente vinculada à conversa e autorização registrada. A cliente pode escrever SAIR a qualquer momento. A IA não marca horários nem altera pagamentos.</p>
-            <?= component('input', ['name' => 'modelo_ia', 'label' => 'Modelo OpenAI', 'value' => $valores['modelo_ia'], 'error' => $erros['modelo_ia'] ?? null, 'help' => 'Use o identificador de um modelo disponível na sua conta. A chave é configurada no servidor.', 'attrs' => ['maxlength' => 100]]) ?>
+            <?= component('select', ['name' => 'provedor_ia', 'label' => 'Provedor de IA', 'selected' => $valores['provedor_ia'], 'options' => array_map(static fn ($p) => $p['nome'], automacoesProvedores()), 'error' => $erros['provedor_ia'] ?? null, 'help' => 'Somente o provedor selecionado recebe as solicitações.']) ?>
+            <?= component('input', ['name' => 'modelo_ia', 'label' => 'Modelo de IA', 'value' => $valores['modelo_ia'], 'error' => $erros['modelo_ia'] ?? null, 'help' => 'Informe um modelo disponível no provedor escolhido. Configure no servidor a chave correspondente: OPENAI_API_KEY, GEMINI_API_KEY, DEEPSEEK_API_KEY ou ANTHROPIC_API_KEY.', 'attrs' => ['maxlength' => 100]]) ?>
             <?= component('input', ['name' => 'limite_diario', 'label' => 'Limite diário de envios', 'type' => 'number', 'value' => $valores['limite_diario'], 'error' => $erros['limite_diario'] ?? null, 'attrs' => ['min' => 1, 'max' => 500]]) ?>
             <?php foreach (['inicio_envio' => 'Enviar a partir de', 'fim_envio' => 'Enviar até'] as $campo => $rotulo) { ?><?= component('input', ['name' => $campo, 'label' => $rotulo, 'type' => 'time', 'value' => $valores[$campo], 'error' => $erros[$campo] ?? null]) ?><?php } ?>
         </section>

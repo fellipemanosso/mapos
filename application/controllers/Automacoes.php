@@ -25,7 +25,7 @@ class Automacoes extends MY_Controller
             'estado' => $this->automacoes_model->estado(), 'erros' => [],
             'webhook_url' => site_url('evolutionhook'),
             'tem_webhook' => strlen((string) ($_ENV['EVOLUTION_WEBHOOK_SECRET'] ?? '')) >= 32,
-            'tem_ia' => ! empty($_ENV['OPENAI_API_KEY']), 'pode_emitente' => $this->permite('cEmitente'),
+            'tem_ia' => automacoesChaveIA($this->automacoes_model->configuracao()['provedor_ia']) !== '', 'pode_emitente' => $this->permite('cEmitente'),
             'tem_smtp' => ! empty($_ENV['EMAIL_SMTP_USER']) && $_ENV['EMAIL_SMTP_USER'] !== 'seuemail@gmail.com' && ! empty($_ENV['EMAIL_SMTP_PASS']),
             'view' => 'automacoes/index'], $extras);
         return $this->layout();
@@ -46,8 +46,8 @@ class Automacoes extends MY_Controller
         if (! is_string($versao) || ! ctype_digit($versao)) {
             $erros['_geral'] = 'Reabra a configuração antes de salvar.';
         }
-        if ($dados['ia'] && empty($_ENV['OPENAI_API_KEY'])) {
-            $erros['modelo_ia'] = 'Configure OPENAI_API_KEY no servidor antes de ativar a IA.';
+        if ($dados['ia'] && automacoesChaveIA($dados['provedor_ia']) === '') {
+            $erros['modelo_ia'] = 'Configure a chave do provedor selecionado no servidor antes de ativar a IA.';
         }
         if ($dados['automatico'] && strlen((string) ($_ENV['EVOLUTION_WEBHOOK_SECRET'] ?? '')) < 32) {
             $erros['_geral'] = 'Configure o segredo do webhook no servidor antes de ativar o atendimento automático.';
