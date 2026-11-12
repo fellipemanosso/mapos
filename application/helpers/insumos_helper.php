@@ -2,6 +2,15 @@
 
 const INSUMOS_UNIDADES = ['un' => 'Unidade', 'ml' => 'Mililitro', 'g' => 'Grama', 'cm' => 'Centímetro'];
 
+function insumoCustoEntrada($texto): string
+{
+    $custo = valorDecimal($texto);
+    if ($custo === null) {
+        throw new DomainException('Informe o custo total da entrada. Se o custo conhecido for zero, digite 0,00; não registre um custo ainda desconhecido.');
+    }
+    return $custo;
+}
+
 function insumoQuantidade($texto): ?int
 {
     if (! is_string($texto) || ! preg_match('/\A(\d{1,6})(?:[,.](\d{1,3}))?\z/', trim($texto), $m)) {

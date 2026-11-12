@@ -17,6 +17,16 @@ lote e a quantidade consumida. O custo é calculado com o valor daquele lote,
 sem depender de alterações futuras nos preços. Consumos anteriores registrados
 no módulo Insumos já aparecem na tela: não os registre de novo.
 
+O custo total da entrada começa vazio e deve ser informado explicitamente.
+Para uma amostra ou outro lote com custo conhecido igual a zero, digite **0,00**.
+Um valor ainda desconhecido não equivale a zero: confira o custo antes de
+registrar a entrada. Consumo e descarte continuam usando o custo do lote, sem
+pedir um novo valor. Lotes e movimentos anteriores não são alterados.
+
+Os botões de estorno de consumo e de outros custos abrem uma confirmação com
+o material ou a descrição e o valor. **Cancelar** ou Esc fecha sem alterar dados;
+somente a confirmação efetua o estorno e preserva o histórico.
+
 Em Serviços, use **Insumos padrão** para definir as quantidades por unidade do
 serviço. Na tela de custos do atendimento, **Aplicar insumos padrão dos serviços**
 baixa os lotes disponíveis, priorizando validade. A operação é atômica se faltar

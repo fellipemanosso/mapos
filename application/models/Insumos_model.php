@@ -78,7 +78,7 @@ class Insumos_model extends CI_Model
                 $nome = $dados['lote'] ?? '';
                 $validade = $dados['validade'] ?? '';
                 $data = $validade === '' ? null : fichaData($validade);
-                $custo = valorDecimal($dados['custo'] ?? null);
+                $custo = insumoCustoEntrada($dados['custo'] ?? null);
                 if (! is_string($nome) || trim($nome) === '' || mb_strlen($nome) > 100 || ($validade !== '' && ! $data) || $custo === null) {
                     throw new DomainException('Informe lote, validade válida (ou deixe vazia) e custo total da entrada.');
                 }

@@ -112,6 +112,9 @@ class Insumos extends MY_Controller
             if ($qtd === null || ! is_string($post['tipo'] ?? null) || ! is_string($post['chave'] ?? null)) {
                 throw new DomainException('Confira a quantidade e o tipo de movimentação.');
             }
+            if ($post['tipo'] === 'entrada') {
+                insumoCustoEntrada($post['custo'] ?? null);
+            }
             $this->insumos_model->movimentar((int) $item->id, $post['tipo'], $qtd, $post, (int) $this->session->userdata('id_admin'), $post['chave']);
             log_info('Movimentou insumo #' . $item->id);
             $this->session->set_flashdata('success', 'Movimentação registrada. Compras devem ser lançadas também em Despesas.');
