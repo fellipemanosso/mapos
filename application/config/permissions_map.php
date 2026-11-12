@@ -131,6 +131,14 @@ $config['permissions_map'] = [
         'atualizarMapos' => 'cSistema',
     ],
 
+    'Notasfiscais' => [
+        'index' => 'vOs',
+        'solicitar' => 'eOs',
+        'anexar' => 'eOs',
+        'disponibilidade' => 'eOs',
+        'arquivo' => 'vOs',
+    ],
+
     'Resumo' => ['index' => 'vLancamento'],
 
     'Despesas' => [

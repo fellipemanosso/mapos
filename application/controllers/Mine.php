@@ -724,6 +724,20 @@ class Mine extends CI_Controller
         $this->session->set_userdata('captchaWord', $codigoCaptcha);
     }
 
+    /** Nota fiscal ativa que pertence ao cliente autenticado. */
+    public function notaFiscal($id = null)
+    {
+        $cliente = $this->clienteLogado();
+        $this->load->model('notas_fiscais_model');
+        $nota = is_scalar($id) && ctype_digit((string) $id) ? $this->notas_fiscais_model->doCliente((int) $id, $cliente) : null;
+        $arquivo = $nota ? armazenamentoLocalizar($nota->caminho) : null;
+        if (! $arquivo) {
+            show_404();
+            return;
+        }
+        armazenamentoEnviar($arquivo, $nota->nome, true);
+    }
+
     // --- Apoio ----------------------------------------------------------------
 
     /**

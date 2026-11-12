@@ -262,6 +262,10 @@ class Os_model extends CI_Model
             }
         }
 
+        if ($os && $this->db->table_exists('notas_fiscais')) {
+            $os->notas_fiscais = $this->db->select('id, numero, data_emissao, nome, ativo')->where('os_id', (int) $os->idOs)->where('ativo', 1)->order_by('id', 'desc')->get('notas_fiscais')->result();
+        }
+
         return $os;
     }
 

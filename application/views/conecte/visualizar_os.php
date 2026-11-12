@@ -50,6 +50,15 @@ $textos = $campos([
     </header>
 
     <?php $this->load->view('agenda/horarios', ['agendamentos' => $os->status === 'Cancelado' ? [] : ($os->agendamentos ?? []), 'editar_agenda' => false]); ?>
+    <?php if (! empty($os->notas_fiscais) || ! empty($os->nf_solicitada)) { ?>
+        <section class="<?= e($caixa) ?>" aria-label="Nota fiscal">
+            <h2 class="text-heading-sm text-text">Nota fiscal</h2>
+            <?php if (empty($os->notas_fiscais)) { ?><p class="mt-2 text-body-md text-muted">Sua solicitação de nota fiscal está registrada. O documento ainda não foi anexado.</p><?php } ?>
+            <?php foreach (($os->notas_fiscais ?? []) as $nota) { ?>
+                <p class="mt-3"><?= component('link', ['label' => $nota->numero ? 'NF ' . $nota->numero . ' · ' . $nota->nome : $nota->nome, 'href' => site_url('mine/notaFiscal/' . (int) $nota->id)]) ?></p>
+            <?php } ?>
+        </section>
+    <?php } ?>
     <?php if (isset($os->pacote_progresso)) { ?>
         <section class="<?= e($caixa) ?>" aria-label="Sessões do pacote">
             <h2 class="text-heading-sm text-text">Sessões do pacote</h2>

@@ -389,6 +389,10 @@ class OsController extends REST_Controller
         }
 
         $osStockRefund = $this->os_model->getById($id);
+        if ($this->db->table_exists('notas_fiscais') && $this->db->where('os_id', (int) $id)->count_all_results('notas_fiscais') > 0) {
+            $this->response(['status' => false, 'message' => 'Atendimento com histórico de nota fiscal não pode ser excluído.'], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
         if (! empty($osStockRefund->pacote_id)) {
             $this->response(['status' => false, 'message' => 'Atendimento vinculado a pacote não pode ser excluído.'], REST_Controller::HTTP_BAD_REQUEST);
             return;
