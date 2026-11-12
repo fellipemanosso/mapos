@@ -1,5 +1,7 @@
 # Migração do Map-OS 4.x para a v5
 
+**Fichas e retornos:** aplique `20261112030000_create_fichas`. O acesso é restrito a `cSistema`, inclusive arquivos e termos. Atendimentos com fichas passam a impedir a troca da pessoa atendida e a exclusão. Inclua os arquivos privados no backup. Veja [Fichas de atendimento](fichas-atendimento.md).
+
 O módulo opcional **Leads e orçamentos** usa a migration `20261112020000_create_leads`. Aplique a atualização do banco antes de abrir o módulo. A conversão preserva o orçamento e vincula o atendimento; consulte [Leads e orçamentos](leads-orcamentos.md) para permissões e operação.
 
 Na customização de atendimentos, a integração opcional com Evolution adiciona a migration `20261112010000_add_evolution_config`. Após atualizar o banco, configure a instância em **Configurações → WhatsApp**. Preserve `APP_ENCRYPTION_KEY` no backup para recuperar a chave de acesso cifrada. Veja [WhatsApp pela Evolution](whatsapp-evolution.md).

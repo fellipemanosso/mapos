@@ -161,6 +161,9 @@ final class LayoutTest extends MaposTestCase
 
         foreach ($conjuntos as $conjunto) {
             $esperado = ['Início'];
+            if (in_array('cSistema', $conjunto, true)) {
+                $esperado[] = 'Fichas e retornos';
+            }
             if (in_array('vLancamento', $conjunto, true)) {
                 $esperado[] = 'Despesas';
                 $esperado[] = 'Resumo mensal';
@@ -228,7 +231,7 @@ final class LayoutTest extends MaposTestCase
 
         $menu = layoutMenuVisivel(layoutMenu(), $this->permite($todas), 'Mapos', 'index');
 
-        $this->assertCount(13 + 10 + 8, self::rotulos($menu));
+        $this->assertCount(14 + 10 + 8, self::rotulos($menu));
         $this->assertContains('Configurações > WhatsApp', self::rotulos($menu));
     }
 

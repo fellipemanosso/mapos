@@ -262,6 +262,10 @@ class Os extends MY_Controller
      */
     private function salvarOs(object $os, array $dados): ?int
     {
+        if (! $this->os_model->pessoaPermitida((int) $os->idOs, $dados)) {
+            $this->session->set_flashdata('error', 'A pessoa atendida não pode ser trocada após registrar uma ficha. Abra outro atendimento.');
+            return null;
+        }
         $idOs = (int) $os->idOs;
         $antes = strtolower((string) $os->status);
         $depois = strtolower((string) $dados['status']);
@@ -426,6 +430,7 @@ class Os extends MY_Controller
                 'ver_cobranca' => $this->permite('vCobranca'),
                 'ver_cliente' => $this->permite('vCliente'),
                 'agendar' => $this->permite('eOs'),
+                'fichas' => $this->permite('cSistema'),
             ],
         ];
     }
@@ -754,6 +759,10 @@ class Os extends MY_Controller
         }
 
         $osStockRefund = $this->os_model->getById($id);
+        if ($this->db->table_exists('fichas') && $this->db->where('os_id', $id)->count_all_results('fichas') > 0) {
+            $this->session->set_flashdata('error', 'Este atendimento tem fichas de atendimento e não pode ser excluído.');
+            return redirect($listagem);
+        }
         if ($this->db->table_exists('leads') && $this->db->where('os_id', $id)->count_all_results('leads') > 0) {
             $this->session->set_flashdata('error', 'Este atendimento está vinculado a um contato comercial e não pode ser excluído.');
             return redirect($listagem);

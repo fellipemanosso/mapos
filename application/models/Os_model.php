@@ -319,14 +319,27 @@ class Os_model extends CI_Model
 
     public function edit($table, $data, $fieldID, $ID)
     {
+        $protegerPessoa = $table === 'os' && (array_key_exists('clientes_id', $data) || array_key_exists('dependente_id', $data));
+        if ($protegerPessoa) {
+            $this->db->trans_begin();
+            $this->db->query('SELECT idOs FROM os WHERE idOs = ?' . ($this->db->dbdriver === 'mysqli' ? ' FOR UPDATE' : ''), [(int) $ID])->row();
+            if (! $this->pessoaPermitida((int) $ID, $data)) {
+                $this->db->trans_rollback();
+                return false;
+            }
+        }
         $this->db->where($fieldID, $ID);
         $this->db->update($table, $data);
 
-        if ($this->db->affected_rows() >= 0) {
-            return true;
+        $ok = $this->db->affected_rows() >= 0 && (! $protegerPessoa || $this->db->trans_status());
+        if ($protegerPessoa) {
+            if ($ok) {
+                $this->db->trans_commit();
+            } else {
+                $this->db->trans_rollback();
+            }
         }
-
-        return false;
+        return $ok;
     }
 
     public function delete($table, $fieldID, $ID)
@@ -343,6 +356,20 @@ class Os_model extends CI_Model
     public function count($table)
     {
         return $this->db->count_all($table);
+    }
+
+    /** O vínculo de uma ficha não pode ser atribuído a outra cliente ou bebê. */
+    public function pessoaPermitida(int $id, array $dados): bool
+    {
+        if ((! array_key_exists('clientes_id', $dados) && ! array_key_exists('dependente_id', $dados)) || ! $this->db->table_exists('fichas')) {
+            return true;
+        }
+        if (! $this->db->where('os_id', $id)->count_all_results('fichas')) {
+            return true;
+        }
+        $os = $this->db->select('clientes_id, dependente_id')->where('idOs', $id)->get('os')->row();
+        return $os && (int) (array_key_exists('clientes_id', $dados) ? $dados['clientes_id'] : $os->clientes_id) === (int) $os->clientes_id
+            && (int) (array_key_exists('dependente_id', $dados) ? $dados['dependente_id'] : $os->dependente_id) === (int) $os->dependente_id;
     }
 
     // Autocompletes: devolvem a lista (vazia quando nada casa) e o controller

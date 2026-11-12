@@ -293,6 +293,10 @@ class OsController extends REST_Controller
             'faturado' => 0,
         ];
 
+        if (! $this->os_model->pessoaPermitida((int) $id, $data)) {
+            $this->response(['status' => false, 'message' => 'A pessoa atendida não pode ser trocada após registrar uma ficha.'], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
         if (strtolower($this->put('status')) == 'cancelado' && strtolower($os->status) != 'cancelado') {
             $this->devolucaoEstoque($id);
         }
@@ -389,6 +393,10 @@ class OsController extends REST_Controller
         }
 
         $osStockRefund = $this->os_model->getById($id);
+        if ($this->db->table_exists('fichas') && $this->db->where('os_id', (int) $id)->count_all_results('fichas') > 0) {
+            $this->response(['status' => false, 'message' => 'Atendimento com ficha não pode ser excluído.'], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
         if ($this->db->table_exists('leads') && $this->db->where('os_id', (int) $id)->count_all_results('leads') > 0) {
             $this->response(['status' => false, 'message' => 'Atendimento vinculado a contato comercial não pode ser excluído.'], REST_Controller::HTTP_BAD_REQUEST);
             return;

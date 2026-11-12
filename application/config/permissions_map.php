@@ -32,6 +32,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 */
 
 $config['permissions_map'] = [
+    'Fichas' => [
+        'index' => 'cSistema', 'atendimento' => 'cSistema', 'modelo' => 'cSistema', 'criar' => 'cSistema',
+        'visualizar' => 'cSistema', 'evolucao' => 'cSistema', 'retorno' => 'cSistema', 'anexar' => 'cSistema',
+        'arquivo' => 'cSistema', 'termo' => 'cSistema',
+    ],
     'Leads' => [
         'index' => 'vOs',
         'visualizar' => 'vOs',
