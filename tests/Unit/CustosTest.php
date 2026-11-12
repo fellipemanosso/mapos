@@ -11,6 +11,30 @@ require_once APPPATH . 'controllers/Custos.php';
 
 final class CustosTest extends MaposTestCase
 {
+    public function testEntradaExigeCustoExplicitoMasPermiteZeroEConsumoSemCampoCusto(): void
+    {
+        $m = $this->modelo();
+        $dados = ['lote' => 'Gratuito', 'nota' => 'Amostra', 'validade' => '2099-01-01'];
+        foreach ([null, '', ' ', 'desconhecido', '-1', []] as $invalido) {
+            try {
+                $m->estoque->movimentar(2, 'entrada', 1000, $dados + ['custo' => $invalido], 1, str_repeat('d', 32));
+                $this->fail('Custo não informado ou inválido não pode virar zero.');
+            } catch (DomainException $e) {
+                $this->assertStringContainsString('custo total', $e->getMessage());
+                $this->assertCount(0, $m->estoque->lotes(2));
+                $this->assertSame(0, $m->estoque->contarMovimentos(2));
+            }
+        }
+        $m->estoque->movimentar(2, 'entrada', 1000, $dados + ['custo' => '0,00'], 1, str_repeat('d', 32));
+        $lote = $m->estoque->lotes(2)[0];
+        $this->assertSame(0.0, (float) $lote->custo_unitario);
+        $m->estoque->movimentar(2, 'consumo', 500, ['lote_id' => (string) $lote->id, 'os_id' => '1', 'nota' => 'Uso da amostra'], 1, str_repeat('e', 32));
+        $this->assertSame(0.5, (float) $m->estoque->lotes(2)[0]->saldo);
+        $this->assertSame(0.0, (float) $m->estoque->movimentos(2, 0, 10)[0]->custo);
+        $m->estoque->movimentar(2, 'descarte', 500, ['lote_id' => (string) $lote->id, 'nota' => 'Perda'], 1, str_repeat('f', 32));
+        $this->assertSame(0.0, (float) $m->estoque->lotes(2)[0]->saldo);
+    }
+
     private function modelo(): Custos_model
     {
         foreach ([
@@ -208,6 +232,34 @@ final class CustosTest extends MaposTestCase
                 $this->fail('Rota interna não pode ser aberta só com vOs.');
             } catch (RuntimeException $e) {
                 $this->assertStringContainsString('Sem permissão', $e->getMessage());
+            }
+        }
+    }
+
+    public function testComposicaoSalvaVariasQuantidadesERemoveEmUmEnvio(): void
+    {
+        $m = $this->modelo();
+        $m->salvarPadrao(1, 1, 2000);
+        $m->salvarPadrao(1, 2, 1000);
+        $m->salvarComposicao(1, [1 => 3500, 2 => 2500]);
+        $this->assertSame([3.5, 2.5], array_map(static fn ($i) => (float) $i->quantidade, $m->padrao(1)));
+        $m->salvarComposicao(1, [1 => 4000, 2 => 0]);
+        $this->assertCount(1, $m->padrao(1));
+        $this->assertSame(4.0, (float) $m->padrao(1)[0]->quantidade);
+        $this->assertCount(0, $m->consumos(1));
+    }
+
+    public function testComposicaoRecusaDadosInvalidosOuItensAlteradosSemSalvarParte(): void
+    {
+        $m = $this->modelo();
+        $m->salvarPadrao(1, 1, 2000);
+        $m->salvarPadrao(1, 2, 1000);
+        foreach ([[1 => 4000, 2 => -1], [1 => 4000, 2 => 1000000000], [1 => 4000], [1 => 4000, 3 => 1000]] as $quantidades) {
+            try {
+                $m->salvarComposicao(1, $quantidades);
+                $this->fail('Composição inválida não deve ser salva.');
+            } catch (DomainException) {
+                $this->assertSame([2.0, 1.0], array_map(static fn ($i) => (float) $i->quantidade, $m->padrao(1)));
             }
         }
     }

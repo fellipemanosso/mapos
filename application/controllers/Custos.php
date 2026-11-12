@@ -119,14 +119,34 @@ class Custos extends MY_Controller
             return;
         }
         $erro = null;
+        $erros = [];
+        $valores = $this->input->method() === 'post' ? $this->input->post() : [];
         if ($this->input->method() === 'post') {
             try {
-                $remover = $this->id($this->input->post('remover'));
-                $qtd = $remover ? 0 : insumoQuantidade($this->input->post('quantidade'));
-                if ($qtd === null) {
-                    throw new DomainException('Informe uma quantidade com até três casas decimais. Zero remove o insumo do padrão.');
+                if (($valores['acao'] ?? '') === 'composicao') {
+                    $quantidades = [];
+                    $enviadas = is_array($valores['quantidades'] ?? null) ? $valores['quantidades'] : [];
+                    $remover = is_array($valores['remover'] ?? null) ? $valores['remover'] : [];
+                    foreach ($enviadas as $insumo => $valor) {
+                        $qtd = isset($remover[$insumo]) ? 0 : insumoQuantidade($valor);
+                        if ($qtd === null || $qtd > 999999999) {
+                            $erros[$insumo] = 'Informe uma quantidade de 0 a 999999,999, com até três casas decimais.';
+                        } else {
+                            $quantidades[$insumo] = $qtd;
+                        }
+                    }
+                    if ($erros) {
+                        throw new DomainException('Confira as quantidades indicadas. Nenhuma alteração foi salva.');
+                    }
+                    $this->custos_model->salvarComposicao($id, $quantidades);
+                } else {
+                    $qtd = insumoQuantidade($valores['quantidade'] ?? null);
+                    if ($qtd === null || $qtd < 1 || $qtd > 999999999) {
+                        $erros['quantidade'] = 'Informe uma quantidade maior que zero, com até três casas decimais.';
+                        throw new DomainException($erros['quantidade']);
+                    }
+                    $this->custos_model->salvarPadrao($id, $this->id($valores['insumo_id'] ?? null), $qtd);
                 }
-                $this->custos_model->salvarPadrao($id, $remover ?: $this->id($this->input->post('insumo_id')), $qtd);
                 log_info('Atualizou insumos padrão do serviço #' . $id);
                 $this->session->set_flashdata('success', 'Composição salva. Consumos já registrados permanecem iguais.');
                 return redirect('custos/padrao/' . $id);
@@ -136,7 +156,7 @@ class Custos extends MY_Controller
             }
         }
         $this->data += ['servico' => $servico, 'itens' => $this->custos_model->padrao($id),
-            'insumos' => $this->db->order_by('nome')->get('insumos')->result(), 'erro' => $erro];
+            'insumos' => $this->db->order_by('nome')->get('insumos')->result(), 'erro' => $erro, 'erros' => $erros, 'valores' => $valores];
         $this->data['view'] = 'custos/padrao';
         return $this->layout();
     }

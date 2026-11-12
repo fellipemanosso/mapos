@@ -146,6 +146,35 @@ class Custos_model extends CI_Model
         });
     }
 
+    /** Salva apenas os itens já vinculados, em uma única transação. */
+    public function salvarComposicao(int $servico, array $quantidades): void
+    {
+        $this->transacao(function () use ($servico, $quantidades) {
+            $registro = $this->db->query('SELECT idServicos FROM servicos WHERE idServicos = ?' . ($this->db->dbdriver === 'mysqli' ? ' FOR UPDATE' : ''), [$servico])->row();
+            if (! $registro) {
+                throw new DomainException('Serviço não encontrado.');
+            }
+            $itens = $this->padrao($servico);
+            $ids = array_map(static fn ($item) => (int) $item->insumo_id, $itens);
+            if (count($quantidades) !== count($ids) || array_diff(array_keys($quantidades), $ids) || array_diff($ids, array_keys($quantidades))) {
+                throw new DomainException('A composição mudou. Reabra a tela e confira os materiais antes de salvar.');
+            }
+            foreach ($quantidades as $quantidade) {
+                if (! is_int($quantidade) || $quantidade < 0 || $quantidade > 999999999) {
+                    throw new DomainException('Confira as quantidades antes de salvar. Nenhuma alteração foi salva.');
+                }
+            }
+            foreach ($quantidades as $insumo => $quantidade) {
+                $this->db->where('servico_id', $servico)->where('insumo_id', $insumo);
+                if ($quantidade === 0) {
+                    $this->db->delete('servico_insumos');
+                } else {
+                    $this->db->update('servico_insumos', ['quantidade' => insumoDecimal($quantidade)]);
+                }
+            }
+        });
+    }
+
     /** Prévia agregada: o consumo já lançado conta para o total real, inclusive manual. */
     public function previa(int $id): array
     {
