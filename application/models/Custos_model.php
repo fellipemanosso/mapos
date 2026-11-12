@@ -146,6 +146,93 @@ class Custos_model extends CI_Model
         });
     }
 
+    /** Prévia agregada: o consumo já lançado conta para o total real, inclusive manual. */
+    public function previa(int $id): array
+    {
+        $itens = $this->db->where('os_id', $id)->order_by('idServicos_os')->get('servicos_os')->result();
+        $materiais = [];
+        $servicos = [];
+        foreach ($itens as $item) {
+            $receita = $this->padrao((int) $item->servicos_id);
+            $servico = $this->db->where('idServicos', $item->servicos_id)->get('servicos')->row();
+            $servicos[] = ['nome' => $servico->nome ?? 'Serviço removido', 'quantidade' => $item->quantidade, 'composicao' => (bool) $receita];
+            foreach ($receita as $p) {
+                $chave = (int) $p->insumo_id;
+                $materiais[$chave] ??= ['id' => $chave, 'nome' => $p->nome, 'unidade' => $p->unidade, 'previsto' => 0, 'registrado' => 0, 'saldo' => 0];
+                $materiais[$chave]['previsto'] += (int) round((float) $p->quantidade * ((float) $item->quantidade ?: 1) * 1000);
+            }
+        }
+        $movimentos = $this->consumos($id);
+        foreach ($movimentos as $m) {
+            if ($m->estornado_em) {
+                continue;
+            }
+            $chave = (int) $m->insumo_id;
+            $materiais[$chave] ??= ['id' => $chave, 'nome' => $m->nome, 'unidade' => $m->unidade, 'previsto' => 0, 'registrado' => 0, 'saldo' => 0];
+            $materiais[$chave]['registrado'] += (int) round((float) $m->quantidade * 1000);
+        }
+        ksort($materiais);
+        $assinatura = hash('sha256', json_encode([$itens, $servicos, $materiais, $movimentos], JSON_THROW_ON_ERROR));
+        $semCusto = false;
+        foreach ($movimentos as $m) {
+            $semCusto = $semCusto || (! $m->estornado_em && (float) $m->custo <= 0);
+        }
+        foreach ($this->lotes() as $lote) {
+            if (isset($materiais[$lote->insumo_id])) {
+                $materiais[$lote->insumo_id]['saldo'] += (int) round((float) $lote->saldo * 1000);
+            }
+        }
+        $conferencia = $this->db->where('os_id', $id)->get('atendimento_conferencia')->row();
+        return ['materiais' => $materiais, 'servicos' => $servicos, 'assinatura' => $assinatura,
+            'conferido' => $conferencia && hash_equals($conferencia->assinatura, $assinatura), 'sem_custo' => $semCusto];
+    }
+
+    public function confirmarMateriais(int $id, array $quantidades, string $assinatura, int $usuario): void
+    {
+        $this->transacao(function () use ($id, $quantidades, $assinatura, $usuario) {
+            $this->atendimento($id);
+            // Mesmo bloqueio usado ao editar a composição; evita confirmar uma receita antiga.
+            foreach ($this->db->where('os_id', $id)->order_by('servicos_id')->get('servicos_os')->result() as $item) {
+                $this->db->query('SELECT idServicos FROM servicos WHERE idServicos = ?' . ($this->db->dbdriver === 'mysqli' ? ' FOR UPDATE' : ''), [$item->servicos_id]);
+            }
+            $previa = $this->previa($id);
+            if (! hash_equals($previa['assinatura'], $assinatura)) {
+                throw new DomainException('Os serviços ou consumos mudaram. Confira a prévia atualizada antes de confirmar.');
+            }
+            if (! $previa['materiais'] || count($quantidades) !== count($previa['materiais'])) {
+                throw new DomainException('Confira todos os materiais da prévia. Serviços sem composição exigem conferência manual.');
+            }
+            foreach ($previa['materiais'] as $insumo => $material) {
+                $total = insumoQuantidade($quantidades[$insumo] ?? null);
+                if ($total === null || $total < $material['registrado'] || $total > 999999999) {
+                    throw new DomainException('Quantidade inválida para ' . $material['nome'] . '. Para reduzir um consumo registrado, estorne o lançamento primeiro.');
+                }
+                $restante = $total - $material['registrado'];
+                $this->db->query('SELECT id FROM insumos WHERE id = ?' . ($this->db->dbdriver === 'mysqli' ? ' FOR UPDATE' : ''), [$insumo]);
+                $lotes = $this->db->query('SELECT * FROM insumo_lotes WHERE insumo_id = ? AND saldo > 0 AND (validade IS NULL OR validade >= ?) ORDER BY validade IS NULL, validade, id' . ($this->db->dbdriver === 'mysqli' ? ' FOR UPDATE' : ''), [$insumo, date('Y-m-d')])->result();
+                foreach ($lotes as $lote) {
+                    $qtd = min($restante, (int) round((float) $lote->saldo * 1000));
+                    if ($qtd > 0) {
+                        $this->estoque()->movimentar(
+                            $insumo,
+                            'consumo',
+                            $qtd,
+                            ['lote_id' => (string) $lote->id, 'os_id' => (string) $id, 'nota' => 'Materiais conferidos no atendimento'],
+                            $usuario,
+                            bin2hex(random_bytes(16))
+                        );
+                        $restante -= $qtd;
+                    }
+                }
+                if ($restante > 0) {
+                    throw new DomainException('Estoque insuficiente para ' . $material['nome'] . '. Registre a compra ou saldo inicial. Nenhum material desta confirmação foi baixado.');
+                }
+            }
+            $this->db->where('os_id', $id)->delete('atendimento_conferencia');
+            $this->db->insert('atendimento_conferencia', ['os_id' => $id, 'assinatura' => $this->previa($id)['assinatura'], 'usuarios_id' => $usuario, 'criado_em' => date('Y-m-d H:i:s')]);
+        });
+    }
+
     /** Aplicação explícita, uma vez por item de serviço; tudo ou nada em falta de estoque. */
     public function aplicarPadroes(int $id, int $usuario): void
     {

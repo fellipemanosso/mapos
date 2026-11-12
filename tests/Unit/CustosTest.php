@@ -15,6 +15,7 @@ final class CustosTest extends MaposTestCase
     {
         foreach ([
             'os (idOs INTEGER PRIMARY KEY, status TEXT)',
+            'atendimento_conferencia (os_id INTEGER PRIMARY KEY, assinatura TEXT, usuarios_id INTEGER, criado_em TEXT)',
             'atendimento_custos (id INTEGER PRIMARY KEY AUTOINCREMENT, os_id INTEGER, tipo TEXT, descricao TEXT, valor NUMERIC, usuarios_id INTEGER, criado_em TEXT, estornado_em TEXT, estornado_por INTEGER, chave TEXT UNIQUE)',
             'insumos (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, unidade TEXT, minimo NUMERIC)',
             'insumo_lotes (id INTEGER PRIMARY KEY AUTOINCREMENT, insumo_id INTEGER, lote TEXT, validade TEXT, saldo NUMERIC, custo_unitario NUMERIC, criado_em TEXT)',
@@ -143,6 +144,51 @@ final class CustosTest extends MaposTestCase
         $this->db->where('id', 1)->update('insumo_lotes', ['validade' => '2020-01-01']);
         $this->expectException(DomainException::class);
         $m->consumir(3, 1, 1000, 1, str_repeat('c', 32));
+    }
+
+    public function testConferenciaDescontaManualPermiteAjusteERecusaReenvioAntigo(): void
+    {
+        $m = $this->modelo();
+        $m->salvarPadrao(1, 1, 2000);
+        $m->consumir(1, 1, 1000, 1, str_repeat('b', 32));
+        $previa = $m->previa(1);
+        $this->assertSame(4000, $previa['materiais'][1]['previsto']);
+        $this->assertSame(1000, $previa['materiais'][1]['registrado']);
+        $this->assertFalse((bool) $previa['conferido']);
+        $m->confirmarMateriais(1, [1 => '3,000'], $previa['assinatura'], 1);
+        $this->assertSame(7.0, (float) $m->estoque->lotes(1)[0]->saldo);
+        $this->assertTrue((bool) $m->previa(1)['conferido']);
+        try {
+            $m->confirmarMateriais(1, [1 => '3,000'], $previa['assinatura'], 1);
+            $this->fail('Prévia antiga deve ser recusada.');
+        } catch (DomainException) {
+            $this->assertCount(2, $m->consumos(1));
+        }
+        $atual = $m->previa(1);
+        $m->confirmarMateriais(1, [1 => '3,000'], $atual['assinatura'], 1);
+        $this->assertCount(2, $m->consumos(1));
+        $m->salvarPadrao(1, 1, 3000);
+        $this->assertFalse((bool) $m->previa(1)['conferido']);
+    }
+
+    public function testConferenciaAtomicaFaltaDeEstoqueEConsumoAlterado(): void
+    {
+        $m = $this->modelo();
+        $m->salvarPadrao(1, 1, 2000);
+        $m->salvarPadrao(1, 2, 1000);
+        $previa = $m->previa(1);
+        try {
+            $m->confirmarMateriais(1, [1 => '4', 2 => '2'], $previa['assinatura'], 1);
+            $this->fail('Luvas sem estoque.');
+        } catch (DomainException $e) {
+            $this->assertStringContainsString('Estoque insuficiente', $e->getMessage());
+        }
+        $this->assertCount(0, $m->consumos(1));
+        $this->assertSame(10.0, (float) $m->estoque->lotes(1)[0]->saldo);
+        $this->assertFalse((bool) $m->previa(1)['conferido']);
+        $m->consumir(1, 1, 1000, 1, str_repeat('b', 32));
+        $this->expectException(DomainException::class);
+        $m->confirmarMateriais(1, [1 => '4', 2 => '0'], $previa['assinatura'], 1);
     }
 
     public function testPermissaoFinanceiraExigidaMesmoConhecendoAUrl(): void

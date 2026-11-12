@@ -48,6 +48,7 @@ class Custos extends MY_Controller
             'lotes' => $this->permite('eInsumo') ? $this->custos_model->lotes() : [],
             'editar' => $this->permite('eOs') && $os->status !== 'Cancelado',
             'editar_insumos' => $this->permite('eOs') && $this->permite('eInsumo') && $os->status !== 'Cancelado',
+            'previa' => $this->custos_model->previa($id),
             'erro' => $erro, 'valores' => $valores, 'chave' => bin2hex(random_bytes(16))];
         $this->data['view'] = 'custos/index';
         return $this->layout();
@@ -91,7 +92,7 @@ class Custos extends MY_Controller
                     $this->custos_model->estornarConsumo($id, $this->id($post['registro'] ?? null), $usuario);
                     break;
                 case 'padroes':
-                    $this->custos_model->aplicarPadroes($id, $usuario);
+                    $this->custos_model->confirmarMateriais($id, is_array($post['materiais'] ?? null) ? $post['materiais'] : [], is_string($post['assinatura'] ?? null) ? $post['assinatura'] : '', $usuario);
                     break;
                 default:
                     throw new DomainException('Operação inválida.');
@@ -120,11 +121,12 @@ class Custos extends MY_Controller
         $erro = null;
         if ($this->input->method() === 'post') {
             try {
-                $qtd = insumoQuantidade($this->input->post('quantidade'));
+                $remover = $this->id($this->input->post('remover'));
+                $qtd = $remover ? 0 : insumoQuantidade($this->input->post('quantidade'));
                 if ($qtd === null) {
                     throw new DomainException('Informe uma quantidade com até três casas decimais. Zero remove o insumo do padrão.');
                 }
-                $this->custos_model->salvarPadrao($id, $this->id($this->input->post('insumo_id')), $qtd);
+                $this->custos_model->salvarPadrao($id, $remover ?: $this->id($this->input->post('insumo_id')), $qtd);
                 log_info('Atualizou insumos padrão do serviço #' . $id);
                 $this->session->set_flashdata('success', 'Composição salva. Consumos já registrados permanecem iguais.');
                 return redirect('custos/padrao/' . $id);

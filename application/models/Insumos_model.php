@@ -52,6 +52,10 @@ class Insumos_model extends CI_Model
         }
         $this->db->trans_begin();
         try {
+            if ($tipo === 'consumo') {
+                $osId = is_string($dados['os_id'] ?? null) && ctype_digit($dados['os_id']) ? (int) $dados['os_id'] : 0;
+                $this->db->query('SELECT idOs FROM os WHERE idOs = ?' . ($this->db->dbdriver === 'mysqli' ? ' FOR UPDATE' : ''), [$osId]);
+            }
             $item = $this->db->query('SELECT * FROM insumos WHERE id = ?' . ($this->db->dbdriver === 'mysqli' ? ' FOR UPDATE' : ''), [$insumo])->row();
             if (! $item) {
                 throw new DomainException('Insumo não encontrado.');
@@ -87,7 +91,7 @@ class Insumos_model extends CI_Model
                 $loteId = (int) $this->db->insert_id();
             } else {
                 $loteId = is_string($dados['lote_id'] ?? null) && ctype_digit($dados['lote_id']) ? (int) $dados['lote_id'] : 0;
-                $lote = $this->db->where('id', $loteId)->where('insumo_id', $insumo)->get('insumo_lotes')->row();
+                $lote = $this->db->query('SELECT * FROM insumo_lotes WHERE id = ? AND insumo_id = ?' . ($this->db->dbdriver === 'mysqli' ? ' FOR UPDATE' : ''), [$loteId, $insumo])->row();
                 if (! $lote || (int) round((float) $lote->saldo * 1000) < $quantidade) {
                     throw new DomainException('Escolha um lote deste insumo com saldo suficiente.');
                 }
@@ -117,8 +121,12 @@ class Insumos_model extends CI_Model
 
     public function estornar(int $insumo, int $movimento, int $usuario): void
     {
+        $referencia = $this->db->where('id', $movimento)->get('insumo_movimentos')->row();
         $this->db->trans_begin();
         try {
+            if ($referencia && $referencia->os_id) {
+                $this->db->query('SELECT idOs FROM os WHERE idOs = ?' . ($this->db->dbdriver === 'mysqli' ? ' FOR UPDATE' : ''), [$referencia->os_id]);
+            }
             $this->db->query('SELECT id FROM insumos WHERE id = ?' . ($this->db->dbdriver === 'mysqli' ? ' FOR UPDATE' : ''), [$insumo])->row();
             $m = $this->db->select('m.*, l.saldo, l.insumo_id')->from('insumo_movimentos m')->join('insumo_lotes l', 'l.id = m.lote_id')
                 ->where('m.id', $movimento)->where('l.insumo_id', $insumo)->get()->row();

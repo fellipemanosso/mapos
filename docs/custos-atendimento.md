@@ -56,3 +56,14 @@ dados nem recebem campos novos de custo.
 8. Imprima orçamento/cupom e abra a área da cliente: devem aparecer serviço,
    deslocamento cobrado e eventuais produtos vendidos, nunca Gaze, taxa de
    cartão, combustível interno ou resultado.
+
+
+## Conferência de materiais
+
+Em Custos e resultado, abra **Conferir materiais antes de baixar**. A prévia soma a composição de todos os serviços pela quantidade contratada e mostra o consumo já registrado, inclusive manual, e o saldo não vencido. Informe o **total realmente usado**, não apenas o adicional. A confirmação baixa somente a diferença, por validade. Quantidades inferiores às já registradas exigem estorno primeiro.
+
+A confirmação é transacional: faltar qualquer material cancela todas as baixas dessa confirmação. Reenvios de uma prévia antiga são recusados; confirmar novamente o mesmo total atualizado não gera consumo adicional. Mudanças nos serviços, composição ou consumo invalidam a conferência. Serviços sem composição continuam exigindo verificação e lançamento manual. Consumo com custo zero gera aviso para revisar as compras. Resultado previsto considera apenas custos registrados e não equivale a lucro líquido.
+
+Na composição do serviço, cada linha permite salvar uma quantidade ou remover o material explicitamente. Na movimentação de estoque, os campos acompanham o tipo escolhido e mantêm o rascunho ao alternar as opções. Links na prévia levam diretamente à entrada do insumo.
+
+Atualização: migration `20261113010000_add_conferencia_materiais` cria apenas o registro interno de conferência. Não altera os saldos ou consumos existentes.
