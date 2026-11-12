@@ -167,6 +167,7 @@ final class LayoutTest extends MaposTestCase
             }
             if (in_array('vOs', $conjunto, true)) {
                 $esperado[] = 'Agenda';
+                $esperado[] = 'Leads e orçamentos';
                 $esperado[] = 'Pacotes e sessões';
             }
             foreach ($itens as [$url, $permissao]) {
@@ -227,7 +228,7 @@ final class LayoutTest extends MaposTestCase
 
         $menu = layoutMenuVisivel(layoutMenu(), $this->permite($todas), 'Mapos', 'index');
 
-        $this->assertCount(12 + 10 + 8, self::rotulos($menu));
+        $this->assertCount(13 + 10 + 8, self::rotulos($menu));
         $this->assertContains('Configurações > WhatsApp', self::rotulos($menu));
     }
 

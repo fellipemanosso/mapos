@@ -754,6 +754,10 @@ class Os extends MY_Controller
         }
 
         $osStockRefund = $this->os_model->getById($id);
+        if ($this->db->table_exists('leads') && $this->db->where('os_id', $id)->count_all_results('leads') > 0) {
+            $this->session->set_flashdata('error', 'Este atendimento está vinculado a um contato comercial e não pode ser excluído.');
+            return redirect($listagem);
+        }
         if ($this->db->table_exists('notas_fiscais') && $this->db->where('os_id', $id)->count_all_results('notas_fiscais') > 0) {
             $this->session->set_flashdata('error', 'Este atendimento tem histórico de nota fiscal e não pode ser excluído.');
             return redirect($listagem);
