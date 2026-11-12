@@ -107,6 +107,7 @@ if (! function_exists('layoutMenu')) {
                 'icon' => 'settings',
                 'itens' => [
                     ['label' => 'Sistema', 'url' => 'mapos/configurar', 'rota' => ['Mapos', 'configurar'], 'ativo' => ['Mapos/configurar']],
+                    ['label' => 'WhatsApp', 'url' => 'whatsapp', 'rota' => ['Whatsapp', 'index'], 'ativo' => ['Whatsapp']],
                     ['label' => 'Usuários', 'url' => 'usuarios', 'rota' => ['Usuarios', 'index'], 'ativo' => ['Usuarios']],
                     ['label' => 'Emitente', 'url' => 'mapos/emitente', 'rota' => ['Mapos', 'emitente'], 'ativo' => ['Mapos/emitente']],
                     ['label' => 'Permissões', 'url' => 'permissoes', 'rota' => ['Permissoes', 'index'], 'ativo' => ['Permissoes']],
@@ -233,6 +234,7 @@ if (! function_exists('layoutIniciais')) {
 if (! defined('LAYOUT_ROTULOS')) {
     // Nome dos módulos no breadcrumb, com acento (o segmento da URL não tem).
     define('LAYOUT_ROTULOS', [
+        'whatsapp' => 'WhatsApp',
         'servicos' => 'Serviços',
         'os' => 'Atendimentos',
         'cobrancas' => 'Cobranças',

@@ -227,7 +227,8 @@ final class LayoutTest extends MaposTestCase
 
         $menu = layoutMenuVisivel(layoutMenu(), $this->permite($todas), 'Mapos', 'index');
 
-        $this->assertCount(12 + 10 + 7, self::rotulos($menu));
+        $this->assertCount(12 + 10 + 8, self::rotulos($menu));
+        $this->assertContains('Configurações > WhatsApp', self::rotulos($menu));
     }
 
     /**

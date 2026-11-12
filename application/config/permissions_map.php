@@ -32,6 +32,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 */
 
 $config['permissions_map'] = [
+    'Whatsapp' => [
+        'index' => 'cSistema',
+        'salvar' => 'cSistema',
+        'executar' => 'cSistema',
+    ],
     'Agenda' => [
         'index' => 'vOs',
         'formulario' => 'eOs',

@@ -1,5 +1,7 @@
 # Migração do Map-OS 4.x para a v5
 
+Na customização de atendimentos, a integração opcional com Evolution adiciona a migration `20261112010000_add_evolution_config`. Após atualizar o banco, configure a instância em **Configurações → WhatsApp**. Preserve `APP_ENCRYPTION_KEY` no backup para recuperar a chave de acesso cifrada. Veja [WhatsApp pela Evolution](whatsapp-evolution.md).
+
 Este guia leva uma instalação da série 4 (4.55.x, a última) para a v5. Se você está numa versão mais antiga, atualize antes para a 4.55.x.
 
 > A v5 ainda não tem release estável. Faça a migração primeiro numa **cópia** do servidor e do banco, confira o resultado e só então repita em produção.
